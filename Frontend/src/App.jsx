@@ -9,6 +9,7 @@ import { Route,  Routes } from 'react-router-dom'
 import LoginSignup from './Components/Buttons/SginIn'
 import TeacherLoginSignup from './Components/Buttons/Teacher'
 import LogOut from './Components/Buttons/LogOut'
+import ResetEmail from "./Components/Buttons/ResetEmail.jsx";
 // import { useState } from 'react'
 
 // import SignInPopup from './Components/popFunction/SignInPopup'
@@ -39,6 +40,7 @@ const App = () => {
       <Route  path='/Guidance'  element={<Guidance/>}/>
       <Route  path='/signin'  element={<LoginSignup />}/>
       <Route  path='/teacher'  element={<TeacherLoginSignup/>}/>
+      <Route path='/resetpassword' element={<ResetEmail/>}/>
 
 
       {/* make the sign in successFull  then  go  to  logout */}

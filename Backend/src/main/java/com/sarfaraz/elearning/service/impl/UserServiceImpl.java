@@ -2,6 +2,7 @@ package com.sarfaraz.elearning.service.impl;
 
 import com.sarfaraz.elearning.constants.AuthProviderEnum;
 import com.sarfaraz.elearning.constants.ErrorEnum;
+import com.sarfaraz.elearning.constants.RoleEnum;
 import com.sarfaraz.elearning.constants.UserCreatedBy;
 import com.sarfaraz.elearning.exceptions.*;
 import com.sarfaraz.elearning.model.CommonEntity;
@@ -123,10 +124,11 @@ public class UserServiceImpl implements UserService {
 			user.setTeacher(teacher);
 		} else if (registrationRequestDTO.getRole().equalsIgnoreCase("Admin")) {
 			user.setAdmin(true); // Set admin role
-		} else {
+		} else  if (registrationRequestDTO.getRole().equalsIgnoreCase("Student")){
 			Student student = new Student();
 			student.setUser(user);
 			student.setCreatedBy(UserCreatedBy.Self);
+			registrationRequestDTO.setRole(String.valueOf(RoleEnum.STUDENT));
 			user.setStudent(student);
 		}
 		System.out.println("Created By: " + user.getCreatedBy());
