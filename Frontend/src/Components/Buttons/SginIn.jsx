@@ -83,7 +83,11 @@ const LoginSignup = () => {
     setLoading(true);
     setErrorMessage("");
 
-    const data = { ...formData, isTeacher: role === "teacher", role };
+    // Prepare data based on whether it's login or registration
+    const data = isLogin
+        ? { username: formData.username, password: formData.password, role }
+        : { ...formData, isTeacher: role === "teacher", role };
+
     const url = isLogin
         ? "http://localhost:8080/v1/auth/login"
         : "http://localhost:8080/v1/auth/registration";
@@ -96,7 +100,7 @@ const LoginSignup = () => {
       }
     } catch (error) {
       console.error("Error during submission:", error);
-      if (error.response && error.response.status === 500) { // Assuming 409 is returned for conflicts (email/username taken)
+      if (error.response && error.response.status === 500) {
         const errorMessage = error.response.data.message || "Email or username is already taken. Please choose another.";
         setErrorMessage(errorMessage);
       } else {
