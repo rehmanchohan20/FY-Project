@@ -1,9 +1,14 @@
 package com.sarfaraz.elearning.rest.dto.outbound;
 
+import java.util.Set;
+
 public class CourseModuleResponseDTO {
     private Long id;
-    private String title;
-    private String content;
+    private String heading;
+    private String description;
+    private Integer priority;
+
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -13,19 +18,27 @@ public class CourseModuleResponseDTO {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

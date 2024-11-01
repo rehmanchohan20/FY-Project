@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/course-progress")
 public class CourseProgressController {
@@ -17,34 +15,22 @@ public class CourseProgressController {
     @Autowired
     private CourseProgressService courseProgressService;
 
-    @PostMapping
-    public ResponseEntity<CourseProgressResponseDTO> createCourseProgress(@RequestBody CourseProgressRequestDTO courseProgressRequestDTO) {
-        CourseProgressResponseDTO courseProgress = courseProgressService.createCourseProgress(courseProgressRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(courseProgress);
+    @PostMapping("/{studentId}/{courseModuleLessonId}/update")
+    public ResponseEntity<CourseProgressResponseDTO> updateProgress(
+            @PathVariable Long studentId,
+            @PathVariable Long courseModuleLessonId,
+            @RequestBody CourseProgressRequestDTO progressRequest) {
+
+        CourseProgressResponseDTO updatedProgress = courseProgressService.updateProgress(studentId, courseModuleLessonId, progressRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProgress);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CourseProgressResponseDTO> getCourseProgressById(@PathVariable Long id) {
-        CourseProgressResponseDTO courseProgress = courseProgressService.getCourseProgressById(id);
-        return ResponseEntity.ok(courseProgress);
-    }
+    @GetMapping("/{studentId}/{courseModuleLessonId}")
+    public ResponseEntity<CourseProgressResponseDTO> getProgress(
+            @PathVariable Long studentId,
+            @PathVariable Long courseModuleLessonId) {
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CourseProgressResponseDTO> updateCourseProgress(@PathVariable Long id, @RequestBody CourseProgressRequestDTO courseProgressRequestDTO) {
-        CourseProgressResponseDTO courseProgress = courseProgressService.updateCourseProgress(id, courseProgressRequestDTO);
-        return ResponseEntity.ok(courseProgress);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourseProgress(@PathVariable Long id) {
-        courseProgressService.deleteCourseProgress(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CourseProgressResponseDTO>> getAllCourseProgress() {
-        List<CourseProgressResponseDTO> courseProgressList = courseProgressService.getAllCourseProgress();
-        return ResponseEntity.ok(courseProgressList);
+        CourseProgressResponseDTO progress = courseProgressService.getProgress(studentId, courseModuleLessonId);
+        return ResponseEntity.status(HttpStatus.OK).body(progress);
     }
 }
-

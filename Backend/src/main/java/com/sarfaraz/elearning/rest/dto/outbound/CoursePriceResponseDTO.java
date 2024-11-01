@@ -1,7 +1,6 @@
 package com.sarfaraz.elearning.rest.dto.outbound;
 
 public class CoursePriceResponseDTO {
-    private Long id;
     private Double price;
     private String currency;
 
@@ -13,13 +12,6 @@ public class CoursePriceResponseDTO {
         this.currency = currency;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Double getPrice() {
         return price;

@@ -8,7 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmailUtil {
+public class  EmailUtil {
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -50,4 +50,43 @@ public class EmailUtil {
         messageHelper.setText(content, true);
         javaMailSender.send(mimeMessage);
     }
+
+    public void sendTicketGeneratedEmail(String email, Long ticketId) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+        messageHelper.setFrom("IntelliGuide E-learning <intelliguideelearning@gmail.com>");
+        messageHelper.setTo(email);
+        messageHelper.setSubject("Ticket Generated: #" + ticketId);
+
+        String content = """
+        <div>
+            <p>Your ticket has been generated successfully.</p>
+            <p>Ticket ID: #%s</p>
+            <p>We will notify you once the issue is resolved.</p>
+        </div>
+    """.formatted(ticketId);
+        messageHelper.setText(content, true);
+        javaMailSender.send(mimeMessage);
+    }
+
+    public void sendTicketResolvedEmail(String email, Long ticketId) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+        messageHelper.setFrom("IntelliGuide E-learning <intelliguideelearning@gmail.com>");
+        messageHelper.setTo(email);
+        messageHelper.setSubject("Ticket Resolved: #" + ticketId);
+
+        String content = """
+        <div>
+            <p>Your ticket has been resolved.</p>
+            <p>Ticket ID: #%s</p>
+            <p>Thank you for your patience.</p>
+        </div>
+    """.formatted(ticketId);
+        messageHelper.setText(content, true);
+        javaMailSender.send(mimeMessage);
+    }
+
+
+
 }

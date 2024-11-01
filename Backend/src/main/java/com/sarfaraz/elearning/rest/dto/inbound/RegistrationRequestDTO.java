@@ -42,7 +42,7 @@ public class RegistrationRequestDTO {
 		this.email = email;
 		this.password = password;
 		this.isTeacher = isTeacher;
-		this.role = role;
+//		this.role = role;
 	}
 
 	public String getUsername() {

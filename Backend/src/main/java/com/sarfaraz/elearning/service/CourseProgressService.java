@@ -1,14 +1,12 @@
 package com.sarfaraz.elearning.service;
 
+import com.sarfaraz.elearning.model.CourseProgress;
 import com.sarfaraz.elearning.rest.dto.inbound.CourseProgressRequestDTO;
 import com.sarfaraz.elearning.rest.dto.outbound.CourseProgressResponseDTO;
-
-import java.util.List;
+import jakarta.transaction.Transactional;
 
 public interface CourseProgressService {
-    CourseProgressResponseDTO createCourseProgress(CourseProgressRequestDTO courseProgressRequestDto);
-    CourseProgressResponseDTO updateCourseProgress(Long id, CourseProgressRequestDTO courseProgressRequestDto);
-    CourseProgressResponseDTO getCourseProgressById(Long id);
-    List<CourseProgressResponseDTO> getAllCourseProgress();
-    void deleteCourseProgress(Long id);
+    CourseProgressResponseDTO updateProgress(Long studentId, Long courseModuleLessonId, CourseProgressRequestDTO progressRequest) ;
+    CourseProgressResponseDTO getProgress(Long studentId, Long courseModuleLessonId) ;
+    CourseProgressResponseDTO markModuleAsCompleted(Long studentId, Long moduleId);
 }

@@ -6,11 +6,11 @@ import com.sarfaraz.elearning.rest.dto.outbound.CourseResponseDTO;
 import java.util.List;
 
 public interface CourseService {
-	CourseResponseDTO createCourse(CourseRequestDTO courseRequestDto);
-	CourseResponseDTO updateCourse(Long id, CourseRequestDTO courseRequestDto);
-	CourseResponseDTO getCourseById(Long id);
+	CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO);
+	CourseResponseDTO getCourseById(Long courseId);
 	List<CourseResponseDTO> getAllCourses();
-	void deleteCourse(Long id);
+	CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO request);
+	void deleteCourse(Long courseId);
 	List<CourseResponseDTO> searchCourseByName(String courseName);
-//	public void saveVideoUrl(Long courseId, String videoUrl);
+
 }

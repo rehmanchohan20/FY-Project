@@ -10,10 +10,7 @@ import com.sarfaraz.elearning.model.Student;
 import com.sarfaraz.elearning.model.Teacher;
 import com.sarfaraz.elearning.model.User;
 import com.sarfaraz.elearning.repository.UserRepository;
-import com.sarfaraz.elearning.rest.dto.inbound.LoginRequestDTO;
-import com.sarfaraz.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
-import com.sarfaraz.elearning.rest.dto.inbound.RegistrationRequestDTO;
-import com.sarfaraz.elearning.rest.dto.inbound.UserRequestDTO;
+import com.sarfaraz.elearning.rest.dto.inbound.*;
 import com.sarfaraz.elearning.rest.dto.outbound.LoginResponseDTO;
 import com.sarfaraz.elearning.rest.dto.outbound.RegistrationAdminResponseDTO;
 import com.sarfaraz.elearning.rest.dto.outbound.RegistrationResponseDTO;
@@ -39,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -88,8 +86,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public RegistrationResponseDTO userRegistration(RegistrationRequestDTO registrationRequestDTO)
-			throws ApplicationException {
+	public RegistrationResponseDTO userRegistration(RegistrationRequestDTO registrationRequestDTO) throws ApplicationException {
+		// Check for existing email or username
 		userRepository.findByEmail(registrationRequestDTO.getEmail()).ifPresent(user -> {
 			throw new EmailAlreadyTakenException(ErrorEnum.EMAIL_ALREADY_EXIST);
 		});
@@ -98,43 +96,42 @@ public class UserServiceImpl implements UserService {
 			throw new UsernameAlreadyTakenException(ErrorEnum.USERNAME_ALREADY_EXIST);
 		});
 
+		// Create a new User instance and set its attributes
 		User user = new User();
 		user.setUsername(registrationRequestDTO.getUsername());
-		user.setFullName(registrationRequestDTO.getUsername());
+		user.setFullName(registrationRequestDTO.getUsername()); // Assuming fullName is the same as username
 		user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword()));
 		user.setEmail(registrationRequestDTO.getEmail());
+		user.setCreatedBy(UserCreatedBy.Self);
 		user.setAdmin(false); // Default value for isAdmin
 		user.setImage("default-profile.png"); // Default image URL
-		user.setCreatedBy(UserCreatedBy.Self);
-		user.setAuthProvider(AuthProviderEnum.TraditionalLogin);
-		user.setProviderId(UUID.randomUUID().toString());
-
-//		if (registrationRequestDTO.isCreatedByAdmin()) {
-//			user.setCreatedBy(UserCreatedBy.Self);
-//		} else {
-//			user.setCreatedBy(UserCreatedBy.Admin);
-//		}
+		user.setAuthProvider(AuthProviderEnum.TraditionalLogin); // Assuming traditional login for registration
+		user.setProviderId(UUID.randomUUID().toString()); // Generate a unique provider ID
 
 		// Role assignment based on registration request
-		if (registrationRequestDTO.getRole().equalsIgnoreCase("Teacher")) {
-			registrationRequestDTO.setTeacher(true);
+		if (registrationRequestDTO.isTeacher()) {
 			Teacher teacher = new Teacher();
 			teacher.setUser(user);
-			teacher.setCreatedBy(UserCreatedBy.Self);
 			user.setTeacher(teacher);
-		} else if (registrationRequestDTO.getRole().equalsIgnoreCase("Admin")) {
-			user.setAdmin(true); // Set admin role
-		} else  if (registrationRequestDTO.getRole().equalsIgnoreCase("Student")){
+			// Optionally, set the createdBy field for the teacher here
+			teacher.setCreatedBy(UserCreatedBy.Self);
+		} else {
 			Student student = new Student();
 			student.setUser(user);
-			student.setCreatedBy(UserCreatedBy.Self);
-			registrationRequestDTO.setRole(String.valueOf(RoleEnum.STUDENT));
 			user.setStudent(student);
+			registrationRequestDTO.setRole(String.valueOf(RoleEnum.STUDENT));
+			// Optionally, set the createdBy field for the student here
+			student.setCreatedBy(UserCreatedBy.Self);
 		}
-		System.out.println("Created By: " + user.getCreatedBy());
+
+		// Save user to the repository
 		userRepository.save(user);
 		return new RegistrationResponseDTO(user.getId().toString());
 	}
+
+
+
+
 
 	@Override
 	@Transactional

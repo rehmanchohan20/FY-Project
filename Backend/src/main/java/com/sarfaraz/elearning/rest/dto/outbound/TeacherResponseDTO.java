@@ -4,17 +4,9 @@ import java.util.Set;
 
 public class TeacherResponseDTO {
     private Long userId;
-    private String userName;
     private UserResponseDTO user;
     private Set<CourseResponseDTO> courses;
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public Long getUserId() {
         return userId;

@@ -2,9 +2,12 @@ package com.sarfaraz.elearning.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "course_progress")
-public class CourseProgress extends  CommonEntity {
+public class CourseProgress extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -18,9 +21,15 @@ public class CourseProgress extends  CommonEntity {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @Column(name = "progress")
-    private String progress;
 
+    @Column(name = "progress_percentage")
+    private double progressPercentage; // Changed from String to double to represent percentage
+
+    @ElementCollection
+    private List<Long> completedModules = new ArrayList<>(); // Stores completed module IDs
+
+
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -45,11 +54,19 @@ public class CourseProgress extends  CommonEntity {
         this.student = student;
     }
 
-    public String getProgress() {
-        return progress;
+    public double getProgressPercentage() {
+        return progressPercentage;
     }
 
-    public void setProgress(String progress) {
-        this.progress = progress;
+    public void setProgressPercentage(double progressPercentage) {
+        this.progressPercentage = progressPercentage;
+    }
+
+    public List<Long> getCompletedModules() {
+        return completedModules;
+    }
+
+    public void setCompletedModules(List<Long> completedModules) {
+        this.completedModules = completedModules;
     }
 }

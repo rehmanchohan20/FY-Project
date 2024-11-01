@@ -2,6 +2,8 @@ package com.sarfaraz.elearning.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "course_offer")
 public class CourseOffer extends Amount {
@@ -11,6 +13,34 @@ public class CourseOffer extends Amount {
 
     private Double Discount;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
     public Double getDiscount() {
         return Discount;
     }
@@ -19,10 +49,6 @@ public class CourseOffer extends Amount {
         Discount = discount;
     }
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "course_id")
-    private Course course;
 
     public Long getCourseId() {
         return courseId;

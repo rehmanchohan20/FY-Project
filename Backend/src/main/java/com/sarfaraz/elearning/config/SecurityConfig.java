@@ -4,7 +4,6 @@ import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.*;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,9 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.*;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import com.sarfaraz.elearning.service.auth.*;
 import com.sarfaraz.elearning.service.impl.AuthServicImpl;
+
 
 @Configuration
 @EnableWebSecurity
@@ -32,12 +33,6 @@ public class SecurityConfig {
 	private OAuth2UserService oAuth2UserService;
 	private CustomCorsConfiguration customCorsConfiguration;
 	private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
-	@Value("${app.oauth2.authorize-uri:http://localhost:8080/oauth2/authorize}")
-	private String oauth2AuthorizeUri;
-
-	@Value("${app.oauth2.redirect-uri:http://localhost:8080/oauth2/callback/google}")
-	private String oauth2RedirectUri;
 
 	@Autowired
 	public SecurityConfig(RsaKeyConfigProperties rsaKeyConfigProperties, AuthServicImpl authServicImpl,
@@ -62,26 +57,40 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 		return http
 				.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(customCorsConfiguration))
+				.cors(cors -> cors.configurationSource(customCorsConfiguration.corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth
+						// Public access URLs
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/v1/auth/**", "/auth/**",
-								"/oauth2/**","/oauth2/callback/**", "/send-email", "/api/public/**", "/api/payments/**", "/api/course-progress/**",
-								"/api/users/**", "/api/media/**", "/user/me", "/dashboard").permitAll()
-						.requestMatchers("/api/users/admin/**").hasAuthority("ROLE_ADMIN")
+								"/oauth2/**", "/send-email", "/api/public/**", "/api/payments/**", "/api/course-progress/**",
+								"/api/users/**", "/api/media/**", "/user/me", "/login/oauth2/**", "/login/oauth2/code/google").permitAll()
+
+						// Student access to ticket endpoints
+						.requestMatchers("/api/tickets//student/{studentId}", "/api/tickets").hasAuthority("SCOPE_ROLE_GUEST")
+
+						// Teacher access to course related endpoints
+						.requestMatchers("/api/courses", "/api/courses/**", "/api/modules/{moduleId}/lessons/**",
+								"/api/modules/{moduleId}/lessons", "/api/courses/{courseId}/offers/**",
+								"/api/courses/{courseId}/modules/{moduleId}").hasAuthority("SCOPE_ROLE_TEACHER")
+
+						// Admin access to user management and ticket resolution
+						.requestMatchers("/api/users/admin/**", "/api/tickets/**").hasAuthority("SCOPE_ROLE_ADMIN")
+
+						// Default rule: any other request requires authentication
 						.anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2
 						.userInfoEndpoint(infoEndpoint -> infoEndpoint.userService(oAuth2UserService))
 						.successHandler(customAuthenticationSuccessHandler())
 						.failureHandler(customAuthenticationFailureHandler())
-						.authorizationEndpoint(authEnd -> authEnd.baseUri(oauth2AuthorizeUri)
+						.authorizationEndpoint(authEnd -> authEnd.baseUri("/oauth2/authorize")
 								.authorizationRequestRepository(cookieAuthorizationRequestRepository()))
-						.redirectionEndpoint(authRedir -> authRedir.baseUri(oauth2RedirectUri)))
+						.redirectionEndpoint(authRedir -> authRedir.baseUri("/login/oauth2/code/google")))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
 				.userDetailsService(authServicImpl)
 				.httpBasic(Customizer.withDefaults())
 				.build();
 	}
+
 
 	@Bean
 	public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {

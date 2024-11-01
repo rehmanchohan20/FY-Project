@@ -1,8 +1,10 @@
 package com.sarfaraz.elearning.rest;
 
-import com.sarfaraz.elearning.model.Media;
+import com.sarfaraz.elearning.rest.dto.inbound.MediaRequestDTO;
+import com.sarfaraz.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.sarfaraz.elearning.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,9 +20,23 @@ public class MediaController {
         this.mediaService = mediaService;
     }
 
+    // Endpoint for uploading a video
     @PostMapping("/upload")
-    public ResponseEntity<Media> uploadVideo(@RequestParam("file") MultipartFile videoFile) {
-        Media media = mediaService.uploadVideo(videoFile);
-        return ResponseEntity.ok(media);
+    public ResponseEntity<MediaResponseDTO> uploadVideo(
+            @RequestParam("file") MultipartFile videoFile,
+            @RequestParam("url") String url,
+            @RequestParam("type") String type,
+            @RequestParam("duration") String duration) {
+        MediaResponseDTO response = mediaService.uploadVideo(videoFile,url,type,duration);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+//     Endpoint for fetching media details by ID
+    @GetMapping("/{mediaId}")
+    public ResponseEntity<MediaResponseDTO> getMediaById(@PathVariable Long mediaId) {
+        MediaResponseDTO response = mediaService.getMediaById(mediaId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 }

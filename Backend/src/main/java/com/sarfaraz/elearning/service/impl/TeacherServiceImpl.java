@@ -1,14 +1,14 @@
 package com.sarfaraz.elearning.service.impl;
 
-import com.sarfaraz.elearning.model.Course;
-import com.sarfaraz.elearning.model.Teacher;
-import com.sarfaraz.elearning.model.User;
+import com.sarfaraz.elearning.model.*;
 import com.sarfaraz.elearning.repository.CourseRepository;
 import com.sarfaraz.elearning.repository.TeacherRepository;
 import com.sarfaraz.elearning.repository.UserRepository;
 import com.sarfaraz.elearning.rest.dto.inbound.TeacherRequestDTO;
+import com.sarfaraz.elearning.rest.dto.outbound.CoursePriceResponseDTO;
 import com.sarfaraz.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.sarfaraz.elearning.rest.dto.outbound.TeacherResponseDTO;
+import com.sarfaraz.elearning.rest.dto.outbound.UserResponseDTO;
 import com.sarfaraz.elearning.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,20 +101,36 @@ public class TeacherServiceImpl implements TeacherService {
         // Set userId from User
         responseDto.setUserId(teacher.getUser().getId());
 
-        // Convert courses to CourseResponseDTO instead of just Long IDs
+        // Map User entity to UserResponseDTO
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setId(teacher.getUser().getId());
+        userResponseDTO.setUsername(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
+        userResponseDTO.setEmail(teacher.getUser().getEmail());
+
+        // Set the user in the response DTO
+        responseDto.setUser(userResponseDTO);
+        // Convert courses to CourseResponseDTO
         responseDto.setCourses(teacher.getCourses().stream()
-                .map(this::mapCourseToResponseDTO)  // Convert each course to CourseResponseDTO
+                .map(this::mapCourseToResponseDTO)
                 .collect(Collectors.toSet()));
 
-        // Set other fields if needed
+        // Return the mapped response DTO
         return responseDto;
     }
+
 
     private CourseResponseDTO mapCourseToResponseDTO(Course course) {
         CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
         courseResponseDTO.setId(course.getId());
         courseResponseDTO.setTitle(course.getTitle());
         courseResponseDTO.setDescription(course.getDescription());
+        if (course.getCoursePrice() != null) {
+            CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
+            priceResponse.setPrice(course.getCoursePrice().getAmount());
+            priceResponse.setCurrency(course.getCoursePrice().getCurrency());
+            courseResponseDTO.setCoursePrice(priceResponse);
+        }
+        courseResponseDTO.setStatus(course.getStatus());
         // Set other fields from Course to CourseResponseDTO
         return courseResponseDTO;
     }

@@ -1,17 +1,19 @@
 package com.sarfaraz.elearning.rest.dto.outbound;
 
-import java.util.Set;
+import com.sarfaraz.elearning.model.Teacher;
+import com.sarfaraz.elearning.model.User;
 
 public class CourseResponseDTO {
-    private Long id;
+
+    private Long id; // Unique identifier for the course
     private String title;
     private String description;
     private String status;
-    private TeacherResponseDTO teacher;
-    private CoursePriceResponseDTO coursePrice;
-    private CourseOfferResponseDTO courseOffer;
-    private Set<CourseModuleResponseDTO> courseModules;
-    private Set<StudentResponseDTO> students;
+    private CoursePriceResponseDTO coursePrice; // Price details of the course
+
+
+// Getters and Setters
+
 
     public Long getId() {
         return id;
@@ -45,14 +47,6 @@ public class CourseResponseDTO {
         this.status = status;
     }
 
-    public TeacherResponseDTO getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(TeacherResponseDTO teacher) {
-        this.teacher = teacher;
-    }
-
     public CoursePriceResponseDTO getCoursePrice() {
         return coursePrice;
     }
@@ -60,28 +54,5 @@ public class CourseResponseDTO {
     public void setCoursePrice(CoursePriceResponseDTO coursePrice) {
         this.coursePrice = coursePrice;
     }
-
-    public CourseOfferResponseDTO getCourseOffer() {
-        return courseOffer;
-    }
-
-    public void setCourseOffer(CourseOfferResponseDTO courseOffer) {
-        this.courseOffer = courseOffer;
-    }
-
-    public Set<CourseModuleResponseDTO> getCourseModules() {
-        return courseModules;
-    }
-
-    public void setCourseModules(Set<CourseModuleResponseDTO> courseModules) {
-        this.courseModules = courseModules;
-    }
-
-    public Set<StudentResponseDTO> getStudents() {
-        return students;
-    }
-
-    public void setStudents(Set<StudentResponseDTO> students) {
-        this.students = students;
-    }
 }
+

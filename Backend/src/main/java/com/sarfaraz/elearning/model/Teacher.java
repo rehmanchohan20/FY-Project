@@ -2,6 +2,7 @@ package com.sarfaraz.elearning.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,7 +17,7 @@ public class Teacher extends CommonEntity{
     @JoinColumn(name = "user_id")
     private User user;
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     public Long getUserId() {
         return userId;
@@ -40,5 +41,17 @@ public class Teacher extends CommonEntity{
 
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
+    }
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
+        course.setTeacher(this);
+    }
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "userId=" + userId +
+                ", user=" + user +
+                '}';
     }
 }

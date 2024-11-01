@@ -26,6 +26,18 @@ public class Student extends CommonEntity {
 	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
 	private Set<Payment> payments;
 
+	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Ticket> tickets;
+
+	public Set<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(Set<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+
+
 	public Long getUserId() {
 		return userId;
 	}

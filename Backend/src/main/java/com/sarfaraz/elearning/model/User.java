@@ -173,7 +173,7 @@ public class User extends CommonEntity implements OAuth2User, UserDetails {
 		return teacher != null;
 	}
 
-	private boolean isStudent() {
+	public boolean isStudent() {
 		return teacher != null;
 	}
 
@@ -204,7 +204,7 @@ public class User extends CommonEntity implements OAuth2User, UserDetails {
 			return Arrays.asList(new SimpleGrantedAuthority(role + RoleEnum.TEACHER));
 		} else if (Boolean.TRUE.equals(isStudent())) {
 			return Arrays.asList(new SimpleGrantedAuthority(role + RoleEnum.STUDENT));
-		} else if (Boolean.TRUE.equals(getAdmin())) {
+		} else if(Boolean.TRUE.equals(getAdmin())) {
 			return Arrays.asList(new SimpleGrantedAuthority(role + RoleEnum.ADMIN));
 		}
 		return Arrays.asList(new SimpleGrantedAuthority(role + RoleEnum.GUEST));

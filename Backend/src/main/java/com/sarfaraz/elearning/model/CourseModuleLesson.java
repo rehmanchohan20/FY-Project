@@ -11,10 +11,13 @@ public class CourseModuleLesson extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long moduleId;
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "description")
+    private String description;
     
     @Column(name = "duration")
     private String duration;
@@ -27,6 +30,9 @@ public class CourseModuleLesson extends CommonEntity {
 
     @Column(name="status")
     private String status;
+
+    @Column(name = "Priority")
+    private Integer priority;
 
     @ManyToOne
     @JoinColumn(name = "course_module")
@@ -42,11 +48,11 @@ public class CourseModuleLesson extends CommonEntity {
     private Set<CourseProgress> courseProgress;
 
     public Long getId() {
-        return id;
+        return moduleId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.moduleId = id;
     }
 
     public String getTitle() {
@@ -93,8 +99,24 @@ public class CourseModuleLesson extends CommonEntity {
         return isContentLock;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setContentLock(Boolean contentLock) {
         isContentLock = contentLock;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public Set<Media> getMedias() {
