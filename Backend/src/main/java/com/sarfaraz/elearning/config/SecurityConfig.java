@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.source.*;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -62,8 +63,8 @@ public class SecurityConfig {
 						// Public access URLs
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/v1/auth/**", "/auth/**",
 								"/oauth2/**", "/send-email", "/api/public/**", "/api/payments/**", "/api/course-progress/**",
-								"/api/users/**", "/api/media/**", "/user/me", "/login/oauth2/**", "/login/oauth2/code/google").permitAll()
-
+								"/api/users/**", "/api/media/**", "/user/me", "/login/oauth2/**", "/oauth2/callback/google").permitAll()
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						// Student access to ticket endpoints
 						.requestMatchers("/api/tickets//student/{studentId}", "/api/tickets").hasAuthority("SCOPE_ROLE_GUEST")
 
@@ -77,18 +78,18 @@ public class SecurityConfig {
 
 						// Default rule: any other request requires authentication
 						.anyRequest().authenticated())
-				.oauth2Login(oauth2 -> oauth2
-						.userInfoEndpoint(infoEndpoint -> infoEndpoint.userService(oAuth2UserService))
-						.successHandler(customAuthenticationSuccessHandler())
-						.failureHandler(customAuthenticationFailureHandler())
-						.authorizationEndpoint(authEnd -> authEnd.baseUri("/oauth2/authorize")
-								.authorizationRequestRepository(cookieAuthorizationRequestRepository()))
-						.redirectionEndpoint(authRedir -> authRedir.baseUri("/login/oauth2/code/google")))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
-				.userDetailsService(authServicImpl)
-				.httpBasic(Customizer.withDefaults())
-				.build();
+				.oauth2Login(
+						oauth2 -> oauth2.userInfoEndpoint(infoEndpoint -> infoEndpoint.userService(oAuth2UserService))
+
+								.successHandler(customAuthenticationSuccessHandler())
+								.defaultSuccessUrl("http://localhost:3000/role-selection")
+								.failureHandler(customAuthenticationFailureHandler())
+								.authorizationEndpoint(authEnd -> authEnd.baseUri("/oauth2/authorize")
+										.authorizationRequestRepository(cookieAuthorizationRequestRepository()))
+								.redirectionEndpoint(authRedir -> authRedir.baseUri("/oauth2/callback/google")))
+				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder())))
+				.userDetailsService(authServicImpl).httpBasic(Customizer.withDefaults()).build();
 	}
 
 

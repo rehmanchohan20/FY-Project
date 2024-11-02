@@ -2,7 +2,6 @@ package com.sarfaraz.elearning.util;
 
 import java.util.Arrays;
 import java.util.Optional;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
-        return Arrays.stream(request.getCookies()).filter(cookie -> name.equals(cookie.getName())).findFirst();
+        if (request.getCookies() == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> name.equals(cookie.getName()))
+                .findFirst();
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
@@ -18,6 +22,8 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
+        cookie.setSecure(false); // Not using secure cookies since it's HTTP
+        cookie.setAttribute("SameSite", "Lax"); // Adjust SameSite policy as needed
         response.addCookie(cookie);
     }
 
