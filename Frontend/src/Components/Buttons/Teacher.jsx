@@ -5,7 +5,7 @@ const TeacherLoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
-  // Toggle between Login and Signup forms
+  // Toggle between Login.jsx and Signup forms
   const toggleForm = () => {
     setIsLogin(!isLogin);
     
@@ -30,7 +30,7 @@ const TeacherLoginSignup = () => {
 
     if (isLogin) {
       // Perform login logic
-      console.log("Login data: ", data);
+      console.log("Login.jsx data: ", data);
     } else {
       // Perform signup logic
       console.log("Signup data: ", data);
@@ -54,7 +54,7 @@ const TeacherLoginSignup = () => {
           </div>
         </div>
 
-        {/* Right side: Login/Signup Form */}
+        {/* Right side: Login.jsx/Signup Form */}
         <div className="w-1/2 p-8">
           <div className="text-center mb-4">
             <button className="px-4 py-2 align-baseline bg-teal-500 text-white font-semibold focus:outline-none">
@@ -63,7 +63,7 @@ const TeacherLoginSignup = () => {
           </div>
 
           <div className="flex justify-center my-6">
-            {/* Login Button */}
+            {/* Login.jsx Button */}
             <button
               onClick={toggleForm}
               className={`px-4 py-2 rounded ${
@@ -88,7 +88,7 @@ const TeacherLoginSignup = () => {
             </button>
           </div>
 
-          {/* Form for Login/Signup */}
+          {/* Form for Login.jsx/Signup */}
           <form className="mt-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-gray-700">Email Address</label>
@@ -135,7 +135,7 @@ const TeacherLoginSignup = () => {
             </div>
 
             <button className="w-full mt-6 px-4 py-2 text-white bg-teal-500 rounded-lg hover:bg-teal-600">
-              {isLogin ? "Login" : "Signup"}
+              {isLogin ? "Login.jsx" : "Signup"}
             </button>
 
             <div className="mt-4 flex items-center justify-center">
@@ -145,7 +145,7 @@ const TeacherLoginSignup = () => {
                   alt="Google Logo"
                   className="w-5 h-5 mr-2"
                 />
-                {isLogin ? "Login" : "Signup"} with Google
+                {isLogin ? "Login.jsx" : "Signup"} with Google
               </button>
             </div>
           </form>

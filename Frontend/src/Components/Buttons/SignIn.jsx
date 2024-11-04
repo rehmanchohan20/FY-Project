@@ -2,19 +2,42 @@ import { useState, useEffect } from "react";
 import image from "../../assets/image5.jpg";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { GOOGLE_AUTH_URL } from "../Auth/Contants/Constants.jsx"; // Import the Google Auth URL
+import googleLogo from "../../assets/logo.svg"; // Import the Google logo
 
-const SginIn = () => {
+const EXPIRATION_HOURS = 6; // Set expiration to 6 hours
+
+const SignIn = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({ username: "", password: "", email: "" });
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [role, setRole] = useState("student");
+    const [role, setRole] = useState("student"); // Default role
     const navigate = useNavigate();
 
-    const togglePasswordVisibility = () => setShowPassword(!showPassword);
+    useEffect(() => {
+        checkAndRetrieveUserData();
+    }, []);
 
+    const checkAndRetrieveUserData = () => {
+        const storedData = JSON.parse(localStorage.getItem("userData"));
+        if (storedData) {
+            const currentTime = new Date().getTime();
+            const timeDiff = currentTime - storedData.timestamp;
+            const timeDiffHours = timeDiff / (1000 * 60 * 60);
+
+            if (timeDiffHours < EXPIRATION_HOURS) {
+                setFormData({ username: storedData.username, email: storedData.email });
+                setRole(storedData.role);
+            } else {
+                localStorage.removeItem("userData");
+            }
+        }
+    };
+
+    const togglePasswordVisibility = () => setShowPassword(!showPassword);
     const toggleForm = () => {
         setIsLogin(!isLogin);
         setErrorMessage("");
@@ -23,64 +46,6 @@ const SginIn = () => {
     };
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    useEffect(() => {
-        const loadGoogleScript = () => {
-            const script = document.createElement("script");
-            script.src = "https://accounts.google.com/gsi/client";
-            script.async = true;
-            script.defer = true;
-            script.onload = initializeGoogleSignIn;
-            document.body.appendChild(script);
-        };
-
-        const initializeGoogleSignIn = () => {
-            window.google.accounts.id.initialize({
-                client_id: "491535410158-rs7qb1660bqlt7usj70ilj2o3ctu37em.apps.googleusercontent.com", // Use the correct client ID
-                callback: handleGoogleResponse
-            });
-            window.google.accounts.id.renderButton(
-                document.getElementById("googleSignInButton"),
-                { theme: "outline", size: "large" }
-            );
-        };
-
-        loadGoogleScript();
-
-        return () => {
-            const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-            if (script) script.remove();
-        };
-    }, []);
-
-    const handleGoogleResponse = async (response) => {
-        try {
-            if (!response.credential) {
-                throw new Error("Google Sign-In failed. No credential received.");
-            }
-            setLoading(true);
-
-            // Send the token to your backend for verification
-            const res = await axios.post(
-                "http://localhost:8080/oauth2/callback/google",
-                { token: response.credential },
-                { headers: { "Content-Type": "application/json" }, withCredentials: true }
-            );
-
-            // Redirect after a successful response
-            if (res.data && res.data.success) {
-                setSuccessMessage("Successfully signed in with Google!");
-                navigate("/role-selection"); // Redirect to role-selection page
-            } else {
-                setErrorMessage(res.data.message || "Google Sign-In failed. Please try again.");
-            }
-        } catch (error) {
-            console.error("Error with Google Sign-In:", error);
-            setErrorMessage("Google Sign-In failed. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -98,7 +63,19 @@ const SginIn = () => {
         try {
             const response = await axios.post(url, data, { withCredentials: true });
             setSuccessMessage(response.data.message || "Success!");
+
+            // Store user data in local storage with a timestamp
+            const userData = {
+                username: formData.username,
+                email: formData.email,
+                role,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem("userData", JSON.stringify(userData));
+
             if (isLogin) navigate("/dashboard");
+            else navigate("/role-selection"); // Navigate to role selection on successful registration
+
         } catch (error) {
             console.error("Error during submission:", error);
             if (error.response) {
@@ -112,9 +89,15 @@ const SginIn = () => {
             }
         } finally {
             setLoading(false);
-            setFormData({ username: "", password: "", email: "" });
+            // Clear formData only after storing in local storage
+            if (isLogin) setFormData({ username: "", password: "", email: "" });
             setTimeout(() => setSuccessMessage(""), 3000);
         }
+    };
+
+    const handleGoogleLogin = async () => {
+        // Redirect to Google OAuth URL
+        window.location.href = GOOGLE_AUTH_URL;
     };
 
     return (
@@ -167,8 +150,10 @@ const SginIn = () => {
                         </button>
                     </form>
 
-                    <div className="flex justify-center mt-4">
-                        <div id="googleSignInButton" className="w-full"></div>
+                    <div className="social-login mt-6">
+                        <a onClick={handleGoogleLogin} className="btn btn-block social-btn google flex items-center justify-center px-4 py-2 border rounded-lg border-gray-300 hover:bg-gray-200 transition">
+                            <img src={googleLogo} alt="Google" className="w-5 h-5 mr-2" /> Continue with Google
+                        </a>
                     </div>
                 </div>
             </div>
@@ -176,4 +161,4 @@ const SginIn = () => {
     );
 };
 
-export default SginIn;
+export default SignIn;

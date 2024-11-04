@@ -5,6 +5,7 @@ import  Success from '../Components/Success/Success';
 import TestimonialSection from '../Components/TestimonialSection/TestimonialSection'; 
 import PhysicalClassroom from '../Components/PhysicalClassroom/PhysicalClassroom';
 import CloudSoftwareSection from '../Components/Section-2/Section_One';
+import TeacherDashboard from "./TeacherDashborad.jsx";
 const Layout = () => {
   return (
     <>
@@ -15,6 +16,7 @@ const Layout = () => {
         <PhysicalClassroom/>
         {/* <Section_One /> */}
         <TestimonialSection/>
+          <TeacherDashboard></TeacherDashboard>
       </div>
     </>
   );

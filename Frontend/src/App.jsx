@@ -1,74 +1,51 @@
-// import React from 'react'
-import { useState } from 'react'
-import Navbar from './Components/Navbar/Navbar'
-import Hero from './Components/Hero/Hero'
-import Courses from './Pages/Courses/Courses'
-import Guidance from './Pages/Guidance/Guidance'
-import Footer from './Components/Footer/Footer'
-import { Route,  Routes } from 'react-router-dom'
-import LoginSignup from './Components/Buttons/SginIn'
-import TeacherLoginSignup from './Components/Buttons/Teacher'
-import LogOut from './Components/Buttons/LogOut'
+import React from 'react';
+import Navbar from './Components/Navbar/Navbar';
+import Hero from './Components/Hero/Hero';
+import Courses from './Pages/Courses/Courses';
+import Guidance from './Pages/Guidance/Guidance';
+import Footer from './Components/Footer/Footer';
+import { Navigate, Routes, Route } from 'react-router-dom'; // Fixed imports
+import LoginSignup from './Components/Buttons/SignIn.jsx';
+import TeacherLoginSignup from './Components/Buttons/Teacher';
 import ResetEmail from "./Components/Buttons/ResetEmail.jsx";
-// import { useState } from 'react'
-
-// import SignInPopup from './Components/popFunction/SignInPopup'
+import RoleSelection from "./Components/Rolle/RoleSelection.jsx";
+import StudentPanel from "./Pages/Student Dashboard/StudentPanel.jsx";
+import TeacherPanel from "./Pages/Teacher Dashboard/TeacherPanel.jsx";
+import TestCorsRequest from "./Pages/TestCorsRequest.jsx";
+import CreateCourse from "./Pages/Teacher Dashboard/CreateCourse.jsx";
+import OAuth2Callback from "./Components/Auth/OAuth2Callback.jsx";
+import Login from "./Components/Auth/Login.jsx";
+import OAuth2RedirectHandler from "./Components/Auth/OAuth2RedirectHandler/OAuth2RedirectHandler.jsx";
+import Profile from "./Components/Auth/Profile.jsx";
+import SessionManager from "./Components/Auth/SessionManager/SessionManager.jsx";
 
 const App = () => {
-    // const [isAuthenticated, setIsAuthenticated] = useState(true);  // to check if user is authenticated or not
+    const authenticated = false;
 
-  // const user = localStorage.getItem("user");
-
-  // const handleRegistrationSuccess = () => {
-  //   setIsAuthenticated(true);  // Update the state to logged in
-  // };
-  //
-  // // Handle user logout
-  //   const handleLogin = () => {
-  //       setIsAuthenticated(true);
-  //   };
-
-
-  return (
-    <div>
-        {/* Conditional Navbar rendering */}
-        {/*{isAuthenticated ? <LogOut /> : <Navbar />}*/}
-        <Navbar />
-      <Routes>
-      <Route exact path='/' element={<Hero/>}   />
-      <Route  path='/courses' element={<Courses/>}/>
-      <Route  path='/Guidance'  element={<Guidance/>}/>
-      <Route  path='/signin'  element={<LoginSignup />}/>
-      <Route  path='/teacher'  element={<TeacherLoginSignup/>}/>
-      <Route path='/resetpassword' element={<ResetEmail/>}/>
-
-
-      {/* make the sign in successFull  then  go  to  logout */}
-      {/* <Route  path='/logout'  element={<LogOut/>}/> */}
-      {/* <Route  path='/signin'  element={<SignInPopup/>}/> */}
-
-
-     {/* <Routes>
-      <Route exact path='/' element={<Hero/>}/>
-      <Route  path='/courses' element={<Courses/>}/>
-      <Route  path='/Guidance'  element={<Guidance/>}/>
-      <Route  path='/signin'  element={<LoginSignup/>}/>
-      <Route  path='/teacher'  element={<TeacherLoginSignup/>}/>
-      <Route  path='/logout'  element={<LogOut/>}/> */}
-
-      {/* make the sign in successFull  then  go  to  logout */}
-      {/* <Route  path='/logout'  element={<LogOut/>}/> */}
-      {/* <Route  path='/signin'  element={<SignInPopup/>}/> */}
-
-
-
-     
-     </Routes>
-      <Footer/>
-
-     
-    </div>
-  )
+    return (
+        <div>
+            <Navbar />
+            <Routes>
+                <Route exact path='/' element={<Hero />} />
+                <Route path='/courses' element={<Courses />} />
+                <Route path='/Guidance' element={<Guidance />} />
+                <Route path='/signin' element={<LoginSignup />} />
+                <Route path='/teacher' element={<TeacherLoginSignup />} />
+                <Route path='/resetpassword' element={<ResetEmail />} />
+                <Route path="/role-selection" element={<RoleSelection />} />
+                <Route path="/teacher-panel" element={<TeacherPanel />} />
+                <Route path="/student-panel" element={<StudentPanel />} />
+                <Route path="/test" element={<TestCorsRequest />} />
+                <Route path="/CreateCourse" element={<CreateCourse />} /> {/* Fixed spelling */}
+                <Route path="/oauth2/callback/google" element={<OAuth2Callback />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/oauth2/callback" element={<OAuth2RedirectHandler />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="*" element={<Navigate to="/" replace />} /> {/* Redirect to home instead of dashboard */}
+            </Routes>
+            <Footer />
+        </div>
+    );
 }
 
-export default App
+export default App;
