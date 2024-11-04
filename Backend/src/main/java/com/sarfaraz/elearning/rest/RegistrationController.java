@@ -30,6 +30,9 @@ public class RegistrationController {
 	@Operation(summary = "Registration API", description = "register student or teacher")
 	public ResponseEntity<ApiResponse<RegistrationResponseDTO>> registration(
 			@RequestBody @Valid RegistrationRequestDTO registrationRequestDTO) {
+		System.out.println("Received Registration Request: " + registrationRequestDTO);
+		System.out.println("Received JSON: " + registrationRequestDTO.toString());
+		System.out.println("isTeacher flag received: " + registrationRequestDTO.getIsTeacher());
 		RegistrationResponseDTO responseDTO = userService.userRegistration(registrationRequestDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<RegistrationResponseDTO>(responseDTO));
 	}

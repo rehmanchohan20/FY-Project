@@ -1,5 +1,5 @@
 package com.sarfaraz.elearning.constants;
 
 public enum RoleEnum {
-	ADMIN, TEACHER, STUDENT, GUEST;
+	ADMIN, TEACHER, GUEST, STUDENT;
 }

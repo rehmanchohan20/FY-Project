@@ -1,12 +1,8 @@
 package com.sarfaraz.elearning.rest.dto.inbound;
 
-import com.sarfaraz.elearning.constants.UserCreatedBy;
-import org.springframework.validation.annotation.Validated;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-@Validated
 public class RegistrationRequestDTO {
 
 	@NotBlank
@@ -18,31 +14,18 @@ public class RegistrationRequestDTO {
 	@NotBlank
 	private String password;
 
-	@NotNull
-	private boolean isTeacher;
-
-	@NotBlank
-	private String role;
-
-	public @NotBlank String getRole() {
-		return role;
-	}
-
-	public void setRole(@NotBlank String role) {
-		this.role = role;
-	}
+	@NotNull // Ensures the value is explicitly provided in the request
+	private Boolean isTeacher;
 
 	public RegistrationRequestDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public RegistrationRequestDTO(String username, String email, String password, boolean isTeacher, String role) {
+	public RegistrationRequestDTO(String username, String email, String password, Boolean isTeacher) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.isTeacher = isTeacher;
-//		this.role = role;
 	}
 
 	public String getUsername() {
@@ -69,11 +52,20 @@ public class RegistrationRequestDTO {
 		this.password = password;
 	}
 
-	public boolean isTeacher() {
+	public Boolean getIsTeacher() {
 		return isTeacher;
 	}
 
-	public void setTeacher(boolean isTeacher) {
+	public void setIsTeacher(Boolean isTeacher) {
 		this.isTeacher = isTeacher;
+	}
+
+	@Override
+	public String toString() {
+		return "RegistrationRequestDTO{" +
+				"username='" + username + '\'' +
+				", email='" + email + '\'' +
+				", password='" + password + '\'' +
+				", isTeacher=" + isTeacher + '}';
 	}
 }

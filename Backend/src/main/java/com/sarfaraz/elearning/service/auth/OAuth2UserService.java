@@ -3,6 +3,8 @@ package com.sarfaraz.elearning.service.auth;
 import java.util.Optional;
 
 import com.sarfaraz.elearning.constants.UserCreatedBy;
+import com.sarfaraz.elearning.model.Student;
+import com.sarfaraz.elearning.model.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -17,6 +19,8 @@ import com.sarfaraz.elearning.constants.ErrorEnum;
 import com.sarfaraz.elearning.exceptions.OAuth2AuthenticationProcessingException;
 import com.sarfaraz.elearning.model.User;
 import com.sarfaraz.elearning.repository.UserRepository;
+
+import static com.sarfaraz.elearning.constants.UserCreatedBy.Teacher;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {
@@ -66,6 +70,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 	private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
 		User user = new User();
 
+
 		user.setAuthProvider(AuthProviderEnum.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
 		user.setProviderId(oAuth2UserInfo.getId());
 		user.setFullName(oAuth2UserInfo.getName());
@@ -73,6 +78,19 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 		user.setUsername(oAuth2UserInfo.getEmail().split("@")[0]);
 		user.setImage(oAuth2UserInfo.getImageUrl());
 		user.setCreatedBy(UserCreatedBy.Self);
+
+		if (user.isTeacher()) {
+			Teacher teacher = new Teacher();
+			teacher.setCreatedBy(UserCreatedBy.Self);
+			teacher.setUser(user); // Set back reference to User
+			user.setTeacher(teacher);
+		} else {
+			Student student = new Student();
+			student.setCreatedBy(UserCreatedBy.Self);
+			student.setUser(user); // Set back reference to User
+			user.setStudent(student);
+		}
+
 		return userRepository.save(user);
 	}
 

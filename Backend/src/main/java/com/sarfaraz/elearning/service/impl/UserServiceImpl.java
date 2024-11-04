@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
 		return new LoginResponseDTO(token, user.isTeacher(), user.getAdmin());
 	}
 
+
 	@Override
 	@Transactional
 	public RegistrationResponseDTO userRegistration(RegistrationRequestDTO registrationRequestDTO) throws ApplicationException {
@@ -109,29 +110,25 @@ public class UserServiceImpl implements UserService {
 		user.setProviderId(UUID.randomUUID().toString()); // Generate a unique provider ID
 
 		// Role assignment based on registration request
-		if (registrationRequestDTO.isTeacher()) {
+		System.out.println("isTeacher flag: " + registrationRequestDTO.getIsTeacher());
+		if (registrationRequestDTO.getIsTeacher()) {
 			Teacher teacher = new Teacher();
 			teacher.setUser(user);
 			user.setTeacher(teacher);
-			// Optionally, set the createdBy field for the teacher here
 			teacher.setCreatedBy(UserCreatedBy.Self);
+			System.out.println("Teacher role assigned");
 		} else {
 			Student student = new Student();
 			student.setUser(user);
 			user.setStudent(student);
-			registrationRequestDTO.setRole(String.valueOf(RoleEnum.STUDENT));
-			// Optionally, set the createdBy field for the student here
 			student.setCreatedBy(UserCreatedBy.Self);
+			System.out.println("Student role assigned");
 		}
 
-		// Save user to the repository
 		userRepository.save(user);
+		Optional<User> savedUser = userRepository.findById(user.getId()); savedUser.ifPresent(u -> { System.out.println("Saved user: " + u.getUsername() + ", Role: " + (u.isTeacher() ? "Teacher" : (u.isStudent() ? "Student" : "Guest"))); });
 		return new RegistrationResponseDTO(user.getId().toString());
 	}
-
-
-
-
 
 	@Override
 	@Transactional
@@ -153,7 +150,7 @@ public class UserServiceImpl implements UserService {
 		user.setFullName(registrationAdminRequestDTO.getUsername());
 		user.setPassword(passwordEncoder.encode(registrationAdminRequestDTO.getPassword()));
 		user.setEmail(registrationAdminRequestDTO.getEmail());
-		user.setAdmin(true); // Set isAdmin to true since this user is created by admin
+		user.setAdmin(false); // Set isAdmin to true since this user is created by admin
 		user.setImage("default-profile.png"); // Default image URL
 		user.setAuthProvider(AuthProviderEnum.TraditionalLogin);
 		user.setProviderId(UUID.randomUUID().toString());
@@ -161,8 +158,7 @@ public class UserServiceImpl implements UserService {
 
 
 		// Role assignment based on registration request
-		if (registrationAdminRequestDTO.getRole().equalsIgnoreCase("Teacher")) {
-			registrationAdminRequestDTO.setTeacher(true);
+		if (registrationAdminRequestDTO.getIsTeacher()) {
 			Teacher teacher = new Teacher();
 			teacher.setUser(user);
 			teacher.setCreatedBy(UserCreatedBy.Admin);

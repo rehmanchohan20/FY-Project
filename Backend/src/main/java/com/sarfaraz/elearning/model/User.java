@@ -174,7 +174,7 @@ public class User extends CommonEntity implements OAuth2User, UserDetails {
 	}
 
 	public boolean isStudent() {
-		return teacher != null;
+		return student != null;
 	}
 
 	@Override
