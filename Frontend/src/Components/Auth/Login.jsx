@@ -33,12 +33,7 @@ const Login = ({ authenticated }) => {
   }
 
   return (
-      <div className="login-container">
-        <div className="login-content">
-          <h1 className="login-title">Login</h1>
           <SampleLogin />
-        </div>
-      </div>
   );
 };
 

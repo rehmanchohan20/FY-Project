@@ -17,7 +17,9 @@ import OAuth2Callback from "./Components/Auth/OAuth2Callback.jsx";
 import Login from "./Components/Auth/Login.jsx";
 import OAuth2RedirectHandler from "./Components/Auth/OAuth2RedirectHandler/OAuth2RedirectHandler.jsx";
 import Profile from "./Components/Auth/Profile.jsx";
-import SessionManager from "./Components/Auth/SessionManager/SessionManager.jsx";
+// import SessionManager from "./Components/Auth/SessionManager/SessionManager.jsx";
+import Payment from "./Pages/Payment.jsx";
+import ConfirmPayment from "./Pages/confirmPayment.jsx";
 
 const App = () => {
     const authenticated = false;
@@ -41,6 +43,8 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/oauth2/callback" element={<OAuth2RedirectHandler />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/payment" element={<Payment/>}/>
+                <Route path="/confirmPayment" element={<ConfirmPayment/>}/>
                 <Route path="*" element={<Navigate to="/" replace />} /> {/* Redirect to home instead of dashboard */}
             </Routes>
             <Footer />

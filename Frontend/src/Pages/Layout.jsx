@@ -16,7 +16,6 @@ const Layout = () => {
         <PhysicalClassroom/>
         {/* <Section_One /> */}
         <TestimonialSection/>
-          <TeacherDashboard></TeacherDashboard>
       </div>
     </>
   );

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JazzCash Payment</title>
+    <style>
+        .jazzcash-button {
+            background-color: rgb(213, 6, 6);
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            border: none;
+            font-family: sans-serif;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<h1>JazzCash Payment</h1>
+<h2>Product Name: <span th:text="${productName}"></span></h2>
+<h3>Amount: <span th:text="${productPrice}"></span> PKR</h3>
+
+<form method="post" action="https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/">
+    <input type="hidden" th:each="entry : ${paymentData}" th:name="${entry.key}" th:value="${entry.value}" />
+    <button type="submit" class="jazzcash-button">Pay with JazzCash</button>
+</form>
+</body>
+</html>
