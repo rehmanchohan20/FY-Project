@@ -1,6 +1,8 @@
 package com.rehman.elearning.service;
 
+import com.rehman.elearning.constants.RoleEnum;
 import com.rehman.elearning.exceptions.ApplicationException;
+import com.rehman.elearning.model.User;
 import com.rehman.elearning.rest.dto.inbound.LoginRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.RegistrationRequestDTO;
@@ -24,12 +26,14 @@ public interface UserService {
 
 	public RegistrationAdminResponseDTO registerUserByAdmin(RegistrationAdminRequestDTO registrationAdminRequestDTO)
 			throws ApplicationException;
-	UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto);
+	UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO getUserById(Long id);
 	List<UserResponseDTO> getAllUsers();
 	void deleteUser(Long id);
 	public String forgotPassword(String email);
 	public String setPassword(String email, String newPassword);
 	public String regenerateOtp(String email);
-	public String uploadProfileImage(Long userId, MultipartFile file) throws IOException;
+	public String setPassword(String email, String otp, String newPassword);
+	public boolean validateOtp(String email, String otp);
+
 }

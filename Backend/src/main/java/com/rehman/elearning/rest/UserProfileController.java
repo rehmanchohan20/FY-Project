@@ -5,6 +5,8 @@ import com.rehman.elearning.rest.dto.outbound.UserProfileResponseDTO;
 import com.rehman.elearning.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,9 +21,9 @@ public class UserProfileController {
 
     // GET /api/users/me - Get current user profile
     @GetMapping("/me")
-    public ResponseEntity<UserProfileResponseDTO> getUserProfile(Authentication authentication) {
-        String username = authentication.getName(); // Assuming username is unique
-        UserProfileResponseDTO responseDTO = userProfileService.getUserProfile(username);
+    public ResponseEntity<UserProfileResponseDTO> getUserProfile(@AuthenticationPrincipal Jwt jwt) {
+        long userId = Long.valueOf(jwt.getId());
+        UserProfileResponseDTO responseDTO = userProfileService.getUserProfile(userId);
         return ResponseEntity.ok(responseDTO);
     }
 

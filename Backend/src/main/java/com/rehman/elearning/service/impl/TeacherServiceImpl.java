@@ -107,7 +107,7 @@ public class TeacherServiceImpl implements TeacherService {
         // Map User entity to UserResponseDTO
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(teacher.getUser().getId());
-        userResponseDTO.setUsername(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
+        userResponseDTO.setFullName(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
         userResponseDTO.setEmail(teacher.getUser().getEmail());
 
         // Set the user in the response DTO

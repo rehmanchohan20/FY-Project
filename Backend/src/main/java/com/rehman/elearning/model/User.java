@@ -3,6 +3,7 @@ package com.rehman.elearning.model;
 import com.rehman.elearning.constants.AuthProviderEnum;
 import com.rehman.elearning.constants.RoleEnum;
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "user")
+@DynamicUpdate
 public class User extends CommonEntity implements OAuth2User, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

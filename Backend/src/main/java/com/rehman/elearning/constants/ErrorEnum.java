@@ -18,7 +18,9 @@ public enum ErrorEnum {
 	LESSON_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Lesson not found"),
 	MODULE_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Module not found"),
 	PAYMENT_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Payment Not Found"),
-	PAYMENT_NOT_FOUND_FOR_TRANSACTION_ID(GeneralErrorEnum.FAILURE.getCode(), "Payment not found for transaction ID");
+	PAYMENT_NOT_FOUND_FOR_TRANSACTION_ID(GeneralErrorEnum.FAILURE.getCode(), "Payment not found for transaction ID"),
+	ACCOUNT_ALREADY_EXIST(GeneralErrorEnum.FAILURE.getCode(), "Account already exists, Please signin"),
+	ACCOUNT_NOT_REGISTER(GeneralErrorEnum.FAILURE.getCode(), "Account not found, Please signup");
 
 	private String code;
 	private String description;

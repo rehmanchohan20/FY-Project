@@ -3,10 +3,12 @@ package com.rehman.elearning.config;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.*;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.rehman.elearning.repository.UserRepository;
 import com.rehman.elearning.service.auth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.rehman.elearning.service.auth.OAuth2AuthenticationFailureHandler;
 import com.rehman.elearning.service.auth.OAuth2AuthenticationSuccessHandler;
 import com.rehman.elearning.service.auth.OAuth2UserService;
+import com.rehman.elearning.util.ApiUrlListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -19,9 +21,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.*;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import com.rehman.elearning.service.auth.*;
@@ -38,16 +44,17 @@ public class SecurityConfig {
 	private OAuth2UserService oAuth2UserService;
 	private CustomCorsConfiguration customCorsConfiguration;
 	private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
+	private UserRepository userRepository;
 	@Autowired
 	public SecurityConfig(RsaKeyConfigProperties rsaKeyConfigProperties, AuthServicImpl authServicImpl,
 						  OAuth2UserService oAuth2UserService, HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository,
-						  CustomCorsConfiguration customCorsConfiguration) {
+						  CustomCorsConfiguration customCorsConfiguration,UserRepository userRepository) {
 		this.rsaKeyConfigProperties = rsaKeyConfigProperties;
 		this.authServicImpl = authServicImpl;
 		this.oAuth2UserService = oAuth2UserService;
 		this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
 		this.customCorsConfiguration = customCorsConfiguration;
+		this.userRepository=userRepository;
 	}
 
 	@Bean
@@ -59,37 +66,35 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector, InMemoryClientRegistrationRepository clientRegistrationRepository) throws Exception {
 		return http
 				.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(customCorsConfiguration.corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth
 						// Public access URLs
-						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/v1/auth/**", "/auth/**",
-								"/oauth2/**", "/send-email", "/api/public/**", "/api/payments/**", "/api/course-progress/**",
-								"/api/users/**", "/api/media/**", "/user/me",  "/login/oauth2/**", "/oauth2/callback/google","/api/courses/**", "/success").permitAll()
-						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(ApiUrlListUtil.getApiIgnoreUrlList().toArray(new RequestMatcher[0])).permitAll()
+//						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						// Student access to ticket endpoints
-						.requestMatchers("/api/tickets//student/{studentId}", "/api/tickets", "/api/guidance", "/api/users/me", "/api/users/{userId}/uploadProfileImage").hasAuthority("SCOPE_ROLE_STUDENT")
-
+								.requestMatchers(ApiUrlListUtil.getStudentApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_STUDENT")
+						//Guest Related end points
+								.requestMatchers(ApiUrlListUtil.getGuestApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_GUEST")
 						// Teacher access to course related endpoints
-						.requestMatchers("/api/courses", "/api/courses/**", "/api/modules/{moduleId}/lessons/**",
-								"/api/modules/{moduleId}/lessons", "/api/courses/{courseId}/offers/**",
-								"/api/courses/{courseId}/modules/{moduleId}", "/api/users/me").hasAuthority("SCOPE_ROLE_TEACHER")
-
+								.requestMatchers(ApiUrlListUtil.getTeacherApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_TEACHER")
+						//Common permission for multiple roles
+								.requestMatchers(ApiUrlListUtil.getCommonApiURLS().toArray(new RequestMatcher[0])).hasAnyAuthority("SCOPE_ROLE_TEACHER","SCOPE_ROLE_STUDENT","SCOPE_ROLE_ADMIN")
 						// Admin access to user management and ticket resolution
-						.requestMatchers("/api/users/admin/**", "/api/tickets/**").hasAuthority("SCOPE_ROLE_ADMIN")
-
+						.requestMatchers(ApiUrlListUtil.getAdminApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_ADMIN")
+								.anyRequest()
+								.authenticated() // All other requests require authentication
 						// Default rule: any other request requires authentication
 						)
 				.oauth2Login(
 						oauth2 -> oauth2.userInfoEndpoint(infoEndpoint -> infoEndpoint.userService(oAuth2UserService))
-
 								.successHandler(customAuthenticationSuccessHandler())
-//								.defaultSuccessUrl("http://localhost:3000/role-selection")
 								.failureHandler(customAuthenticationFailureHandler())
 								.authorizationEndpoint(authEnd -> authEnd.baseUri("/oauth2/authorize")
-										.authorizationRequestRepository(cookieAuthorizationRequestRepository()))
+										.authorizationRequestRepository(cookieAuthorizationRequestRepository())
+								)
 								.redirectionEndpoint(authRedir -> authRedir.baseUri("/oauth2/callback/google")))
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder())))
@@ -121,7 +126,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SimpleUrlAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-		return new OAuth2AuthenticationSuccessHandler(httpCookieOAuth2AuthorizationRequestRepository, jwtEncoder());
+		return new OAuth2AuthenticationSuccessHandler(httpCookieOAuth2AuthorizationRequestRepository, jwtEncoder(),userRepository);
 	}
 
 	@Bean

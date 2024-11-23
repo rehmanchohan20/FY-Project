@@ -18,8 +18,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public UserProfileResponseDTO getUserProfile(String username) {
-        User user = userRepository.findByUsername(username)
+    public UserProfileResponseDTO getUserProfile(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return mapToResponseDTO(user);
     }

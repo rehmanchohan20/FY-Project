@@ -1,6 +1,10 @@
 package com.rehman.elearning.util;
 
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,5 +43,27 @@ public class CookieUtil {
                 }
             }
         }
+    }
+
+    public static Map<String, String> getQueryParams(String urlString) {
+        Map<String, String> queryParams = new HashMap<>();
+        try {
+            URL url = new URL(urlString);
+            String query = url.getQuery(); // Get the query part of the URL
+
+            if (query != null && !query.isEmpty()) {
+                String[] pairs = query.split("&");
+                for (String pair : pairs) {
+                    String[] keyValue = pair.split("=");
+                    if (keyValue.length == 2) {
+                        queryParams.put(URLDecoder.decode(keyValue[0], "UTF-8"),
+                                URLDecoder.decode(keyValue[1], "UTF-8"));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return queryParams;
     }
 }

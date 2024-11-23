@@ -1,10 +1,27 @@
 package com.rehman.elearning.rest.dto.outbound;
 
+import com.rehman.elearning.model.User;
+
 public class UserResponseDTO {
     private Long id;
-    private String username;
+    private String fullName;
     private String email;
+    private String role;
 
+
+
+    public UserResponseDTO() {
+    }
+
+    // Constructor that takes a User object
+    public UserResponseDTO(User user) {
+        this.id = user.getId();
+        this.fullName = user.getFullName();
+        this.email = user.getEmail();
+        this.role = String.valueOf(user.isTeacher());  // Default to Teacher if no role is found
+    }
+
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -13,12 +30,12 @@ public class UserResponseDTO {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -28,4 +45,47 @@ public class UserResponseDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
+
+
+//package com.rehman.elearning.rest.dto.outbound;
+//
+//public class UserResponseDTO {
+//    private Long id;
+//    private String username;
+//    private String email;
+//
+//
+//
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public String getUsername() {
+//        return username;
+//    }
+//
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//}
