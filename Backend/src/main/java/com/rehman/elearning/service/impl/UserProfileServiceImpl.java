@@ -32,7 +32,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         user.setFullName(requestDTO.getName());
         user.setEmail(requestDTO.getEmail());
         user.setImage(requestDTO.getProfilePicture());
-
         User updatedUser = userRepository.save(user);
         return mapToResponseDTO(updatedUser);
     }

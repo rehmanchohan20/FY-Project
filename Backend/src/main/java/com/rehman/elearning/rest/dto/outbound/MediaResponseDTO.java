@@ -6,8 +6,6 @@ public class MediaResponseDTO {
     private String type;
     private String duration;
 
-    // Getters and setters
-
 
     public Long getId() {
         return id;

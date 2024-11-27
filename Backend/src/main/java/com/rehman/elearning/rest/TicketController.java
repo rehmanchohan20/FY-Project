@@ -21,7 +21,7 @@ public class TicketController {
         return ticketService.createTicket(ticketRequest, studentId);
     }
 
-    @GetMapping("alltickets")
+    @GetMapping("/alltickets")
     public List<TicketResponseDTO> getAllTickets() {
         return ticketService.getAllTickets();
     }

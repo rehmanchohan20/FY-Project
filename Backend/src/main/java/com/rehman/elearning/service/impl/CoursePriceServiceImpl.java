@@ -39,6 +39,20 @@ public class CoursePriceServiceImpl implements CoursePriceService {
 
 
     // update price code here:
+    @Override
+    public CoursePriceResponseDTO updateCoursePrice(Long courseId, CoursePriceRequestDTO request) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+
+        CoursePrice coursePrice = coursePriceRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+
+        coursePrice.setAmount(request.getPrice());
+        coursePrice.setCurrency(request.getCurrency());
+        coursePrice = coursePriceRepository.save(coursePrice);
+
+        return convertToCoursePriceResponseDTO(coursePrice);
+    }
 
     private CoursePriceResponseDTO convertToCoursePriceResponseDTO(CoursePrice coursePrice) {
         CoursePriceResponseDTO dto = new CoursePriceResponseDTO();

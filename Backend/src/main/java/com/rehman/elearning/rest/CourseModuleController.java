@@ -44,6 +44,5 @@ public class CourseModuleController {
         courseModuleService.deleteModule(moduleId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
 }
 

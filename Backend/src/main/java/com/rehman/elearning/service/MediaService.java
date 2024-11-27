@@ -2,12 +2,20 @@ package com.rehman.elearning.service;
 
 import com.rehman.elearning.rest.dto.inbound.MediaRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface MediaService {
-    public MediaResponseDTO uploadVideo(MultipartFile videoFile, String url, String type, String duration);
-    public MediaResponseDTO getMediaById(Long mediaId);
-    public MediaResponseDTO updateMedia(Long mediaId, MediaRequestDTO request);
-    public void deleteMedia(Long mediaId);
 
+    // Method for uploading video
+    public MediaResponseDTO uploadVideo(String base64Video, Long courseId) throws IOException ;
+
+    // Method to get media by ID
+    MediaResponseDTO getMediaById(Long mediaId);
+
+    // Method to update media
+    MediaResponseDTO updateMedia(Long mediaId, MediaRequestDTO request);
+
+    // Method to delete media
+    void deleteMedia(Long mediaId);
 }

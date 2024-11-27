@@ -21,5 +21,12 @@ public class CoursePriceController {
         CoursePriceResponseDTO response = coursePriceService.setCoursePrice(courseId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    @PutMapping()
+    public ResponseEntity<CoursePriceResponseDTO> updateCoursePrice(
+            @PathVariable Long courseId,
+            @RequestBody CoursePriceRequestDTO request) {
+        CoursePriceResponseDTO response = coursePriceService.updateCoursePrice(courseId, request);
+        return ResponseEntity.ok(response);
+    }
 }
 

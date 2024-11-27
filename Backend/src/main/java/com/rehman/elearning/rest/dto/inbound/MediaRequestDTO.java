@@ -1,12 +1,22 @@
 package com.rehman.elearning.rest.dto.inbound;
 
+
+import org.springframework.web.multipart.MultipartFile;
+
 public class MediaRequestDTO {
+    private MultipartFile file;
     private String url;
     private String type;
     private String duration;
 
-    // Getters and setters
 
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 
     public String getUrl() {
         return url;

@@ -54,7 +54,6 @@ public class ForgetPasswordController {
         }
     }
 
-    // Endpoint for resetting password (after OTP validation)
 
 }
 

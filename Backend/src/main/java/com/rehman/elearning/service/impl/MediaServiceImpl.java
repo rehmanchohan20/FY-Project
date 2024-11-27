@@ -1,72 +1,65 @@
 package com.rehman.elearning.service.impl;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
+import com.rehman.elearning.model.CourseModuleLesson;
 import com.rehman.elearning.model.Media;
 import com.rehman.elearning.repository.CourseModuleLessonRepository;
 import com.rehman.elearning.repository.MediaRepository;
 import com.rehman.elearning.rest.dto.inbound.MediaRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.rehman.elearning.service.MediaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Base64;
+import java.util.UUID;
 
 @Service
 public class MediaServiceImpl implements MediaService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MediaServiceImpl.class);
-
-    private final Cloudinary cloudinary;
-    private final MediaRepository mediaRepository;
-    private final CourseModuleLessonRepository courseModuleLessonRepository;
+    @Autowired
+    private MediaRepository mediaRepository;
 
     @Autowired
-    public MediaServiceImpl(Cloudinary cloudinary, MediaRepository mediaRepository,CourseModuleLessonRepository courseModuleLessonRepository ) {
-        this.cloudinary = cloudinary;
-        this.mediaRepository = mediaRepository;
-        this.courseModuleLessonRepository = courseModuleLessonRepository;
-    }
+    private CourseModuleLessonRepository courseModuleLessonRepository;
 
+    @Value("${course.media.server}")
+    private String mediaServerUrl;
+
+    @Value("${course.videos.upload}")
+    private String mediaUploadDir;
+
+    @Transactional
     @Override
-    public MediaResponseDTO uploadVideo(MultipartFile videoFile, String url, String type, String duration) {
-        // Validate file type and size if needed
-        try {
-            // Upload the video to Cloudinary
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(videoFile.getBytes(),
-                    ObjectUtils.asMap("resource_type", "video"));
-
-            // Extract the URL and other details from the result
-            String videoUrl = (String) uploadResult.get("secure_url");
-            String format = (String) uploadResult.get("format");
-            String videoType = "video/" + format;
-
-            // Extract duration in seconds and convert it to HH:mm:ss format
-            Double durationInSeconds = (Double) uploadResult.get("duration");
-            String formattedDuration = formatDuration(durationInSeconds);
-
-            // Create a new Media entity and save it to the database
-            Media media = new Media();
-            media.setUrl(videoUrl);
-            media.setType(videoType);
-            media.setDuration(formattedDuration);
-            media.setCreatedBy(UserCreatedBy.Teacher);
-
-            Media savedMedia = mediaRepository.save(media);
-
-            return convertToResponseDTO(savedMedia); // Convert entity to DTO before returning
-        } catch (IOException e) {
-            logger.error("Failed to upload video", e);
-            throw new RuntimeException("Failed to upload video", e);
+    public MediaResponseDTO uploadVideo(String base64Video, Long courseId) throws IOException {
+        if (base64Video == null || base64Video.length() == 0) {
+            throw new IllegalArgumentException("No video data provided.");
         }
+
+        if (base64Video.startsWith("data:video")) {
+            base64Video = base64Video.split(",")[1];  // Clean base64 string
+        }
+
+        byte[] videoBytes = Base64.getDecoder().decode(base64Video);
+        String videoFilePath = saveVideoToFile(videoBytes);  // Save video to file or cloud
+
+        Media media = new Media();
+        media.setUrl(videoFilePath);
+        media.setType("video");
+
+        Double videoDurationInSeconds = getVideoDuration(videoBytes);
+        media.setDuration(String.valueOf(videoDurationInSeconds));
+
+        Media savedMedia = mediaRepository.save(media);
+
+        return convertToResponseDTO(savedMedia);
     }
 
     @Override
@@ -101,7 +94,7 @@ public class MediaServiceImpl implements MediaService {
         dto.setId(media.getId());
         dto.setUrl(media.getUrl());
         dto.setType(media.getType());
-        dto.setDuration(media.getDuration());
+        dto.setDuration(formatDuration(Double.valueOf(media.getDuration())));  // Format duration
         return dto;
     }
 
@@ -112,5 +105,32 @@ public class MediaServiceImpl implements MediaService {
         int minutes = (int) ((durationInSeconds % 3600) / 60);
         int seconds = (int) (durationInSeconds % 60);
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    // Dummy method to calculate video duration - you can replace it with actual logic
+    private Double getVideoDuration(byte[] videoBytes) {
+        // Use a library or external tool (e.g., FFmpeg) to extract duration from the video
+        // For the purpose of this example, let's return a fixed duration of 300 seconds (5 minutes)
+        return 300.0;
+    }
+
+    private String saveVideoToFile(byte[] videoBytes) throws IOException {
+        // Create a directory if not exists
+        File directory = new File(mediaUploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Generate a unique filename for the video
+        String videoFileName = UUID.randomUUID().toString() + ".mp4";
+        File videoFile = new File(directory, videoFileName);
+
+        // Write video bytes to file
+        try (FileOutputStream fileOutputStream = new FileOutputStream(videoFile)) {
+            fileOutputStream.write(videoBytes);
+        }
+
+        // Return the video file path (local file path or URL)
+        return mediaServerUrl + videoFile;
     }
 }

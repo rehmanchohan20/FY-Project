@@ -7,6 +7,7 @@ public interface CoursePriceService {
     CoursePriceResponseDTO setCoursePrice(Long courseId, CoursePriceRequestDTO request);
 
     // update price code here!
+    CoursePriceResponseDTO updateCoursePrice(Long courseId, CoursePriceRequestDTO request);
 
 }
 

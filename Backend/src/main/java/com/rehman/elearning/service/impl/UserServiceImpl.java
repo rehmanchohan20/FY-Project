@@ -55,8 +55,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private EmailUtil emailUtil;
 
-	@Autowired
-	private Cloudinary cloudinary;
+
 	@Value("${profile.images.server}")
 	private String mediaServerUrl;
 
@@ -294,24 +293,6 @@ public class UserServiceImpl implements UserService {
 		return "Password reset successful. You can now log in with your new password.";
 	}
 
-
-	// ends here
-
-//	@Transactional
-//	public String setPassword(String email, String otp, String newPassword) {
-//		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
-//
-//		// Validate OTP and expiration (assuming 15 minutes validity)
-//		if (user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (15 * 60)) {
-//			user.setPassword(passwordEncoder.encode(newPassword));  // Set new password
-//			user.setOtp(null);  // Clear OTP after successful reset
-//			userRepository.save(user);
-//			return "Password reset successful. You can now log in with your new password.";
-//		}
-//
-//		return "Invalid OTP or OTP expired. Please regenerate OTP.";
-//	}
-
 	/**
 	 * Regenerate OTP for resetting the password
 	 */
@@ -334,7 +315,6 @@ public class UserServiceImpl implements UserService {
 		return "New OTP has been sent. Please verify your account within 15 minutes.";
 	}
 
-
 	private String saveImage(byte[] imageBytes, Long userId) throws IOException {
 		// Save the image to a local directory or use cloud service (e.g., Cloudinary)
 		String fileName = UUID.randomUUID().toString() + ".jpg";
@@ -352,7 +332,4 @@ public class UserServiceImpl implements UserService {
 		}
 		return mediaServerUrl+fileName; // Return the image path or URL to store in the database
 	}
-
-
-
 }
