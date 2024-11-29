@@ -77,8 +77,8 @@ public class RegistrationRequestDTO {
 
 // code for admin registration:
 
-
-
+//
+//
 //package com.rehman.elearning.rest.dto.inbound;
 //
 //import com.fasterxml.jackson.annotation.JsonProperty;
@@ -165,4 +165,4 @@ public class RegistrationRequestDTO {
 //				", isAdmin=" + isAdmin + '}' ;
 //	}
 //}
-
+//

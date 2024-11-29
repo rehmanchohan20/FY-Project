@@ -1,5 +1,6 @@
 package com.rehman.elearning.model;
 
+import com.rehman.elearning.constants.CourseStatusEnum;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class Course extends CommonEntity {
     private String description;
 
     @Column(name = "status")
-    private String status;
+    private CourseStatusEnum status;
 
     @Column(name = "locked", nullable = false)
     private boolean locked = true; // Default to true, indicating locked
@@ -81,11 +82,11 @@ public class Course extends CommonEntity {
         this.description = description;
     }
 
-    public String getStatus() {
+    public CourseStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CourseStatusEnum status) {
         this.status = status;
     }
 

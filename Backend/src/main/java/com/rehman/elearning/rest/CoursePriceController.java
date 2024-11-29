@@ -15,12 +15,6 @@ public class CoursePriceController {
     @Autowired
     private CoursePriceService coursePriceService;
 
-    @PostMapping
-    public ResponseEntity<CoursePriceResponseDTO> setCoursePrice(
-            @PathVariable Long courseId, @RequestBody CoursePriceRequestDTO request) {
-        CoursePriceResponseDTO response = coursePriceService.setCoursePrice(courseId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
     @PutMapping()
     public ResponseEntity<CoursePriceResponseDTO> updateCoursePrice(
             @PathVariable Long courseId,
@@ -29,4 +23,12 @@ public class CoursePriceController {
         return ResponseEntity.ok(response);
     }
 }
+
+
+//    @PostMapping
+//    public ResponseEntity<CoursePriceResponseDTO> setCoursePrice(
+//            @PathVariable Long courseId, @RequestBody CoursePriceRequestDTO request) {
+//        CoursePriceResponseDTO response = coursePriceService.setCoursePrice(courseId, request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 

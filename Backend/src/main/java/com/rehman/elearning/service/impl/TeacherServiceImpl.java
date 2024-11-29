@@ -57,6 +57,24 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teacherId));
     }
+    @Override
+    public List<CourseResponseDTO> getCoursesByTeacher(Long teacherId) {
+        List<Course> courses = courseRepository.findCoursesByTeacherId(teacherId);
+        return courses.stream()
+                .map(course -> new CourseResponseDTO(
+                                        course.getId(),
+                                        course.getTitle(),
+                                        course.getDescription(),
+                        new CoursePriceResponseDTO(
+                                                course.getCoursePrice().getAmount(),
+                                                course.getCoursePrice().getCurrency()
+                                        ),
+                        course.getStatus()
+                                ))
+                .collect(Collectors.toList());
+    }
+
+
 
 
     @Override

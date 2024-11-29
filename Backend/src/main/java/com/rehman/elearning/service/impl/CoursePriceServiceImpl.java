@@ -10,6 +10,8 @@ import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.rest.dto.inbound.CoursePriceRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
 import com.rehman.elearning.service.CoursePriceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +24,23 @@ public class CoursePriceServiceImpl implements CoursePriceService {
     @Autowired
     private CoursePriceRepository coursePriceRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(CoursePriceServiceImpl.class);
+
+
     @Override
     public CoursePriceResponseDTO setCoursePrice(Long courseId, CoursePriceRequestDTO request) {
+        logger.info("Setting price for courseId: {}", courseId);
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
-        CoursePrice coursePrice = new CoursePrice();
+        CoursePrice coursePrice = coursePriceRepository.findByCourse(course)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+
+        if (request.getPrice() < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
+        }
+
         coursePrice.setCourse(course);
         coursePrice.setAmount(request.getPrice());
         coursePrice.setCurrency(request.getCurrency());

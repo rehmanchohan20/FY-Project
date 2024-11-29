@@ -1,6 +1,5 @@
 package com.rehman.elearning.service.impl;
 
-import com.cloudinary.Cloudinary;
 import com.rehman.elearning.constants.AuthProviderEnum;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
@@ -88,7 +87,7 @@ public class UserServiceImpl implements UserService {
 				() -> new UserNotFoundException(ErrorEnum.USER_NOT_FOUND)
 		);
 		// Return the token and username
-		return new LoginResponseDTO(token, user.getUsername(),user.isTeacher(),user.isStudent(),user.getAdmin());
+		return new LoginResponseDTO(user.getId(), token, user.getUsername(),user.isTeacher(),user.isStudent(),user.getAdmin());
 	}
 
 

@@ -33,8 +33,8 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
     @Autowired
     private MediaRepository mediaRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public List<CourseModuleLessonResponseDTO> addLesson(Long moduleId, List<CourseModuleLessonRequestDTO> requests) {
         CourseModule module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
@@ -51,7 +51,7 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
             lesson.setContentLock(request.getIsContentLock());
             lesson.setStatus(request.getStatus());
 
-            // Handle media relationships
+            // Handle media relationships with validation
             if (request.getMediaIds() != null && !request.getMediaIds().isEmpty()) {
                 Set<Media> medias = request.getMediaIds().stream()
                         .map(mediaId -> mediaRepository.findById(mediaId)
@@ -65,13 +65,13 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
             }
 
             lesson.setCourseModule(module);
-
             lesson = lessonRepository.save(lesson);
             responseList.add(convertToResponseDTO(lesson));
         }
 
         return responseList;
     }
+
 
     @Override
     public List<CourseModuleLessonResponseDTO> getAllLessons(Long moduleId) {
@@ -140,6 +140,7 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
 
         return dto;
     }
+
     private String calculateTotalDuration(Set<Media> medias) {
         int totalSeconds = medias.stream()
                 .mapToInt(media -> parseDurationToSeconds(media.getDuration()))
@@ -149,11 +150,16 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
     }
 
     private int parseDurationToSeconds(String duration) {
-        String[] parts = duration.split(":");
-        int hours = Integer.parseInt(parts[0]);
-        int minutes = Integer.parseInt(parts[1]);
-        int seconds = Integer.parseInt(parts[2]);
-        return hours * 3600 + minutes * 60 + seconds;
+        try {
+            String[] parts = duration.split(":");
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            int seconds = Integer.parseInt(parts[2]);
+            return hours * 3600 + minutes * 60 + seconds;
+        } catch (Exception e) {
+            // Log or handle invalid duration formats
+            return 0;
+        }
     }
 
     private String convertSecondsToDurationFormat(int totalSeconds) {
@@ -162,4 +168,5 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
         int seconds = totalSeconds % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
 }

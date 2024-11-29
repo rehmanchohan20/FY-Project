@@ -1,7 +1,7 @@
 package com.rehman.elearning.service.impl;
 
 import com.rehman.elearning.config.JwtTokenExtractor;
-import com.rehman.elearning.constants.CourseStatus;
+import com.rehman.elearning.constants.CourseStatusEnum;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
@@ -10,6 +10,7 @@ import com.rehman.elearning.model.CoursePrice;
 import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.TeacherRepository;
+import com.rehman.elearning.repository.UserRepository;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
@@ -33,6 +34,9 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private JwtTokenExtractor jwtTokenExtractor;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO request) {
         String teacherIdFromToken = jwtTokenExtractor.extractTeacherIdFromJwt();
@@ -43,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = new Course();
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
-        course.setStatus(String.valueOf(CourseStatus.DRAFT));
+        course.setStatus(CourseStatusEnum.DRAFT);
         course.setCreatedBy(UserCreatedBy.Teacher);
         course.setTeacher(teacher);
 
@@ -84,7 +88,7 @@ public class CourseServiceImpl implements CourseService {
         // Update course details
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
-        course.setStatus(request.getStatus());
+        course.setStatus(CourseStatusEnum.DRAFT);
 
         // Update course price
         CoursePrice coursePrice = course.getCoursePrice(); // Get existing course price
@@ -128,7 +132,7 @@ public class CourseServiceImpl implements CourseService {
         dto.setId(course.getId());
         dto.setTitle(course.getTitle());
         dto.setDescription(course.getDescription());
-        dto.setStatus(course.getStatus());
+        dto.setStatus(CourseStatusEnum.DRAFT);
 
         if (course.getCoursePrice() != null) {
             CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
@@ -139,5 +143,4 @@ public class CourseServiceImpl implements CourseService {
 
         return dto;
     }
-
 }

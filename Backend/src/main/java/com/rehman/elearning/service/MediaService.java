@@ -1,14 +1,16 @@
 package com.rehman.elearning.service;
 
 import com.rehman.elearning.rest.dto.inbound.MediaRequestDTO;
+import com.rehman.elearning.rest.dto.inbound.MediaUploadRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 public interface MediaService {
 
-    // Method for uploading video
-    public MediaResponseDTO uploadVideo(String base64Video, Long courseId) throws IOException ;
+    // Method for uploading video (changed to MultipartFile)
+    public MediaResponseDTO uploadVideo(Long moduleId, MultipartFile videoFile) throws IOException;
 
     // Method to get media by ID
     MediaResponseDTO getMediaById(Long mediaId);

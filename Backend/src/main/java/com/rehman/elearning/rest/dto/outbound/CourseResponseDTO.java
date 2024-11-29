@@ -1,17 +1,30 @@
 package com.rehman.elearning.rest.dto.outbound;
 
+import com.rehman.elearning.constants.CourseStatusEnum;
+
 public class CourseResponseDTO {
 
     private Long id; // Unique identifier for the course
     private String title;
     private String description;
-    private String status;
+    private CourseStatusEnum status; // Status of the course
     private CoursePriceResponseDTO coursePrice; // Price details of the course
 
+    // Constructor accepting CoursePriceResponseDTO
+    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.coursePrice = coursePrice;
 
-// Getters and Setters
+    }
 
+    // No-argument constructor
+    public CourseResponseDTO() {
+    }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -36,11 +49,11 @@ public class CourseResponseDTO {
         this.description = description;
     }
 
-    public String getStatus() {
+    public CourseStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CourseStatusEnum status) {
         this.status = status;
     }
 
@@ -52,4 +65,3 @@ public class CourseResponseDTO {
         this.coursePrice = coursePrice;
     }
 }
-

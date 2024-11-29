@@ -4,6 +4,14 @@ public class CoursePriceResponseDTO {
     private Double price;
     private String currency;
 
+    public CoursePriceResponseDTO(Double price, String currency) {
+        this.price = price;
+        this.currency = currency;
+    }
+
+    public CoursePriceResponseDTO() {
+    }
+
     public String getCurrency() {
         return currency;
     }

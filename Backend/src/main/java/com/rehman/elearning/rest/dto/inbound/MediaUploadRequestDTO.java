@@ -1,14 +1,16 @@
 package com.rehman.elearning.rest.dto.inbound;
 
-public class MediaUploadRequestDTO { // The ID of the course to link media
-    private String media; // List of Base64-encoded media files
+import org.springframework.web.multipart.MultipartFile;
+
+public class MediaUploadRequestDTO {
+    private MultipartFile media; // Multipart file for media upload
 
     // Getters and setters
-    public String getMedia() {
+    public MultipartFile getMedia() {
         return media;
     }
 
-    public void setMedia(String media) {
+    public void setMedia(MultipartFile media) {
         this.media = media;
     }
 }

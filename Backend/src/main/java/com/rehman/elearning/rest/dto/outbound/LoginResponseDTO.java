@@ -4,11 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 
 public class LoginResponseDTO {
 
+	private Long userId;
+
 	@NotBlank
 	private String token;
 
 	@NotBlank
 	private String username;
+
+
 
 	private Boolean isTeacher;
 	private Boolean isStudent;
@@ -23,12 +27,21 @@ public class LoginResponseDTO {
 		this.username = username;
 	}
 
-	public LoginResponseDTO(String token, String username, Boolean isTeacher, Boolean isStudent, Boolean isAdmin) {
+	public LoginResponseDTO(Long userId,String token, String username, Boolean isTeacher, Boolean isStudent, Boolean isAdmin) {
 		this.token = token;
 		this.username = username;
 		this.isTeacher = isTeacher;
 		this.isStudent = isStudent;
 		this.isAdmin = isAdmin;
+		this.userId = userId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getToken() {

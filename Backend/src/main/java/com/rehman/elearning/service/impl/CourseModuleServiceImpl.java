@@ -5,11 +5,14 @@ import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.CourseModule;
+import com.rehman.elearning.repository.CourseModuleLessonRepository;
 import com.rehman.elearning.repository.CourseModuleRepository;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.rest.dto.inbound.CourseModuleRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseModuleResponseDTO;
 import com.rehman.elearning.service.CourseModuleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +29,27 @@ public class CourseModuleServiceImpl implements CourseModuleService {
     @Autowired
     private CourseRepository courseRepository;
 
-    @Transactional
+    @Autowired
+    private CourseModuleLessonRepository lessonRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(CoursePriceServiceImpl.class);
+
+
     @Override
     public List<CourseModuleResponseDTO> addModules(Long courseId, List<CourseModuleRequestDTO> requests) {
+        logger.info("Adding modules for courseId: {}", courseId);
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
         List<CourseModuleResponseDTO> responseDTOs = requests.stream()
                 .map(request -> {
+                    // Check if a module with the same priority already exists
+                    boolean priorityExists = courseModuleRepository.existsByCourseAndPriority(course, request.getPriority());
+                    if (priorityExists) {
+                        throw new IllegalArgumentException("A module with this priority already exists.");
+                    }
+
                     CourseModule module = new CourseModule();
                     module.setHeading(request.getHeading());
                     module.setDescription(request.getDescription());
@@ -72,7 +88,11 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
     @Override
     public void deleteModule(Long moduleId) {
-        courseModuleRepository.deleteById(moduleId);
+        CourseModule module = courseModuleRepository.findById(moduleId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+        // Ensure no lessons exist before deleting or cascade delete if necessary
+        lessonRepository.deleteAllByCourseModule(module);  // Cascade delete the lessons if needed
+        courseModuleRepository.delete(module);   // Then delete the module itself
     }
 
     private CourseModuleResponseDTO convertToResponseDTO(CourseModule module) {
