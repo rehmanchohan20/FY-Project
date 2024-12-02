@@ -41,9 +41,15 @@ public class MediaServiceImpl implements MediaService {
     @Value("${course.videos.upload}")
     private String mediaUploadDir;
 
+    @Value("${course.thumbnail.upload}")
+    private String thumbnailUploadDir;
+
+    @Value("${course.thumbnail.server}")
+    private String thumbnailServerUrl;
+
     @Transactional
     @Override
-    public MediaResponseDTO uploadVideo(Long moduleId, MultipartFile videoFile) throws IOException {
+    public MediaResponseDTO uploadVideo(MultipartFile videoFile) throws IOException {
         if (videoFile == null || videoFile.isEmpty()) {
             throw new IllegalArgumentException("No video file provided.");
         }
@@ -179,9 +185,6 @@ public class MediaServiceImpl implements MediaService {
         return hours * 3600 + minutes * 60 + seconds + fractionalSeconds;
     }
     private String saveVideoToFile(MultipartFile videoFile) throws IOException {
-        // Log the upload directory and file name for debugging purposes
-        System.out.println("Uploading video to directory: " + mediaUploadDir);
-
         // Create the upload directory if it doesn't exist
         File directory = new File(mediaUploadDir);
         if (!directory.exists()) {
@@ -191,8 +194,6 @@ public class MediaServiceImpl implements MediaService {
         // Generate a unique file name
         String videoFileName = UUID.randomUUID().toString() + ".mp4";
         File videoFilePath = new File(directory, videoFileName);
-
-        System.out.println("Saving file: " + videoFilePath.getAbsolutePath());
 
         // Save video file to disk
         try (FileOutputStream fileOutputStream = new FileOutputStream(videoFilePath)) {
@@ -208,5 +209,48 @@ public class MediaServiceImpl implements MediaService {
 
         return fileUrl;  // Return the server URL
     }
+
+    @Override
+    public MediaResponseDTO uploadThumbnail(MultipartFile thumbnailFile) throws IOException {
+        if (thumbnailFile == null || thumbnailFile.isEmpty()) {
+            throw new IllegalArgumentException("No thumbnail file provided.");
+        }
+
+        // Save thumbnail to the file system and get the server URL
+        String thumbnailFileUrl = saveThumbnailToFile(thumbnailFile);
+
+        // Create Media entity for the thumbnail
+        Media media = new Media();
+        media.setUrl(thumbnailFileUrl);  // Save the server URL in the database
+        media.setType("thumbnail");
+        media.setCreatedBy(UserCreatedBy.Teacher);
+
+        // Save media entity
+        Media savedMedia = mediaRepository.save(media);
+        return convertToResponseDTO(savedMedia);
+    }
+
+    private String saveThumbnailToFile(MultipartFile thumbnailFile) throws IOException {
+        // Save the file just like the video method but with the thumbnail directory and extension
+        File directory = new File(thumbnailUploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Ensure directory is created if it does not exist
+        }
+
+        String thumbnailFileName = UUID.randomUUID().toString() + ".jpg";  // Or use another extension based on file type
+        File thumbnailFilePath = new File(directory, thumbnailFileName);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFilePath)) {
+            fileOutputStream.write(thumbnailFile.getBytes());
+        }
+
+        // Construct the server URL for the uploaded thumbnail
+        String fileUrl = (thumbnailServerUrl.endsWith("/") ? thumbnailServerUrl : thumbnailServerUrl + "/") + thumbnailFileName;
+        fileUrl = fileUrl.replace("\\", "/");  // Ensure forward slashes in URL
+
+        return fileUrl;
+    }
+
+
 
 }

@@ -13,7 +13,8 @@ public class CourseModuleLessonResponseDTO {
     private Boolean isContentLock; // Optional field
     private String status;
 
-    private Set<Long> mediaIds;
+    // Replace mediaIds with detailed media information
+    private Set<MediaResponseDTO> mediaDetails;
 
     // Getters and setters
 
@@ -81,11 +82,11 @@ public class CourseModuleLessonResponseDTO {
         this.status = status;
     }
 
-    public Set<Long> getMediaIds() {
-        return mediaIds;
+    public Set<MediaResponseDTO> getMediaDetails() {
+        return mediaDetails;
     }
 
-    public void setMediaIds(Set<Long> mediaIds) {
-        this.mediaIds = mediaIds;
+    public void setMediaDetails(Set<MediaResponseDTO> mediaDetails) {
+        this.mediaDetails = mediaDetails;
     }
 }

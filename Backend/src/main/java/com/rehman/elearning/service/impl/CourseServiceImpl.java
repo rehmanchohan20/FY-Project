@@ -10,16 +10,22 @@ import com.rehman.elearning.model.CoursePrice;
 import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.TeacherRepository;
-import com.rehman.elearning.repository.UserRepository;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
+import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.rehman.elearning.service.CourseService;
-import jakarta.transaction.Transactional;
+import com.rehman.elearning.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +41,13 @@ public class CourseServiceImpl implements CourseService {
     private JwtTokenExtractor jwtTokenExtractor;
 
     @Autowired
-    private UserRepository userRepository;
+    private MediaService mediaService;  // Inject MediaService for uploading video
+
+    @Value("${course.thumbnail.upload}")
+    private String thumbnailUploadDir;
+
+    @Value("${course.thumbnail.server}")
+    private String thumbnailServerUrl;
 
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO request) {
@@ -43,7 +55,9 @@ public class CourseServiceImpl implements CourseService {
         Long teacherId = Long.parseLong(teacherIdFromToken);
 
         Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new IllegalArgumentException("Teacher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+
+        // Initialize and set course details
         Course course = new Course();
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
@@ -51,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
         course.setCreatedBy(UserCreatedBy.Teacher);
         course.setTeacher(teacher);
 
+        // Save course price
         CoursePrice coursePrice = new CoursePrice();
         coursePrice.setAmount(request.getCoursePrice().getPrice());
         coursePrice.setCurrency(request.getCoursePrice().getCurrency());
@@ -58,10 +73,30 @@ public class CourseServiceImpl implements CourseService {
         coursePrice.setCourse(course);
         course.setCoursePrice(coursePrice);
 
-
+        // Save and return course response
         course = courseRepository.save(course);
         return convertToResponseDTO(course);
     }
+
+    @Override
+    public String uploadThumbnail(Long courseId, MultipartFile thumbnail) {
+        // Retrieve the course by its ID
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.COURSE_NOT_FOUND));
+        try {
+            // Reuse the MediaService uploadThumbnail method
+            MediaResponseDTO mediaResponse = mediaService.uploadThumbnail(thumbnail);
+
+            // Update course thumbnail URL
+            course.setThumbnail(mediaResponse.getUrl());
+            courseRepository.save(course); // Save the course with the updated thumbnail URL
+
+            return mediaResponse.getUrl();
+        } catch (IOException e) {
+            throw new RuntimeException(String.valueOf(ErrorEnum.FAILED_TO_UPLOAD_THUMBNAIL));
+        }
+    }
+
 
     @Override
     public CourseResponseDTO getCourseById(Long courseId) {
@@ -72,8 +107,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponseDTO> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
-        return courses.stream()
+        return courseRepository.findAll().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -81,27 +115,24 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO request) {
-        // Retrieve existing course
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
-        // Update course details
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
-        course.setStatus(CourseStatusEnum.DRAFT);
+        course.setStatus(request.getStatus() != null ? request.getStatus() : CourseStatusEnum.DRAFT);
 
-        // Update course price
-        CoursePrice coursePrice = course.getCoursePrice(); // Get existing course price
+        // Update or create course price
+        CoursePrice coursePrice = course.getCoursePrice();
         if (coursePrice == null) {
             coursePrice = new CoursePrice();
-            coursePrice.setCourse(course); // Set course reference
+            coursePrice.setCourse(course);
         }
         coursePrice.setAmount(request.getCoursePrice().getPrice());
         coursePrice.setCurrency(request.getCoursePrice().getCurrency());
-        coursePrice.setCreatedBy(UserCreatedBy.Teacher); // Assume the course price is created by the teacher
-        course.setCoursePrice(coursePrice); // Associate price with course
+        coursePrice.setCreatedBy(UserCreatedBy.Teacher);
+        course.setCoursePrice(coursePrice);
 
-        // Save updated course
         course = courseRepository.save(course);
         return convertToResponseDTO(course);
     }
@@ -116,8 +147,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponseDTO> searchCourseByName(String courseName) {
-        List<Course> courses = courseRepository.findByTitleContaining(courseName);
-        return courses.stream()
+        return courseRepository.findByTitleContaining(courseName).stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -132,7 +162,8 @@ public class CourseServiceImpl implements CourseService {
         dto.setId(course.getId());
         dto.setTitle(course.getTitle());
         dto.setDescription(course.getDescription());
-        dto.setStatus(CourseStatusEnum.DRAFT);
+        dto.setStatus(course.getStatus());
+        dto.setThumbnail(course.getThumbnail());
 
         if (course.getCoursePrice() != null) {
             CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
@@ -140,7 +171,6 @@ public class CourseServiceImpl implements CourseService {
             priceResponse.setCurrency(course.getCoursePrice().getCurrency());
             dto.setCoursePrice(priceResponse);
         }
-
         return dto;
     }
 }

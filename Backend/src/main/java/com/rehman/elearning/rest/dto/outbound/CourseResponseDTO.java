@@ -9,15 +9,16 @@ public class CourseResponseDTO {
     private String description;
     private CourseStatusEnum status; // Status of the course
     private CoursePriceResponseDTO coursePrice; // Price details of the course
+    private String thumbnail; // URL of the course thumbnail
 
-    // Constructor accepting CoursePriceResponseDTO
-    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status) {
+    // Constructor accepting all fields including thumbnail
+    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status, String thumbnail) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.coursePrice = coursePrice;
-
+        this.thumbnail = thumbnail;
     }
 
     // No-argument constructor
@@ -63,5 +64,13 @@ public class CourseResponseDTO {
 
     public void setCoursePrice(CoursePriceResponseDTO coursePrice) {
         this.coursePrice = coursePrice;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

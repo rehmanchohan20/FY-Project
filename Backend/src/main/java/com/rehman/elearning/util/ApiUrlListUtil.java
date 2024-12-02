@@ -9,9 +9,12 @@ import java.util.List;
 public class ApiUrlListUtil {
     public static List<RequestMatcher> getStudentApiUrls(){
         List<RequestMatcher> list = new ArrayList<>();
+        list.add(new AntPathRequestMatcher("/api/courses/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/student/{studentId}"));
+        list.add(new AntPathRequestMatcher("/api/modules/**"));
+        list.add(new AntPathRequestMatcher("/api/media/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/**"));
-        list.add(new AntPathRequestMatcher("/api/guidance"));
+                list.add(new AntPathRequestMatcher("/api/guidance"));
         return list;
     }
 
@@ -26,10 +29,10 @@ public class ApiUrlListUtil {
         List<RequestMatcher> list = new ArrayList<>();
         list.add(new AntPathRequestMatcher("/api/courses/**"));
         list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons/**"));
-        list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons"));
+
         list.add(new AntPathRequestMatcher("/api/courses/{courseId}/offers/**"));
         list.add(new AntPathRequestMatcher("/api/courses/{courseId}/modules/{moduleId}"));
-        list.add(new AntPathRequestMatcher("/api/media/**"));
+
         return list;
     }
 
@@ -57,7 +60,9 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/api/payments/**"));
         list.add(new AntPathRequestMatcher("/login/oauth2/**"));
         list.add(new AntPathRequestMatcher("/oauth2/callback/google"));
+        list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons"));
         list.add(new AntPathRequestMatcher("/api/courses/**"));
+                list.add(new AntPathRequestMatcher("/api/media/**"));
         return list;
     }
 }

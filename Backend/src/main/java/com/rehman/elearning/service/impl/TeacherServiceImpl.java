@@ -62,15 +62,16 @@ public class TeacherServiceImpl implements TeacherService {
         List<Course> courses = courseRepository.findCoursesByTeacherId(teacherId);
         return courses.stream()
                 .map(course -> new CourseResponseDTO(
-                                        course.getId(),
-                                        course.getTitle(),
-                                        course.getDescription(),
+                        course.getId(),
+                        course.getTitle(),
+                        course.getDescription(),
                         new CoursePriceResponseDTO(
-                                                course.getCoursePrice().getAmount(),
-                                                course.getCoursePrice().getCurrency()
-                                        ),
-                        course.getStatus()
-                                ))
+                                course.getCoursePrice().getAmount(),
+                                course.getCoursePrice().getCurrency()
+                        ),
+                        course.getStatus(),
+                        course.getThumbnail() // Include the thumbnail field
+                ))
                 .collect(Collectors.toList());
     }
 

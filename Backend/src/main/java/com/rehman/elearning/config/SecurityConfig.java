@@ -73,13 +73,13 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						// Public access URLs
 						.requestMatchers(ApiUrlListUtil.getApiIgnoreUrlList().toArray(new RequestMatcher[0])).permitAll()
-//						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						// Student access to ticket endpoints
 								.requestMatchers(ApiUrlListUtil.getStudentApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_STUDENT")
 						//Guest Related end points
 								.requestMatchers(ApiUrlListUtil.getGuestApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_GUEST")
 						// Teacher access to course related endpoints
 								.requestMatchers(ApiUrlListUtil.getTeacherApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_TEACHER")
+                                .requestMatchers("api/media/upload-media").hasAuthority("ROLE_TEACHER")
 						//Common permission for multiple roles
 								.requestMatchers(ApiUrlListUtil.getCommonApiURLS().toArray(new RequestMatcher[0])).hasAnyAuthority("SCOPE_ROLE_TEACHER","SCOPE_ROLE_STUDENT","SCOPE_ROLE_ADMIN")
 						// Admin access to user management and ticket resolution
@@ -133,7 +133,6 @@ public class SecurityConfig {
 	public SimpleUrlAuthenticationFailureHandler customAuthenticationFailureHandler() {
 		return new OAuth2AuthenticationFailureHandler(httpCookieOAuth2AuthorizationRequestRepository);
 	}
-
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

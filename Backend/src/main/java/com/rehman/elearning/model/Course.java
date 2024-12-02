@@ -23,6 +23,9 @@ public class Course extends CommonEntity {
     @Column(name = "status")
     private CourseStatusEnum status;
 
+    @Column (name = "thumbnail")
+    private String thumbnail;
+
     @Column(name = "locked", nullable = false)
     private boolean locked = true; // Default to true, indicating locked
 
@@ -104,6 +107,14 @@ public class Course extends CommonEntity {
 
     public void setCoursePrice(CoursePrice coursePrice) {
         this.coursePrice = coursePrice;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public CourseOffer getCourseOffer() {

@@ -11,6 +11,7 @@ import com.rehman.elearning.repository.CourseModuleRepository;
 import com.rehman.elearning.repository.MediaRepository;
 import com.rehman.elearning.rest.dto.inbound.CourseModuleLessonRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseModuleLessonResponseDTO;
+import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.rehman.elearning.service.CourseModuleLessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -129,23 +130,33 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
         dto.setStatus(lesson.getStatus());
         dto.setIsContentLock(lesson.getContentLock());
         dto.setPriority(lesson.getPriority());
+        dto.setDuration(lesson.getDuration());
 
-        // Include media information in the response DTO if necessary
+        // Populate mediaDetails
         if (lesson.getMedias() != null) {
-            Set<Long> mediaIds = lesson.getMedias().stream()
-                    .map(Media::getId)
+            Set<MediaResponseDTO> mediaDetails = lesson.getMedias().stream()
+                    .map(this::convertMediaToDTO)
                     .collect(Collectors.toSet());
-            dto.setMediaIds(mediaIds);
+            dto.setMediaDetails(mediaDetails);
         }
 
         return dto;
     }
 
+    private MediaResponseDTO convertMediaToDTO(Media media) {
+        MediaResponseDTO dto = new MediaResponseDTO();
+        dto.setId(media.getId());
+        dto.setUrl(media.getUrl());
+        dto.setType(media.getType());
+        dto.setDuration(media.getDuration());
+        return dto;
+    }
+
+
     private String calculateTotalDuration(Set<Media> medias) {
         int totalSeconds = medias.stream()
                 .mapToInt(media -> parseDurationToSeconds(media.getDuration()))
                 .sum();
-
         return convertSecondsToDurationFormat(totalSeconds);
     }
 
