@@ -76,10 +76,13 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
 
     @Override
     public List<CourseModuleLessonResponseDTO> getAllLessons(Long moduleId) {
+        // Fetch lessons associated with the given moduleId
         List<CourseModuleLesson> lessons = lessonRepository.findByModuleId(moduleId);
+
+        // Convert the list of CourseModuleLesson to CourseModuleLessonResponseDTO
         return lessons.stream()
-                .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .map(this::convertToResponseDTO) // Use a method reference to convert each lesson
+                .collect(Collectors.toList()); // Collect the results into a List
     }
 
     @Override

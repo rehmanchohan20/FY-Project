@@ -79,7 +79,6 @@ public class SecurityConfig {
 								.requestMatchers(ApiUrlListUtil.getGuestApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_GUEST")
 						// Teacher access to course related endpoints
 								.requestMatchers(ApiUrlListUtil.getTeacherApiUrls().toArray(new RequestMatcher[0])).hasAuthority("SCOPE_ROLE_TEACHER")
-                                .requestMatchers("api/media/upload-media").hasAuthority("ROLE_TEACHER")
 						//Common permission for multiple roles
 								.requestMatchers(ApiUrlListUtil.getCommonApiURLS().toArray(new RequestMatcher[0])).hasAnyAuthority("SCOPE_ROLE_TEACHER","SCOPE_ROLE_STUDENT","SCOPE_ROLE_ADMIN")
 						// Admin access to user management and ticket resolution
