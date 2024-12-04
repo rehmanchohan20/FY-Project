@@ -107,7 +107,7 @@ public class CourseController {
     @GetMapping("/categories/{category}")
     public ResponseEntity<List<CourseResponseDTO>> getCoursesByCategory(@PathVariable CategoryEnum category) {
         List<CourseResponseDTO> courses = courseService.getCoursesByCategory(category);
-        return ResponseEntity.ok(courses);
+        return ResponseEntity.ok(courses);dsada
     }
 
 
