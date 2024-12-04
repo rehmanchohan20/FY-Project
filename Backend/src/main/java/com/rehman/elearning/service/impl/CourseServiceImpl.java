@@ -1,6 +1,7 @@
 package com.rehman.elearning.service.impl;
 
 import com.rehman.elearning.config.JwtTokenExtractor;
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
@@ -64,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
         course.setStatus(CourseStatusEnum.DRAFT);
         course.setCreatedBy(UserCreatedBy.Teacher);
         course.setTeacher(teacher);
+        course.setCategory(request.getCategory());
 
         // Save course price
         CoursePrice coursePrice = new CoursePrice();
@@ -121,6 +123,7 @@ public class CourseServiceImpl implements CourseService {
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
         course.setStatus(request.getStatus() != null ? request.getStatus() : CourseStatusEnum.DRAFT);
+        course.setCategory(request.getCategory());
 
         // Update or create course price
         CoursePrice coursePrice = course.getCoursePrice();
@@ -155,6 +158,29 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getCoursesByKeyword(String keyword) {
         return courseRepository.searchCoursesByKeyword(keyword);
+    }
+
+    public List<CourseResponseDTO> getCoursesByCategory(CategoryEnum category) {
+        List<Course> courses = courseRepository.findByCategory(category);
+        return courses.stream()
+                .map(course -> {
+                    // Assuming coursePrice is an embedded object and needs to be mapped
+                    CoursePriceResponseDTO coursePrice = new CoursePriceResponseDTO(
+                            course.getCoursePrice().getAmount(),
+                            course.getCoursePrice().getCurrency()
+                    );
+                    return new CourseResponseDTO(
+                            course.getId(),
+                            course.getTitle(),
+                            course.getDescription(),
+                            coursePrice,
+                            course.getStatus(),
+                            course.getThumbnail(),
+                            course.getCategory()
+                    );
+
+                })
+                .collect(Collectors.toList());
     }
 
     private CourseResponseDTO convertToResponseDTO(Course course) {

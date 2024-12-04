@@ -70,7 +70,8 @@ public class TeacherServiceImpl implements TeacherService {
                                 course.getCoursePrice().getCurrency()
                         ),
                         course.getStatus(),
-                        course.getThumbnail() // Include the thumbnail field
+                        course.getThumbnail(), // Include the thumbnail field
+                        course.getCategory()
                 ))
                 .collect(Collectors.toList());
     }
@@ -146,6 +147,7 @@ public class TeacherServiceImpl implements TeacherService {
         courseResponseDTO.setId(course.getId());
         courseResponseDTO.setTitle(course.getTitle());
         courseResponseDTO.setDescription(course.getDescription());
+        courseResponseDTO.setCategory(course.getCategory());
         if (course.getCoursePrice() != null) {
             CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
             priceResponse.setPrice(course.getCoursePrice().getAmount());

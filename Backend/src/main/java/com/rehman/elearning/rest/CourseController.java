@@ -1,7 +1,10 @@
 package com.rehman.elearning.rest;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
+import com.rehman.elearning.rest.dto.outbound.RecommendedCourseResponseDTO;
+import com.rehman.elearning.service.CourseRecommendationService;
 import com.rehman.elearning.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,9 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private CourseRecommendationService courseRecommendationService;
 
     // Create a course (without thumbnail)
     @PostMapping
@@ -82,4 +88,28 @@ public class CourseController {
         String thumbnailUrl = courseService.uploadThumbnail(courseId, thumbnail);  // Reusing the upload method
         return new ResponseEntity<>(thumbnailUrl, HttpStatus.OK);
     }
+
+    // recommend course to the students:
+
+    @GetMapping("/recommendations")
+    public List<RecommendedCourseResponseDTO> getRecommendedCourses(@RequestParam Long studentId) {
+        return courseRecommendationService.getRecommendedCourses(studentId);
+    }
+
+    // course categories:
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryEnum>> getAllCategories() {
+        List<CategoryEnum> categories = List.of(CategoryEnum.values()); // Get all enum values from CategoryEnum
+        return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/categories/{category}")
+    public ResponseEntity<List<CourseResponseDTO>> getCoursesByCategory(@PathVariable CategoryEnum category) {
+        List<CourseResponseDTO> courses = courseService.getCoursesByCategory(category);
+        return ResponseEntity.ok(courses);
+    }
+
+
+
 }

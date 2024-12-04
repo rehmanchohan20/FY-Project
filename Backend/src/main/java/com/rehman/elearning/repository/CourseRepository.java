@@ -1,6 +1,8 @@
 package com.rehman.elearning.repository;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.model.Course;
+import com.rehman.elearning.model.Student;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +21,12 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
     @Query("SELECT c FROM Course c WHERE c.teacher.userId = :teacherId")
     List<Course> findCoursesByTeacherId(@Param("teacherId") Long teacherId);
 
-//    List<Course> findByUserId(Long userId);
+    @Query("SELECT c FROM Course c WHERE :student NOT MEMBER OF c.students")
+    List<Course> findByStudentsNotContaining(@Param("student") Student student);
+
+    List<Course> findByCategory(CategoryEnum category);
+
+
 
 
 }

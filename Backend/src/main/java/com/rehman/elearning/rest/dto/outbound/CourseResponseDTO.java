@@ -1,5 +1,6 @@
 package com.rehman.elearning.rest.dto.outbound;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
 
 public class CourseResponseDTO {
@@ -10,20 +11,23 @@ public class CourseResponseDTO {
     private CourseStatusEnum status; // Status of the course
     private CoursePriceResponseDTO coursePrice; // Price details of the course
     private String thumbnail; // URL of the course thumbnail
+    private CategoryEnum category;
 
     // Constructor accepting all fields including thumbnail
-    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status, String thumbnail) {
+    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status, String thumbnail, CategoryEnum category) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.coursePrice = coursePrice;
         this.thumbnail = thumbnail;
+        this.category = category;
     }
 
     // No-argument constructor
     public CourseResponseDTO() {
     }
+
 
     // Getters and Setters
     public Long getId() {
@@ -72,5 +76,13 @@ public class CourseResponseDTO {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public CategoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEnum category) {
+        this.category = category;
     }
 }

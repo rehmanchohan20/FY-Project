@@ -1,5 +1,6 @@
 package com.rehman.elearning.model;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -28,6 +29,9 @@ public class Course extends CommonEntity {
 
     @Column(name = "locked", nullable = false)
     private boolean locked = true; // Default to true, indicating locked
+
+    @Enumerated(EnumType.STRING)
+    private CategoryEnum category;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "teacher_id")
@@ -115,6 +119,14 @@ public class Course extends CommonEntity {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public CategoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEnum category) {
+        this.category = category;
     }
 
     public CourseOffer getCourseOffer() {

@@ -1,5 +1,6 @@
 package com.rehman.elearning.rest.dto.inbound;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,9 @@ public class CourseRequestDTO {
     private CoursePriceRequestDTO coursePrice;
 
     private CourseStatusEnum status;
+
+    @NotNull(message = "Category should not be null")
+    private CategoryEnum category;
 
     public String getTitle() {
         return title;
@@ -39,6 +43,14 @@ public class CourseRequestDTO {
 
     public void setStatus(CourseStatusEnum status) {
         this.status = status;
+    }
+
+    public CategoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEnum category) {
+        this.category = category;
     }
 
     public CoursePriceRequestDTO getCoursePrice() {

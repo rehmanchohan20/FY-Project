@@ -1,5 +1,6 @@
 package com.rehman.elearning.service;
 
+import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
@@ -72,4 +73,7 @@ public interface CourseService {
 	 * @return a list of courses matching the keyword
 	 */
 	List<Course> getCoursesByKeyword(String keyword);
+
+
+	public List<CourseResponseDTO> getCoursesByCategory(CategoryEnum category);
 }
