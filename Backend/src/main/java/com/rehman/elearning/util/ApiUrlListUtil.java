@@ -14,7 +14,6 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/api/modules/**"));
         list.add(new AntPathRequestMatcher("/api/media/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/**"));
-                list.add(new AntPathRequestMatcher("/api/guidance"));
         return list;
     }
 
@@ -63,6 +62,7 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons"));
         list.add(new AntPathRequestMatcher("/api/courses/**"));
                 list.add(new AntPathRequestMatcher("/api/media/**"));
+        list.add(new AntPathRequestMatcher("/api/guidance/**"));
         return list;
     }
 }

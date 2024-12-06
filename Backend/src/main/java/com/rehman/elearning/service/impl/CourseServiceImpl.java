@@ -190,7 +190,7 @@ public class CourseServiceImpl implements CourseService {
         dto.setDescription(course.getDescription());
         dto.setStatus(course.getStatus());
         dto.setThumbnail(course.getThumbnail());
-
+        dto.setCategory(course.getCategory());
         if (course.getCoursePrice() != null) {
             CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
             priceResponse.setPrice(course.getCoursePrice().getAmount());

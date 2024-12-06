@@ -17,6 +17,7 @@ public class Guidance extends CommonEntity {
 
     private String question;
     private String answer;
+    private String keywords;
 
     @ManyToMany
     @JoinTable(
@@ -24,7 +25,12 @@ public class Guidance extends CommonEntity {
             joinColumns = @JoinColumn(name = "guidance_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private List<Course> courses = new ArrayList<>(); // Changed to List
+    private List<Course> courses = new ArrayList<>();  // Courses related to the guidance answer
+
+    private String nextStepRecommendation;
+
+    // Adding the WhatsApp link for guidance-related session booking
+    private String whatsappLink;
 
     // Getters and Setters
     public Long getId() {
@@ -62,77 +68,29 @@ public class Guidance extends CommonEntity {
     public void setCourses(List<Course> courses) {
         this.courses = courses;
     }
+
+    public String getNextStepRecommendation() {
+        return nextStepRecommendation;
+    }
+
+    public void setNextStepRecommendation(String nextStepRecommendation) {
+        this.nextStepRecommendation = nextStepRecommendation;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    // Getter and Setter for WhatsApp Link
+    public String getWhatsappLink() {
+        return whatsappLink;
+    }
+
+    public void setWhatsappLink(String whatsappLink) {
+        this.whatsappLink = whatsappLink;
+    }
 }
-
-
-
-
-
-
-//package com.sarfaraz.elearning.model;
-//
-//import jakarta.persistence.*;
-//
-//import java.util.ArrayList;
-//import java.util.HashSet;
-//import java.util.Set;
-//
-//@Entity
-//public class Guidance extends CommonEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "student_id")
-//    private Student student;
-//
-//    private String question;
-//    private String answer;
-//
-//    @ManyToMany
-//    @JoinTable(
-//            name = "course_guidance",
-//            joinColumns = @JoinColumn(name = "guidance_id"),
-//            inverseJoinColumns = @JoinColumn(name = "course_id")
-//    )
-//    private Set<Course> courses = new ArrayList<>();
-//
-//    // Getters and Setters
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public Student getStudent() {
-//        return student;
-//    }
-//
-//    public void setStudent(Student student) {
-//        this.student = student;
-//    }
-//
-//    public String getQuestion() {
-//        return question;
-//    }
-//
-//    public void setQuestion(String question) {
-//        this.question = question;
-//    }
-//
-//    public String getAnswer() {
-//        return answer;
-//    }
-//
-//    public void setAnswer(String answer) {
-//        this.answer = answer;
-//    }
-//
-//    public Set<Course> getCourses() {
-//        return courses;
-//    }
-//
-//    public void setCourses(Set<Course> courses) {
-//        this.courses = courses;
-//    }
-//}

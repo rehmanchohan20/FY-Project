@@ -24,7 +24,6 @@ public class CourseModuleLessonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
-
     @GetMapping
     public ResponseEntity<List<CourseModuleLessonResponseDTO>> getAllLessons(@PathVariable Long moduleId) {
         List<CourseModuleLessonResponseDTO> response = courseModuleLessonService.getAllLessons(moduleId);

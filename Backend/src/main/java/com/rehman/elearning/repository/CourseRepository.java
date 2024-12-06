@@ -3,7 +3,6 @@ package com.rehman.elearning.repository;
 import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Student;
-import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,6 +25,9 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 
     List<Course> findByCategory(CategoryEnum category);
 
+    // Custom method to find recommended courses
+    @Query("SELECT c FROM Course c WHERE c.category IN :categories AND c.students IS EMPTY")
+    List<Course> findRecommendedCourses(@Param("categories") List<CategoryEnum> categories);
 
 
 
