@@ -1,12 +1,25 @@
 package com.rehman.elearning.rest.dto.inbound;
 
-import com.rehman.elearning.model.Student;
+import com.rehman.elearning.model.Course;
+
+import java.util.List;
 
 public class GuidanceRequestDTO {
+
+    private Long studentId;  // Only pass the studentId
     private String question;
-    private Student student;
+    private List<Course> courses; // Courses related to the question
 
     // Getters and Setters
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
+
     public String getQuestion() {
         return question;
     }
@@ -15,11 +28,11 @@ public class GuidanceRequestDTO {
         this.question = question;
     }
 
-    public Student getStudent() {
-        return student;
+    public List<Course> getCourses() {
+        return courses;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 }

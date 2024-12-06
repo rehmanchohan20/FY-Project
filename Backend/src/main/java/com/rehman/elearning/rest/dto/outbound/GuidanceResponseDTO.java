@@ -1,40 +1,39 @@
 package com.rehman.elearning.rest.dto.outbound;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)  // Exclude null fields in JSON response
 public class GuidanceResponseDTO {
-    private Long id;
-    private String question;
+    private Long guidanceId;
     private String answer;
-    private Long studentId;
-    private List<Long> courseIds;  // List of recommended courses (using their IDs)
     private String nextStepRecommendation;
+    private List<Map<String, Object>> courses; // List of Maps with courseId and courseTitle
+    private String whatsappLink;
 
-    // Constructor
-    public GuidanceResponseDTO(Long id, String question, String answer, Long studentId, List<Long> courseIds, String nextStepRecommendation) {
-        this.id = id;
-        this.question = question;
+    // Constructor for full response
+    public GuidanceResponseDTO(Long guidanceId, String answer, String nextStepRecommendation,
+                               List<Map<String, Object>> courses, String whatsappLink) {
+        this.guidanceId = guidanceId;
         this.answer = answer;
-        this.studentId = studentId;
-        this.courseIds = courseIds;
         this.nextStepRecommendation = nextStepRecommendation;
+        this.courses = courses;
+        this.whatsappLink = whatsappLink;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    // Constructor for only WhatsApp link response
+    public GuidanceResponseDTO(String whatsappLink) {
+        this.whatsappLink = whatsappLink;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getters and setters
+    public Long getGuidanceId() {
+        return guidanceId;
     }
 
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setGuidanceId(Long guidanceId) {
+        this.guidanceId = guidanceId;
     }
 
     public String getAnswer() {
@@ -45,27 +44,27 @@ public class GuidanceResponseDTO {
         this.answer = answer;
     }
 
-    public Long getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
-    }
-
-    public List<Long> getCourseIds() {
-        return courseIds;
-    }
-
-    public void setCourseIds(List<Long> courseIds) {
-        this.courseIds = courseIds;
-    }
-
     public String getNextStepRecommendation() {
         return nextStepRecommendation;
     }
 
     public void setNextStepRecommendation(String nextStepRecommendation) {
         this.nextStepRecommendation = nextStepRecommendation;
+    }
+
+    public List<Map<String, Object>> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Map<String, Object>> courses) {
+        this.courses = courses;
+    }
+
+    public String getWhatsappLink() {
+        return whatsappLink;
+    }
+
+    public void setWhatsappLink(String whatsappLink) {
+        this.whatsappLink = whatsappLink;
     }
 }

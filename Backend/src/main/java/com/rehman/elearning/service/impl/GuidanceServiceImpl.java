@@ -1,14 +1,13 @@
 package com.rehman.elearning.service.impl;
 
 import com.rehman.elearning.constants.CategoryEnum;
-import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Guidance;
 import com.rehman.elearning.model.Student;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.GuidanceRepository;
-import com.rehman.elearning.rest.dto.outbound.GuidanceResponse;
+import com.rehman.elearning.rest.dto.outbound.GuidanceResponseDTO;
 import com.rehman.elearning.service.GuidanceService;
 import com.rehman.elearning.util.KeywordUtil; // Importing the utility class
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +26,14 @@ public class GuidanceServiceImpl implements GuidanceService {
     private CourseRepository courseRepository;
 
     @Override
-    public GuidanceResponse createGuidanceForStudent(Student student, String question, List<Course> courses) {
+    public GuidanceResponseDTO createGuidanceForStudent(Student student, String question, List<Course> courses) {
         String whatsappLink = null;
 
         // Check if question contains any of the response triggers (case-insensitive match)
         if (KeywordUtil.RESPONSE_TRIGGERS.stream()
                 .anyMatch(trigger -> question.toLowerCase().contains(trigger.toLowerCase()))) {
             whatsappLink = "https://wa.me/03113865205?text=Hello, I need further guidance regarding my course!";
-            return new GuidanceResponse(whatsappLink); // Returning the WhatsApp link response
+            return new GuidanceResponseDTO(whatsappLink); // Returning the WhatsApp link response
         }
 
         // Clean the question for better matching
@@ -76,7 +75,7 @@ public class GuidanceServiceImpl implements GuidanceService {
         guidance.setAnswer("Personalized answer based on your query.");
 
         // Return full response
-        return new GuidanceResponse(
+        return new GuidanceResponseDTO(
                 guidance.getId(),  // Guidance ID
                 guidance.getAnswer(),
                 guidance.getNextStepRecommendation(),
