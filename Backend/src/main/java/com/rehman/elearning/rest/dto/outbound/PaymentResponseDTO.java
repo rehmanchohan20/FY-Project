@@ -1,43 +1,41 @@
 package com.rehman.elearning.rest.dto.outbound;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import com.rehman.elearning.constants.PaymentStatus;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class PaymentResponseDTO {
 
     private Long id;                     // Payment ID
-    private String transactionId;        // Transaction ID
-    private Double amount;           // Payment amount
-    private String status;               // Payment status
-    private LocalDateTime createdAt;     // Creation timestamp
-    private LocalDateTime updatedAt;     // Update timestamp
+    private String transactionId;          // Transaction ID
+    private Double amount;               // Payment amount
+    private PaymentStatus status;        // Payment status
     private Long courseId;               // Course ID related to the payment
     private Long studentId;              // Student ID making the payment
-    private Map<String, String> paymentDetails; // Additional details (optional)
+    private Map<String, String> paymentDetails; // Additional details (including the URL for Stripe Checkout)
 
     // Constructor without additional payment details
-    public PaymentResponseDTO(Long id, String transactionId, Double amount, String status,
-                              LocalDateTime createdAt, LocalDateTime updatedAt,
+    public PaymentResponseDTO(Long id, String transactionId, Double amount, PaymentStatus status,
                               Long courseId, Long studentId) {
         this.id = id;
         this.transactionId = transactionId;
         this.amount = amount;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.courseId = courseId;
         this.studentId = studentId;
+        this.paymentDetails = new HashMap<>(); // Initialize the map
     }
 
-    // Constructor with additional payment details
-    public PaymentResponseDTO(Long id, String transactionId, Double amount, String status,
-                              LocalDateTime createdAt, LocalDateTime updatedAt,
-                              Long courseId, Long studentId, Map<String, String> paymentDetails) {
-        this(id, transactionId, amount, status, createdAt, updatedAt, courseId, studentId);
-        this.paymentDetails = paymentDetails;
+    // Constructor with additional payment details (including checkout URL)
+    public PaymentResponseDTO(Long id, String transactionId, Double amount, PaymentStatus status,
+                              Long courseId, Long studentId, String checkoutUrl) {
+        this(id, transactionId, amount, status, courseId, studentId);
+        this.paymentDetails = new HashMap<>();
+        this.paymentDetails.put("checkoutUrl", checkoutUrl); // Add checkout URL to paymentDetails
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -62,28 +60,12 @@ public class PaymentResponseDTO {
         this.amount = amount;
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(PaymentStatus status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public Long getCourseId() {

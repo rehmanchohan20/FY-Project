@@ -1,5 +1,6 @@
 package com.rehman.elearning.service.impl;
 
+import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.model.User;
 import com.rehman.elearning.repository.UserRepository;
 import com.rehman.elearning.rest.dto.inbound.UserProfileRequestDTO;
@@ -20,14 +21,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileResponseDTO getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(ErrorEnum.USER_NOT_FOUND.getCode()));
         return mapToResponseDTO(user);
     }
 
     @Override
     public UserProfileResponseDTO updateUserProfile(String username, UserProfileRequestDTO requestDTO) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(ErrorEnum.USER_NOT_FOUND.getCode()));
 
         user.setFullName(requestDTO.getName());
         user.setEmail(requestDTO.getEmail());

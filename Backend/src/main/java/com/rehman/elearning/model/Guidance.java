@@ -27,10 +27,8 @@ public class Guidance extends CommonEntity {
     )
     private List<Course> courses = new ArrayList<>();  // Courses related to the guidance answer
 
+    // Additional fields to personalize guidance for the student (can be updated later)
     private String nextStepRecommendation;
-
-    // Adding the WhatsApp link for guidance-related session booking
-    private String whatsappLink;
 
     // Getters and Setters
     public Long getId() {
@@ -83,14 +81,5 @@ public class Guidance extends CommonEntity {
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
-    }
-
-    // Getter and Setter for WhatsApp Link
-    public String getWhatsappLink() {
-        return whatsappLink;
-    }
-
-    public void setWhatsappLink(String whatsappLink) {
-        this.whatsappLink = whatsappLink;
     }
 }

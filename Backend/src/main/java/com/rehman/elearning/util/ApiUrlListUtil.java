@@ -61,8 +61,11 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/oauth2/callback/google"));
         list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons"));
         list.add(new AntPathRequestMatcher("/api/courses/**"));
-                list.add(new AntPathRequestMatcher("/api/media/**"));
+        list.add(new AntPathRequestMatcher("/api/media/**"));
         list.add(new AntPathRequestMatcher("/api/guidance/**"));
+        list.add(new AntPathRequestMatcher("/api/payment/**"));
+
+
         return list;
     }
 }

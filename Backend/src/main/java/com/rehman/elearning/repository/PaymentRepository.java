@@ -9,11 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    List<Payment> findAllByCourseId(Long courseId);
-    // If you're expecting a single payment by courseId, use Optional
-    List<Payment> findByCourseId(Long courseId);
-    // If you're expecting a single payment by transactionId, use Optional
-    Optional<Payment> findByTransactionId(String transactionId);
+//    List<Payment> findAllByCourseId(Long courseId);
+//    // If you're expecting a single payment by courseId, use Optional
+//    List<Payment> findByCourseId(Long courseId);
+//    // If you're expecting a single payment by transactionId, use Optional
+//    Optional<Payment> findByTransactionId(String transactionId);
 
 
 }

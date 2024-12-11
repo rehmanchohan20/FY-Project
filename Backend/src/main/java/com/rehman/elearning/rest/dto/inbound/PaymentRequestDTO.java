@@ -1,44 +1,45 @@
 package com.rehman.elearning.rest.dto.inbound;
 
-import java.math.BigDecimal;
+import com.rehman.elearning.model.Amount;
+import com.rehman.elearning.model.Course;
+import com.rehman.elearning.model.Student;
 
 public class PaymentRequestDTO {
+    private Amount amount;         // Amount of the payment
+    private Student studentId;     // ID of the student making the payment
+    private Course courseId;       // ID of the course associated with the payment
 
-    private String transactionId;  // Transaction ID for the payment
-    private Double amount;     // Amount of the payment
-    private Long studentId;        // ID of the student making the payment
-    private String paymentStatus;  // Payment status (if updatable in the request)
-
-    // Getters and setters
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Double getAmount() {
+    // Getters and Setters
+    public Amount getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Amount amount) {
         this.amount = amount;
     }
 
-    public Long getStudentId() {
+    public Student getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Long studentId) {
+    public void setStudentId(Student studentId) {
         this.studentId = studentId;
     }
 
-    public String getPaymentStatus() {
-        return paymentStatus;
+    public Course getCourseId() {
+        return courseId;
     }
 
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public void setCourseId(Course courseId) {
+        this.courseId = courseId;
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentRequestDTO{" +
+                ", amount=" + amount +
+                ", studentId=" + studentId +
+                ", courseId=" + courseId +
+                '}';
     }
 }

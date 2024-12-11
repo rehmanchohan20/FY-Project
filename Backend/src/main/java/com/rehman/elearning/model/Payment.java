@@ -1,5 +1,6 @@
 package com.rehman.elearning.model;
 
+import com.rehman.elearning.constants.PaymentStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,8 +11,9 @@ public class Payment extends Amount {
     @Column(name = "id")
     private Long id;
 
+    @Enumerated(EnumType.STRING) // Store enum as string in DB
     @Column(name = "status")
-    private String status;
+    private PaymentStatus status;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
@@ -24,6 +26,8 @@ public class Payment extends Amount {
     @Column(name = "transaction_id")
     private String transactionId;
 
+    // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -32,11 +36,11 @@ public class Payment extends Amount {
         this.id = id;
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(PaymentStatus status) {
         this.status = status;
     }
 
