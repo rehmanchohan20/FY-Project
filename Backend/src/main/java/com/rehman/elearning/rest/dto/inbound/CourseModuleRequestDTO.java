@@ -21,6 +21,7 @@ public class CourseModuleRequestDTO {
     @Min(value = 0, message = "Priority must be a non-negative integer")
     private Integer priority;
 
+    private String assignmentPath;
 
     // Getters and Setters
 
@@ -54,5 +55,13 @@ public class CourseModuleRequestDTO {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public String getAssignmentPath() {
+        return assignmentPath;
+    }
+
+    public void setAssignmentPath(String assignmentPath) {
+        this.assignmentPath = assignmentPath;
     }
 }

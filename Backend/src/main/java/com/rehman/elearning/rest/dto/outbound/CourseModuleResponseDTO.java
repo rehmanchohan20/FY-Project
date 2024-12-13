@@ -7,7 +7,7 @@ public class CourseModuleResponseDTO {
     private String heading;
     private String description;
     private Integer priority;
-
+    private String assignmentPath;  // Include assignment path in the response
     // Getters and setters
 
     public Long getId() {
@@ -40,5 +40,13 @@ public class CourseModuleResponseDTO {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public String getAssignmentPath() {
+        return assignmentPath;
+    }
+
+    public void setAssignmentPath(String assignmentPath) {
+        this.assignmentPath = assignmentPath;
     }
 }

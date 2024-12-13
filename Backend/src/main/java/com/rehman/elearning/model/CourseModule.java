@@ -1,7 +1,6 @@
 package com.rehman.elearning.model;
 
 import jakarta.persistence.*;
-
 import java.util.Set;
 
 @Entity
@@ -12,22 +11,34 @@ public class CourseModule extends CommonEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "heading")
     private String heading;
+
     @Column(name = "description")
     private String description;
+
     @Column(name = "priority")
     private Integer priority;
 
+    // Store assignment PDF URL (path on the server)
+    @Column(name = "assignment_path")
+    private String assignmentPath;
 
+    // Relationship with Course entity
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id")
     private Course course;
 
+    // Relationship with CourseModuleLesson (one-to-many)
     @OneToMany(mappedBy = "courseModule", fetch = FetchType.LAZY)
     private Set<CourseModuleLesson> courseModuleLessons;
 
+    // Relationship with MCQ (one-to-many)
+    @OneToMany(mappedBy = "courseModule", fetch = FetchType.LAZY)
+    private Set<MCQ> mcqs;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -60,6 +71,14 @@ public class CourseModule extends CommonEntity {
         this.priority = priority;
     }
 
+    public String getAssignmentPath() {
+        return assignmentPath;
+    }
+
+    public void setAssignmentPath(String assignmentPath) {
+        this.assignmentPath = assignmentPath;
+    }
+
     public Course getCourse() {
         return course;
     }
@@ -74,5 +93,13 @@ public class CourseModule extends CommonEntity {
 
     public void setCourseModuleLessons(Set<CourseModuleLesson> courseModuleLessons) {
         this.courseModuleLessons = courseModuleLessons;
+    }
+
+    public Set<MCQ> getMcqs() {
+        return mcqs;
+    }
+
+    public void setMcqs(Set<MCQ> mcqs) {
+        this.mcqs = mcqs;
     }
 }
