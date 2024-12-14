@@ -71,7 +71,6 @@ public class CourseModuleServiceImpl implements CourseModuleService {
                     module.setDescription(request.getDescription());
                     module.setPriority(request.getPriority());
                     module.setCourse(course);
-                    module.setAssignmentPath(request.getAssignmentPath());
                     module.setCreatedBy(UserCreatedBy.Teacher);
 
                     module = courseModuleRepository.save(module);
@@ -100,7 +99,6 @@ public class CourseModuleServiceImpl implements CourseModuleService {
         module.setDescription(request.getDescription());
         module.setPriority(request.getPriority());
         module.setCreatedBy(UserCreatedBy.Teacher);
-        module.setAssignmentPath(request.getAssignmentPath());
         module = courseModuleRepository.save(module);
         return convertToResponseDTO(module);
     }
@@ -115,73 +113,6 @@ public class CourseModuleServiceImpl implements CourseModuleService {
         courseModuleRepository.delete(module);   // Then delete the module itself
     }
 
-    // Uploading an assignment
-    @Override
-    public String uploadAssignment(Long moduleId, MultipartFile file) throws IOException {
-        CourseModule module = courseModuleRepository.findById(moduleId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
-
-        // Save file locally
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        String localFilePath = uploadDir + fileName;
-        File destFile = new File(localFilePath);
-        file.transferTo(destFile);
-
-        // Map to server URL
-        String fileUrl = serverUrl + fileName;
-
-        // Update module assignment path
-        module.setAssignmentPath(fileUrl);
-        courseModuleRepository.save(module);
-
-        return fileUrl;
-    }
-
-    // Updating an assignment for a module
-    @Override
-    public String updateAssignment(Long moduleId, MultipartFile file) throws IOException {
-        // Fetch the CourseModule by ID
-        CourseModule module = courseModuleRepository.findById(moduleId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
-
-        // Save the new file locally
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        String localFilePath = uploadDir + fileName;
-        File destFile = new File(localFilePath);
-        file.transferTo(destFile);
-
-        // Map the file to the server URL
-        String fileUrl = serverUrl + fileName;
-
-        // Update the assignment path
-        module.setAssignmentPath(fileUrl);
-
-        // Save the updated module with the new assignment path
-        courseModuleRepository.save(module);
-
-        // Return the new assignment URL
-        return fileUrl;
-    }
-
-
-    // Fetching assignment URL for a module
-    @Override
-    public String getAssignment(Long moduleId) {
-        CourseModule module = courseModuleRepository.findById(moduleId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
-
-        return module.getAssignmentPath();
-    }
-
-    // Deleting an assignment
-    @Override
-    public void deleteAssignment(Long moduleId) {
-        CourseModule module = courseModuleRepository.findById(moduleId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
-
-        module.setAssignmentPath(null);
-        courseModuleRepository.save(module);
-    }
 
     // Saving MCQs for a module
     @Override
@@ -258,7 +189,6 @@ public class CourseModuleServiceImpl implements CourseModuleService {
         dto.setHeading(module.getHeading());
         dto.setDescription(module.getDescription());
         dto.setPriority(module.getPriority());
-        dto.setAssignmentPath(module.getAssignmentPath());
         return dto;
     }
 }

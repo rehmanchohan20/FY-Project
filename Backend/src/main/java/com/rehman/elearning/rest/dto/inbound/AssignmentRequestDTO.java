@@ -1,14 +1,12 @@
 package com.rehman.elearning.rest.dto.inbound;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Set;
-
 @Validated
-public class CourseModuleRequestDTO {
+public class AssignmentRequestDTO {
 
     private Long id;
 
@@ -17,10 +15,8 @@ public class CourseModuleRequestDTO {
 
     private String description; // Optional, consider adding @NotBlank if required
 
-    @NotNull(message = "Priority must not be null")
-    @Min(value = 0, message = "Priority must be a non-negative integer")
-    private Integer priority;
 
+    private String assignmentPath;
 
     // Getters and Setters
 
@@ -48,11 +44,12 @@ public class CourseModuleRequestDTO {
         this.description = description;
     }
 
-    public Integer getPriority() {
-        return priority;
+
+    public String getAssignmentPath() {
+        return assignmentPath;
     }
 
-    public void setPriority(Integer priority) {
-        this.priority = priority;
+    public void setAssignmentPath(String assignmentPath) {
+        this.assignmentPath = assignmentPath;
     }
 }

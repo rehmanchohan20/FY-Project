@@ -16,12 +16,6 @@ public interface CourseModuleService {
     CourseModuleResponseDTO updateModule(Long moduleId, CourseModuleRequestDTO request);
     void deleteModule(Long moduleId);
 
-    // Upload assignment
-    String uploadAssignment(Long moduleId, MultipartFile file) throws IOException;
-    public void deleteAssignment(Long moduleId);
-    public String updateAssignment(Long moduleId, MultipartFile file) throws IOException;
-    public String getAssignment(Long moduleId);
-
 
     // Save MCQs
     void saveMCQs(Long moduleId, List<MCQRequestDTO> mcqRequestDTOs);

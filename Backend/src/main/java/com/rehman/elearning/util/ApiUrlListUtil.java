@@ -56,6 +56,7 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/v1/auth/**"));
         list.add(new AntPathRequestMatcher("/oauth2/**"));
         list.add(new AntPathRequestMatcher("/api/public/**"));
+        list.add(new AntPathRequestMatcher("/api/**"));
         list.add(new AntPathRequestMatcher("/api/payments/**"));
         list.add(new AntPathRequestMatcher("/login/oauth2/**"));
         list.add(new AntPathRequestMatcher("/oauth2/callback/google"));

@@ -21,9 +21,6 @@ public class CourseModule extends CommonEntity {
     @Column(name = "priority")
     private Integer priority;
 
-    // Store assignment PDF URL (path on the server)
-    @Column(name = "assignment_path")
-    private String assignmentPath;
 
     // Relationship with Course entity
     @ManyToOne(cascade = CascadeType.ALL)
@@ -37,6 +34,9 @@ public class CourseModule extends CommonEntity {
     // Relationship with MCQ (one-to-many)
     @OneToMany(mappedBy = "courseModule", fetch = FetchType.LAZY)
     private Set<MCQ> mcqs;
+
+    @OneToMany(mappedBy = "courseModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Assignment> assignments;
 
     // Getters and Setters
     public Long getId() {
@@ -71,14 +71,6 @@ public class CourseModule extends CommonEntity {
         this.priority = priority;
     }
 
-    public String getAssignmentPath() {
-        return assignmentPath;
-    }
-
-    public void setAssignmentPath(String assignmentPath) {
-        this.assignmentPath = assignmentPath;
-    }
-
     public Course getCourse() {
         return course;
     }
@@ -101,5 +93,13 @@ public class CourseModule extends CommonEntity {
 
     public void setMcqs(Set<MCQ> mcqs) {
         this.mcqs = mcqs;
+    }
+
+    public Set<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(Set<Assignment> assignments) {
+        this.assignments = assignments;
     }
 }
