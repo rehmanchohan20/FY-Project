@@ -13,6 +13,8 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long>{
+
+
     List<Course> findByTitleContaining(String title);
     @Query("SELECT c FROM Course c WHERE c.title LIKE %:keyword% OR c.description LIKE %:keyword%")
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword);

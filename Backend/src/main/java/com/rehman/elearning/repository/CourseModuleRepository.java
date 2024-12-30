@@ -12,6 +12,4 @@ public interface CourseModuleRepository extends JpaRepository<CourseModule, Long
     // findByCourseId
     List<CourseModule> findByCourseId(Long courseId);
     boolean existsByCourseAndPriority(Course course, int priority);
-
-
 }

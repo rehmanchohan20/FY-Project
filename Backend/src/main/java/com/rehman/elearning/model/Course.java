@@ -37,24 +37,21 @@ public class Course extends CommonEntity {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private CoursePrice coursePrice;
 
-    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private CourseOffer courseOffer;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseModule> courseDetails = new HashSet<>(); // Initialize to avoid NullPointerException
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CourseModule> courseDetails = new HashSet<>();
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Student> students;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Payment> payments;
 
-    // New property for the ManyToMany relationship with Guidance
     @ManyToMany
     @JoinTable(
             name = "course_guidance",
@@ -62,7 +59,6 @@ public class Course extends CommonEntity {
             inverseJoinColumns = @JoinColumn(name = "guidance_id")
     )
     private Set<Guidance> guidances = new HashSet<>();
-
     // Getters and setters
 
     public Long getId() {

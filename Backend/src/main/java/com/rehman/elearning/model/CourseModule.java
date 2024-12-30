@@ -28,14 +28,14 @@ public class CourseModule extends CommonEntity {
     private Course course;
 
     // Relationship with CourseModuleLesson (one-to-many)
-    @OneToMany(mappedBy = "courseModule", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courseModule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<CourseModuleLesson> courseModuleLessons;
 
     // Relationship with MCQ (one-to-many)
-    @OneToMany(mappedBy = "courseModule", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courseModule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<MCQ> mcqs;
 
-    @OneToMany(mappedBy = "courseModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courseModule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Assignment> assignments;
 
     // Getters and Setters

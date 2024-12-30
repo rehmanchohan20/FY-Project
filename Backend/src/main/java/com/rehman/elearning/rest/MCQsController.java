@@ -34,7 +34,7 @@ public class MCQsController {
 
     @PutMapping("/{moduleId}/mcqs/{mcqId}")
     public ResponseEntity<MCQResponseDTO> updateMCQ(
-            @PathVariable Long courseId, @PathVariable Long moduleId, @PathVariable Long mcqId, @RequestBody MCQRequestDTO request) {
+             @PathVariable Long moduleId, @PathVariable Long mcqId, @RequestBody MCQRequestDTO request) {
         MCQResponseDTO updatedMCQ = courseModuleService.updateMCQ(moduleId, mcqId, request);
         return ResponseEntity.ok(updatedMCQ);
     }

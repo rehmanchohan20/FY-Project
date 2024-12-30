@@ -16,7 +16,8 @@ public class Teacher extends CommonEntity{
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Course> courses = new HashSet<>();
 
     public Long getUserId() {

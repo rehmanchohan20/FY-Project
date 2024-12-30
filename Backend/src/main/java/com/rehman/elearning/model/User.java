@@ -47,11 +47,11 @@ public class User extends CommonEntity implements OAuth2User, UserDetails {
 	@Column(name = "otp_generated_time")
 	private LocalDateTime otpGeneratedTime;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@PrimaryKeyJoinColumn
 	private Student student;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@PrimaryKeyJoinColumn
 	private Teacher teacher;
 

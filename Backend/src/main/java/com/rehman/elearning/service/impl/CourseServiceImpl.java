@@ -51,6 +51,7 @@ public class CourseServiceImpl implements CourseService {
     private String thumbnailServerUrl;
 
     @Override
+    @Transactional
     public CourseResponseDTO createCourse(CourseRequestDTO request) {
         String teacherIdFromToken = jwtTokenExtractor.extractTeacherIdFromJwt();
         Long teacherId = Long.parseLong(teacherIdFromToken);
@@ -81,6 +82,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public String uploadThumbnail(Long courseId, MultipartFile thumbnail) {
         // Retrieve the course by its ID
         Course course = courseRepository.findById(courseId)
@@ -101,6 +103,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
+    @Transactional
     public CourseResponseDTO getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
@@ -108,6 +111,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public List<CourseResponseDTO> getAllCourses() {
         return courseRepository.findAll().stream()
                 .map(this::convertToResponseDTO)
@@ -135,17 +139,37 @@ public class CourseServiceImpl implements CourseService {
         coursePrice.setCurrency(request.getCoursePrice().getCurrency());
         coursePrice.setCreatedBy(UserCreatedBy.Teacher);
         course.setCoursePrice(coursePrice);
-
         course = courseRepository.save(course);
         return convertToResponseDTO(course);
     }
 
     @Override
+    @Transactional
     public void deleteCourse(Long courseId) {
-        if (!courseRepository.existsById(courseId)) {
-            throw new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND);
+        // Fetch the course to ensure it exists and load all related entities
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.COURSE_NOT_FOUND));
+
+        try {
+            if (course.getCoursePrice() != null) {
+                course.setCoursePrice(null); // Unlink the price from the course
+            }
+            if (course.getCourseDetails() != null && !course.getCourseDetails().isEmpty()) {
+                course.getCourseDetails().forEach(module -> module.setCourse(null)); // Unlink each module
+                course.getCourseDetails().clear(); // Clear the collection
+            }
+
+            // Finally, delete the course itself
+            if(course != null && course.getTeacher() != null) {
+                course.getTeacher().getCourses().remove(course); // Unlink the course from the teacher
+            }
+            courseRepository.delete(course); // Delete the course object
+            courseRepository.flush(); // Ensure delete it immediately executed
+
+            // Log success
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete course with ID: " + courseId, e);
         }
-        courseRepository.deleteById(courseId);
     }
 
     @Override

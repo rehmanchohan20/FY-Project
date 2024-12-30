@@ -44,7 +44,7 @@ public class CourseModuleLesson extends CommonEntity {
             inverseJoinColumns = @JoinColumn(name = "media_id"))
     private Set<Media> medias;
 
-    @OneToMany(mappedBy = "courseModuleLesson",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courseModuleLesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CourseProgress> courseProgress;
 
     public Long getId() {

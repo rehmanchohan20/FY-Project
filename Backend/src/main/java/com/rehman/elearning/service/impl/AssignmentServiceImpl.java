@@ -47,6 +47,12 @@ public class AssignmentServiceImpl implements AssignmentService {
         CourseModule module = courseModuleRepository.findById(moduleId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Create the directory if it doesn't exist
+        }
+
+
         // Save file locally
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         String localFilePath = uploadDir + fileName;
@@ -76,6 +82,11 @@ public class AssignmentServiceImpl implements AssignmentService {
 
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Create the directory if it doesn't exist
+        }
 
         // Save new file locally
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
