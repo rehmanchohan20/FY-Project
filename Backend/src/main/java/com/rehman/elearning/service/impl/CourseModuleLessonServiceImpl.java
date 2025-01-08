@@ -13,6 +13,8 @@ import com.rehman.elearning.rest.dto.inbound.CourseModuleLessonRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseModuleLessonResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.rehman.elearning.service.CourseModuleLessonService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,127 +36,124 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
     @Autowired
     private MediaRepository mediaRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(CourseModuleLessonServiceImpl.class);
+
     @Override
     @Transactional
     public List<CourseModuleLessonResponseDTO> addLesson(Long moduleId, List<CourseModuleLessonRequestDTO> requests) {
+        log.info("Adding lessons to module with ID: {}", moduleId);
+
         CourseModule module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
         List<CourseModuleLessonResponseDTO> responseList = new ArrayList<>();
-
         for (CourseModuleLessonRequestDTO request : requests) {
-            CourseModuleLesson lesson = new CourseModuleLesson();
-            lesson.setTitle(request.getTitle());
-            lesson.setDescription(request.getDescription());
-            lesson.setCreatedBy(UserCreatedBy.Teacher);
-            lesson.setFeaturedLesson(request.getFeaturedLesson());
-            lesson.setPriority(request.getPriority());
-            lesson.setContentLock(request.getIsContentLock());
-            lesson.setStatus(request.getStatus());
-
-            // Handle media relationships with validation
-            if (request.getMediaIds() != null && !request.getMediaIds().isEmpty()) {
-                Set<Media> medias = request.getMediaIds().stream()
-                        .map(mediaId -> mediaRepository.findById(mediaId)
-                                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.MEDIA_NOT_FOUND)))
-                        .collect(Collectors.toSet());
-                lesson.setMedias(medias);
-
-                // Calculate the total duration from the media
-                String totalDuration = calculateTotalDuration(medias);
-                lesson.setDuration(totalDuration);
-            }
-
+            CourseModuleLesson lesson = createLessonFromRequest(request);
             lesson.setCourseModule(module);
             lesson = lessonRepository.save(lesson);
             responseList.add(convertToResponseDTO(lesson));
         }
 
+        log.info("Successfully added {} lessons to module with ID: {}", responseList.size(), moduleId);
         return responseList;
     }
 
-
     @Override
+    @Transactional
     public List<CourseModuleLessonResponseDTO> getAllLessons(Long moduleId) {
-        // Fetch lessons associated with the given moduleId
-        List<CourseModuleLesson> lessons = lessonRepository.findByModuleId(moduleId);
+        log.info("Fetching all lessons for module with ID: {}", moduleId);
 
-        // Convert the list of CourseModuleLesson to CourseModuleLessonResponseDTO
+        List<CourseModuleLesson> lessons = lessonRepository.findByCourseModule_Id(moduleId);
+        if (lessons.isEmpty()) {
+            log.warn("No lessons found for module with ID: {}", moduleId);
+        }
+
         return lessons.stream()
-                .map(this::convertToResponseDTO) // Use a method reference to convert each lesson
-                .collect(Collectors.toList()); // Collect the results into a List
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public CourseModuleLessonResponseDTO updateLesson(Long lessonId, CourseModuleLessonRequestDTO request) {
-        CourseModuleLesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
+        log.info("Updating lesson with ID: {}", lessonId);
 
+        CourseModuleLesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND));
+
+        updateLessonFromRequest(lesson, request);
+        lesson = lessonRepository.save(lesson);
+
+        log.info("Successfully updated lesson with ID: {}", lessonId);
+        return convertToResponseDTO(lesson);
+    }
+
+    @Override
+    @Transactional
+    public void deleteLesson(Long lessonId) {
+        log.info("Deleting lesson with ID: {}", lessonId);
+        if (!lessonRepository.existsById(lessonId)) {
+            throw new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND);
+        }
+        lessonRepository.deleteById(lessonId);
+        log.info("Successfully deleted lesson with ID: {}", lessonId);
+    }
+
+    @Override
+    @Transactional
+    public List<MediaResponseDTO> getMediaByLessonId(Long lessonId) {
+        log.info("Fetching media for lesson with ID: {}", lessonId);
+
+        CourseModuleLesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND));
+
+        return lesson.getMedias().stream()
+                .map(this::convertMediaToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // --- Private Helper Methods ---
+
+    private CourseModuleLesson createLessonFromRequest(CourseModuleLessonRequestDTO request) {
+        CourseModuleLesson lesson = new CourseModuleLesson();
         lesson.setTitle(request.getTitle());
         lesson.setDescription(request.getDescription());
-        lesson.setFeaturedLesson(request.getFeaturedLesson());
         lesson.setCreatedBy(UserCreatedBy.Teacher);
+        lesson.setFeaturedLesson(request.getFeaturedLesson());
         lesson.setPriority(request.getPriority());
         lesson.setContentLock(request.getIsContentLock());
         lesson.setStatus(request.getStatus());
 
-        // Handle media relationships
         if (request.getMediaIds() != null && !request.getMediaIds().isEmpty()) {
-            Set<Media> medias = request.getMediaIds().stream()
-                    .map(mediaId -> mediaRepository.findById(mediaId)
-                            .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.MEDIA_NOT_FOUND)))
-                    .collect(Collectors.toSet());
+            Set<Media> medias = fetchAndValidateMedia(request.getMediaIds());
             lesson.setMedias(medias);
-
-            // Calculate the total duration from the media
-            String totalDuration = calculateTotalDuration(medias);
-            lesson.setDuration(totalDuration);
-        } else {
-            lesson.setMedias(null);
-            lesson.setDuration("00:00:00"); // Set duration to zero if no media is associated
+            lesson.setDuration(calculateTotalDuration(medias));
         }
 
-        lesson = lessonRepository.save(lesson);
-        return convertToResponseDTO(lesson);
+        return lesson;
     }
 
+    private void updateLessonFromRequest(CourseModuleLesson lesson, CourseModuleLessonRequestDTO request) {
+        lesson.setTitle(request.getTitle());
+        lesson.setDescription(request.getDescription());
+        lesson.setFeaturedLesson(request.getFeaturedLesson());
+        lesson.setPriority(request.getPriority());
+        lesson.setContentLock(request.getIsContentLock());
+        lesson.setStatus(request.getStatus());
 
-    @Override
-    public void deleteLesson(Long lessonId) {
-        lessonRepository.deleteById(lessonId);
-    }
-
-    private CourseModuleLessonResponseDTO convertToResponseDTO(CourseModuleLesson lesson) {
-        CourseModuleLessonResponseDTO dto = new CourseModuleLessonResponseDTO();
-        dto.setId(lesson.getId());
-        dto.setTitle(lesson.getTitle());
-        dto.setDescription(lesson.getDescription());
-        dto.setFeaturedLesson(lesson.getFeaturedLesson());
-        dto.setStatus(lesson.getStatus());
-        dto.setIsContentLock(lesson.getContentLock());
-        dto.setPriority(lesson.getPriority());
-        dto.setDuration(lesson.getDuration());
-
-        // Populate mediaDetails
-        if (lesson.getMedias() != null) {
-            Set<MediaResponseDTO> mediaDetails = lesson.getMedias().stream()
-                    .map(this::convertMediaToDTO)
-                    .collect(Collectors.toSet());
-            dto.setMediaDetails(mediaDetails);
+        if (request.getMediaIds() != null && !request.getMediaIds().isEmpty()) {
+            Set<Media> medias = fetchAndValidateMedia(request.getMediaIds());
+            lesson.setMedias(medias);
+            lesson.setDuration(calculateTotalDuration(medias));
         }
-
-        return dto;
     }
 
-    private MediaResponseDTO convertMediaToDTO(Media media) {
-        MediaResponseDTO dto = new MediaResponseDTO();
-        dto.setId(media.getId());
-        dto.setUrl(media.getUrl());
-        dto.setType(media.getType());
-        dto.setDuration(media.getDuration());
-        return dto;
+    private Set<Media> fetchAndValidateMedia(Set<Long> mediaIds) {
+        return mediaIds.stream()
+                .map(mediaId -> mediaRepository.findById(mediaId)
+                        .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.MEDIA_NOT_FOUND)))
+                .collect(Collectors.toSet());
     }
-
 
     private String calculateTotalDuration(Set<Media> medias) {
         int totalSeconds = medias.stream()
@@ -171,7 +170,7 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
             int seconds = Integer.parseInt(parts[2]);
             return hours * 3600 + minutes * 60 + seconds;
         } catch (Exception e) {
-            // Log or handle invalid duration formats
+            log.error("Invalid duration format: {}", duration, e);
             return 0;
         }
     }
@@ -183,4 +182,34 @@ public class CourseModuleLessonServiceImpl implements CourseModuleLessonService 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
+    private CourseModuleLessonResponseDTO convertToResponseDTO(CourseModuleLesson lesson) {
+        CourseModuleLessonResponseDTO dto = new CourseModuleLessonResponseDTO();
+        dto.setId(lesson.getId());
+        dto.setTitle(lesson.getTitle());
+        dto.setDescription(lesson.getDescription());
+        dto.setFeaturedLesson(lesson.getFeaturedLesson());
+        dto.setStatus(lesson.getStatus());
+        dto.setIsContentLock(lesson.getContentLock());
+        dto.setPriority(lesson.getPriority());
+        dto.setDuration(lesson.getDuration());
+
+        if (lesson.getMedias() != null) {
+            dto.setMediaDetails(
+                    lesson.getMedias().stream()
+                            .map(this::convertMediaToDTO)
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        return dto;
+    }
+
+    private MediaResponseDTO convertMediaToDTO(Media media) {
+        MediaResponseDTO dto = new MediaResponseDTO();
+        dto.setId(media.getId());
+        dto.setUrl(media.getUrl());
+        dto.setType(media.getType());
+        dto.setDuration(media.getDuration());
+        return dto;
+    }
 }

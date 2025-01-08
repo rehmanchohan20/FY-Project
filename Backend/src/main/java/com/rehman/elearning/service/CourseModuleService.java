@@ -13,7 +13,7 @@ public interface CourseModuleService {
 
     List<CourseModuleResponseDTO> addModules(Long courseId, List<CourseModuleRequestDTO> requests);
     List<CourseModuleResponseDTO> getAllModules(Long courseId);
-    CourseModuleResponseDTO updateModule(Long moduleId, CourseModuleRequestDTO request);
+    public List<CourseModuleResponseDTO> updateModules(Long moduleId, List<CourseModuleRequestDTO> requests);
     void deleteModule(Long moduleId);
 
 

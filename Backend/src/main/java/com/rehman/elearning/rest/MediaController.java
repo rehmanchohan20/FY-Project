@@ -37,10 +37,8 @@ public class MediaController {
     }
 
     @PutMapping("/{mediaId}")
-    public ResponseEntity<MediaResponseDTO> updateMedia(
-            @PathVariable Long mediaId,
-            @RequestBody MediaRequestDTO request
-    ) {
+    public ResponseEntity<MediaResponseDTO> updateMedia(@PathVariable Long mediaId,
+            @RequestBody MediaRequestDTO request) {
         MediaResponseDTO updatedMedia = mediaService.updateMedia(mediaId, request);
         return ResponseEntity.ok(updatedMedia);
     }

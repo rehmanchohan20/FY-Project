@@ -2,6 +2,7 @@ package com.rehman.elearning.rest;
 
 import com.rehman.elearning.rest.dto.inbound.CourseModuleLessonRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseModuleLessonResponseDTO;
+import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
 import com.rehman.elearning.service.CourseModuleLessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,12 @@ public class CourseModuleLessonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
+    @GetMapping("/{lessonId}/media")
+    public ResponseEntity<List<MediaResponseDTO>> getLessonMedia(@PathVariable Long lessonId) {
+        List<MediaResponseDTO> mediaList = courseModuleLessonService.getMediaByLessonId(lessonId);
+        return ResponseEntity.ok(mediaList);
+    }
+
     @GetMapping
     public ResponseEntity<List<CourseModuleLessonResponseDTO>> getAllLessons(@PathVariable Long moduleId) {
         List<CourseModuleLessonResponseDTO> response = courseModuleLessonService.getAllLessons(moduleId);
@@ -32,7 +39,7 @@ public class CourseModuleLessonController {
 
     @PutMapping("/{lessonId}")
     public ResponseEntity<CourseModuleLessonResponseDTO> updateLesson(
-            @PathVariable Long moduleId, @PathVariable Long lessonId, @RequestBody CourseModuleLessonRequestDTO request) {
+            @PathVariable Long lessonId, @RequestBody CourseModuleLessonRequestDTO request) {
         CourseModuleLessonResponseDTO response = courseModuleLessonService.updateLesson(lessonId, request);
         return ResponseEntity.ok(response);
     }

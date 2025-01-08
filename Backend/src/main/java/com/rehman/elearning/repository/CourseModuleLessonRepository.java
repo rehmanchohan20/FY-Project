@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CourseModuleLessonRepository extends JpaRepository<CourseModuleLesson, Long> {
 
-    List<CourseModuleLesson> findByModuleId(Long moduleId);
+    List<CourseModuleLesson> findByCourseModule_Id(Long moduleId);
     void deleteAllByCourseModule(CourseModule module);
 }

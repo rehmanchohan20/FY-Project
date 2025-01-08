@@ -15,12 +15,11 @@ public class CourseModuleRequestDTO {
     @NotBlank(message = "Heading is required")
     private String heading;
 
-    private String description; // Optional, consider adding @NotBlank if required
+    private String description;
 
-    @NotNull(message = "Priority must not be null")
+//    @NotNull(message = "Priority must not be null")
     @Min(value = 0, message = "Priority must be a non-negative integer")
     private Integer priority;
-
 
     // Getters and Setters
 
