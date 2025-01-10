@@ -44,6 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.studentRepository = studentRepository;
     }
 
+    @Override
     public PaymentResponseDTO createAndProcessPayment(PaymentRequestDTO paymentRequestDTO) throws StripeException, IOException {
         Stripe.apiKey = secretKey;
 
@@ -69,10 +70,12 @@ public class PaymentServiceImpl implements PaymentService {
                         SessionCreateParams.LineItem.builder()
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("usd")
+                                                .setCurrency("pkr")  // Currency in PKR
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName(course.getTitle())  // Course name as the product
+                                                                .setDescription(course.getDescription())  // Course description
+                                                                .setTaxCode("education")  // Tax code for education
                                                                 .build()
                                                 )
                                                 .setUnitAmount((long) (amountInUSD * 100))  // Amount in cents
@@ -112,7 +115,6 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
-
     private double fetchExchangeRatePKRtoUSD() throws IOException {
         // Example hardcoded value, replace with an actual API call if needed
         return 300.0; // Assume 1 USD = 300 PKR
@@ -135,6 +137,24 @@ public class PaymentServiceImpl implements PaymentService {
             default:
                 return PaymentStatus.PENDING;
         }
+    }
+
+    // New Method to enroll student in course
+    public void enrollStudentInCourse(Long studentId, Long courseId) {
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
+        Optional<Course> courseOpt = courseRepository.findById(courseId);
+
+        if (studentOpt.isEmpty() || courseOpt.isEmpty()) {
+            throw new IllegalArgumentException("Invalid student or course ID.");
+        }
+
+        Student student = studentOpt.get();
+        Course course = courseOpt.get();
+
+        // Enroll the student in the course
+        // This could involve adding a record to an "enrollment" table or simply updating the student's enrolled courses.
+        student.getCourses().add(course);  // Assume student has a List<Course> enrolledCourses
+        studentRepository.save(student);  // Save updated student data
     }
 
     @Override
