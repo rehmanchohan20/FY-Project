@@ -11,16 +11,18 @@ public class PaymentResponseDTO {
     private String transactionId;          // Transaction ID
     private Double amount;               // Payment amount
     private PaymentStatus status;        // Payment status
+    private String currency;             // Currency used for payment
     private Long courseId;               // Course ID related to the payment
     private Long studentId;              // Student ID making the payment
     private Map<String, String> paymentDetails; // Additional details (including the URL for Stripe Checkout)
 
     // Constructor without additional payment details
-    public PaymentResponseDTO(Long id, String transactionId, Double amount, PaymentStatus status,
+    public PaymentResponseDTO(Long id, String transactionId, Double amount, String currency, PaymentStatus status,
                               Long courseId, Long studentId) {
         this.id = id;
         this.transactionId = transactionId;
         this.amount = amount;
+        this.currency = currency;
         this.status = status;
         this.courseId = courseId;
         this.studentId = studentId;
@@ -28,9 +30,9 @@ public class PaymentResponseDTO {
     }
 
     // Constructor with additional payment details (including checkout URL)
-    public PaymentResponseDTO(Long id, String transactionId, Double amount, PaymentStatus status,
+    public PaymentResponseDTO(Long id, String transactionId, Double amount, String currency, PaymentStatus status,
                               Long courseId, Long studentId, String checkoutUrl) {
-        this(id, transactionId, amount, status, courseId, studentId);
+        this(id, transactionId, amount, currency, status, courseId, studentId);
         this.paymentDetails = new HashMap<>();
         this.paymentDetails.put("checkoutUrl", checkoutUrl); // Add checkout URL to paymentDetails
     }
@@ -90,5 +92,13 @@ public class PaymentResponseDTO {
 
     public void setPaymentDetails(Map<String, String> paymentDetails) {
         this.paymentDetails = paymentDetails;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

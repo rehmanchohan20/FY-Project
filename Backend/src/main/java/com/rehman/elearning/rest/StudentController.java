@@ -1,14 +1,19 @@
 package com.rehman.elearning.rest;
 
 import com.rehman.elearning.rest.dto.inbound.StudentRequestDTO;
+import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.StudentResponseDTO;
 import com.rehman.elearning.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/public")
@@ -43,5 +48,15 @@ public class StudentController {
     public String deleteStudent(@PathVariable Long userId) {
         studentService.deleteStudent(userId);
         return "Student deleted successfully";
+    }
+
+    @GetMapping("/students/courses")
+    public ResponseEntity<Set<CourseResponseDTO>> getEnrolledCourses(@AuthenticationPrincipal Jwt jwt) {
+        long userId = Long.valueOf(jwt.getId());
+        // Fetch the student by the extracted user ID
+        StudentResponseDTO student = studentService.getStudentById(userId);
+        // Get the enrolled courses
+        Set<CourseResponseDTO> enrolledCourses = student.getCourses();
+        return ResponseEntity.ok(enrolledCourses);
     }
 }

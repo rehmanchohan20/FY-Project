@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.rehman.elearning.service.impl.StudentServiceImpl.getCourseResponseDTO;
+
 @Service
 public class CourseServiceImpl implements CourseService {
 
@@ -208,19 +210,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     private CourseResponseDTO convertToResponseDTO(Course course) {
-        CourseResponseDTO dto = new CourseResponseDTO();
-        dto.setId(course.getId());
-        dto.setTitle(course.getTitle());
-        dto.setDescription(course.getDescription());
-        dto.setStatus(course.getStatus());
-        dto.setThumbnail(course.getThumbnail());
-        dto.setCategory(course.getCategory());
-        if (course.getCoursePrice() != null) {
-            CoursePriceResponseDTO priceResponse = new CoursePriceResponseDTO();
-            priceResponse.setPrice(course.getCoursePrice().getAmount());
-            priceResponse.setCurrency(course.getCoursePrice().getCurrency());
-            dto.setCoursePrice(priceResponse);
-        }
-        return dto;
+        return getCourseResponseDTO(course);
     }
 }

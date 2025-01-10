@@ -1,6 +1,5 @@
 package com.rehman.elearning.rest;
 
-import com.rehman.elearning.constants.PaymentStatus;
 import com.rehman.elearning.rest.dto.inbound.PaymentRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.PaymentResponseDTO;
 import com.rehman.elearning.service.PaymentService;
@@ -31,22 +30,17 @@ public class PaymentController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error fetching exchange rate: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Payment failed: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid input: " + e.getMessage());
         }
     }
 
-    @GetMapping("/success")
-    public ResponseEntity<String> paymentSuccess(@RequestParam("payment_intent") String paymentIntentId) {
-        try {
-            PaymentStatus status = paymentService.updatePaymentStatus(paymentIntentId);
-            return ResponseEntity.ok("Payment Success! Payment ID: " + paymentIntentId + " Status: " + status);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Payment processing failed: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/failure")
-    public ResponseEntity<String> paymentFailure() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed. Please try again.");
+    @PostMapping("/webhook")
+    public ResponseEntity<String> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+        return paymentService.handleWebhook(payload, sigHeader);
     }
 }

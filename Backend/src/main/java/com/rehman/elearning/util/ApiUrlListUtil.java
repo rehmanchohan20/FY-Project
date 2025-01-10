@@ -14,6 +14,8 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/api/modules/**"));
         list.add(new AntPathRequestMatcher("/api/media/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/**"));
+        list.add(new AntPathRequestMatcher("/api/payment/**"));
+        list.add(new AntPathRequestMatcher("/api/guidance/**"));
         return list;
     }
 
@@ -45,6 +47,7 @@ public class ApiUrlListUtil {
     public static List<RequestMatcher> getGuestApiUrls(){
         List<RequestMatcher> list = new ArrayList<>();
         list.add(new AntPathRequestMatcher("v1/oauth2/*"));
+        list.add(new AntPathRequestMatcher("/api/payment/**"));
         return list;
     }
 
