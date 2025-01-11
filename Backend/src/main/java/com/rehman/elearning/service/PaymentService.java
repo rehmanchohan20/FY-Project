@@ -15,8 +15,9 @@ public interface PaymentService {
     PaymentResponseDTO createAndProcessPayment(PaymentRequestDTO paymentRequestDTO) throws StripeException, IOException;
 //    Optional<Payment> findByTransactionId(String transactionId);
 //    void save(Payment payment);
-    public ResponseEntity<String> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader);
-        void enrollStudentInCourse(String transactionId);
-    void handlePaymentSuccess(String transactionId);
+public void handleWebhook(String payload, String sigHeader);
+//void enrollStudentInCourse(String transactionId);
+//public void handlePaymentSuccess(String studentId, String courseId);
+//    public void enrollStudentInCourse(Payment payment);
     void handlePaymentFailure(String transactionId);
 }

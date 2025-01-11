@@ -1,6 +1,9 @@
 package com.rehman.elearning.rest.dto.outbound;
 
 import com.rehman.elearning.constants.PaymentStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +11,7 @@ import java.util.Map;
 public class PaymentResponseDTO {
 
     private Long id;                     // Payment ID
-    private String transactionId;          // Transaction ID
+    private String transactionId;        // Transaction ID
     private Double amount;               // Payment amount
     private PaymentStatus status;        // Payment status
     private String currency;             // Currency used for payment
@@ -31,9 +34,9 @@ public class PaymentResponseDTO {
 
     // Constructor with additional payment details (including checkout URL)
     public PaymentResponseDTO(Long id, String transactionId, Double amount, String currency, PaymentStatus status,
-                              Long courseId, Long studentId, String checkoutUrl) {
+                              Long courseId, Long studentId, String ClientSecret, String checkoutUrl) {
         this(id, transactionId, amount, currency, status, courseId, studentId);
-        this.paymentDetails = new HashMap<>();
+        this.paymentDetails.put("ClientSecret", ClientSecret); // Add checkout URL to paymentDetails
         this.paymentDetails.put("checkoutUrl", checkoutUrl); // Add checkout URL to paymentDetails
     }
 

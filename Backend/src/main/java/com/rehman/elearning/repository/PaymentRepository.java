@@ -12,4 +12,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     // Custom method to find a payment by its transaction ID
     Optional<Payment> findByTransactionId(String transactionId);
+    Optional<Payment> findByStudentUserIdAndCourseId(Long studentId, Long courseId);
 }

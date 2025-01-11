@@ -3,8 +3,11 @@ package com.rehman.elearning.rest;
 import com.rehman.elearning.rest.dto.inbound.PaymentRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.PaymentResponseDTO;
 import com.rehman.elearning.service.PaymentService;
+import com.rehman.elearning.service.impl.PaymentServiceImpl;
 import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,8 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @PostMapping("/create")
     public ResponseEntity<?> createPayment(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO) {
@@ -41,6 +46,13 @@ public class PaymentController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
-        return paymentService.handleWebhook(payload, sigHeader);
+        try {
+            paymentService.handleWebhook(payload, sigHeader);
+            return ResponseEntity.ok("Webhook processed successfully");
+        } catch (Exception e) {
+            logger.error("Error processing webhook: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook processing failed");
+        }
     }
+
 }
