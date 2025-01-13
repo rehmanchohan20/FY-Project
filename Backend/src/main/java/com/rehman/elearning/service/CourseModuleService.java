@@ -20,6 +20,7 @@ public interface CourseModuleService {
     // Save MCQs
     void saveMCQs(Long moduleId, List<MCQRequestDTO> mcqRequestDTOs);
     public MCQResponseDTO updateMCQ(Long moduleId, Long mcqId, MCQRequestDTO request);
+    MCQResponseDTO getMCQById(Long moduleId, Long mcqId); // New method
     public List<MCQResponseDTO> getMCQsForModule(Long moduleId);
     public void deleteMCQ(Long moduleId, Long mcqId);
 }

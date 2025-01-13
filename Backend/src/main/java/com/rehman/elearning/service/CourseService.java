@@ -75,5 +75,9 @@ public interface CourseService {
 	List<Course> getCoursesByKeyword(String keyword);
 
 
+	public List<CourseRequestDTO> getAvailableCoursesForStudent(Long studentId);
+
+
+
 	public List<CourseResponseDTO> getCoursesByCategory(CategoryEnum category);
 }

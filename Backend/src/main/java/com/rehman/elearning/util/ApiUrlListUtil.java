@@ -12,6 +12,7 @@ public class ApiUrlListUtil {
         list.add(new AntPathRequestMatcher("/api/courses/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/student/{studentId}"));
         list.add(new AntPathRequestMatcher("/api/modules/**"));
+        list.add(new AntPathRequestMatcher("/api/enrollments/**"));
         list.add(new AntPathRequestMatcher("/api/media/**"));
         list.add(new AntPathRequestMatcher("/api/tickets/**"));
         list.add(new AntPathRequestMatcher("/api/payment/**"));

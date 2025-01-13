@@ -2,7 +2,6 @@ package com.rehman.elearning.rest.dto.inbound;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 public class CoursePriceRequestDTO {
 
@@ -11,6 +10,11 @@ public class CoursePriceRequestDTO {
 
     @NotBlank(message = "Currency must not be blank") // Optional: Add validation for currency
     private String currency;
+
+    public CoursePriceRequestDTO(Double amount, String currency) {
+        this.price = amount;
+        this.currency = currency;
+    }
 
     // Getters and Setters
     public Double getPrice() {

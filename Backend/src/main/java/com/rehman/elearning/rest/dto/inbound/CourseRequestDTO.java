@@ -21,6 +21,17 @@ public class CourseRequestDTO {
     @NotNull(message = "Category should not be null")
     private CategoryEnum category;
 
+    public CourseRequestDTO() {
+    }
+
+    public CourseRequestDTO(String title, String description, CoursePriceRequestDTO coursePrice, CourseStatusEnum status, CategoryEnum category) {
+        this.title = title;
+        this.description = description;
+        this.coursePrice = coursePrice;
+        this.status = status;
+        this.category = category;
+    }
+
     public String getTitle() {
         return title;
     }

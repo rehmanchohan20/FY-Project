@@ -11,6 +11,17 @@ public class Amount extends CommonEntity {
     @Column(name = "currency")
     private String currency;
 
+    // Default constructor
+    public Amount() {
+    }
+
+    // All-argument constructor
+    public Amount(Double amount, String currency) {
+        this.amount =  amount;
+        this.currency = currency;
+    }
+
+
     public Double getAmount() {
         return amount;
     }

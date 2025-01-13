@@ -126,7 +126,7 @@ public class CourseModuleServiceImpl implements CourseModuleService {
                     .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
             // Properly unlink the module from the course
-            course.getCourseDetails().remove(module);
+            course.getcourseModule().remove(module);
             module.setCourse(null); // Break the bi-directional link explicitly
 
             courseRepository.save(course); // Save the course to update the persistence context
@@ -160,6 +160,14 @@ public class CourseModuleServiceImpl implements CourseModuleService {
         }).collect(Collectors.toList());
 
         mcqRepository.saveAll(mcqs);
+    }
+
+    @Override
+    @Transactional
+    public MCQResponseDTO getMCQById(Long moduleId, Long mcqId) {
+        return mcqRepository.findByIdAndCourseModuleId(mcqId, moduleId)
+                .map(mcq -> new MCQResponseDTO(mcq.getId(), mcq.getQuestion(), mcq.getOptions(), mcq.getCorrectAnswer()))
+                .orElseThrow(() -> new RuntimeException("MCQ not found"));
     }
 
     // Updating an MCQ for a module

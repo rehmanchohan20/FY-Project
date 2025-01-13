@@ -5,6 +5,8 @@ import com.rehman.elearning.model.Student;
 import com.rehman.elearning.model.User;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.StudentRepository;
+import com.rehman.elearning.rest.dto.inbound.CoursePriceRequestDTO;
+import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.StudentRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
@@ -39,6 +41,26 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDto) {
         Student student = new Student();
         return getStudentResponseDTO(studentRequestDto, student);
+    }
+
+
+    @Override
+    @Transactional
+    public List<CourseResponseDTO> getEnrolledCourses(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        List<Course> enrolledCourses = courseRepository.findByStudents_UserId(studentId);
+        return enrolledCourses.stream()
+                .map(course -> new CourseResponseDTO(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getDescription(),
+                        new CoursePriceResponseDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
+                        course.getStatus(),
+                        course.getThumbnail(),
+                        course.getCategory()
+                ))
+                .collect(Collectors.toList());
     }
 
     private StudentResponseDTO getStudentResponseDTO(StudentRequestDTO studentRequestDto, Student student) {

@@ -42,6 +42,18 @@ public class Student extends CommonEntity {
 	}
 
 
+
+	//	Constructors
+	// Default constructor
+	public Student() {
+	}
+
+	// Constructor for deserialization
+	public Student(Long userId) {
+		this.userId = userId;
+	}
+
+
 	public Long getUserId() {
 		return userId;
 	}

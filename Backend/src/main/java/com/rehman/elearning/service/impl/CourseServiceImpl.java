@@ -8,9 +8,12 @@ import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.CoursePrice;
+import com.rehman.elearning.model.Student;
 import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.repository.CourseRepository;
+import com.rehman.elearning.repository.StudentRepository;
 import com.rehman.elearning.repository.TeacherRepository;
+import com.rehman.elearning.rest.dto.inbound.CoursePriceRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
@@ -23,10 +26,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
-import java.io.File;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.rehman.elearning.service.impl.StudentServiceImpl.getCourseResponseDTO;
@@ -42,6 +46,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private JwtTokenExtractor jwtTokenExtractor;
+
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private MediaService mediaService;  // Inject MediaService for uploading video
@@ -156,9 +164,9 @@ public class CourseServiceImpl implements CourseService {
             if (course.getCoursePrice() != null) {
                 course.setCoursePrice(null); // Unlink the price from the course
             }
-            if (course.getCourseDetails() != null && !course.getCourseDetails().isEmpty()) {
-                course.getCourseDetails().forEach(module -> module.setCourse(null)); // Unlink each module
-                course.getCourseDetails().clear(); // Clear the collection
+            if (course.getcourseModule()!= null && !course.getcourseModule().isEmpty()) {
+                course.getcourseModule().forEach(module -> module.setCourse(null)); // Unlink each module
+                course.getcourseModule().clear(); // Clear the collection
             }
 
             // Finally, delete the course itself
@@ -212,4 +220,29 @@ public class CourseServiceImpl implements CourseService {
     private CourseResponseDTO convertToResponseDTO(Course course) {
         return getCourseResponseDTO(course);
     }
+
+    @Override
+    @Transactional
+    public List<CourseRequestDTO> getAvailableCoursesForStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID."));
+
+        List<Course> allCourses = courseRepository.findAll();
+        Set<Course> enrolledCoursesSet = student.getCourses();  // This is a Set
+        // Convert the Set to a List
+        List<Course> enrolledCourses = new ArrayList<>(enrolledCoursesSet);
+
+        // Filter out the courses the student is already enrolled in and map to CourseRequestDTO
+        return allCourses.stream()
+                .filter(course -> !enrolledCourses.contains(course))
+                .map(course -> new CourseRequestDTO(
+                        course.getTitle(),
+                        course.getDescription(),
+                        new CoursePriceRequestDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
+                        course.getStatus(),
+                        course.getCategory()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }

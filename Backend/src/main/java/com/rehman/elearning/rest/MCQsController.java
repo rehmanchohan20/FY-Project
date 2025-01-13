@@ -32,9 +32,15 @@ public class MCQsController {
         return ResponseEntity.ok(mcqs);
     }
 
+    @GetMapping("/{moduleId}/mcqs/{mcqId}")
+    public ResponseEntity<MCQResponseDTO> getMCQById(@PathVariable Long moduleId, @PathVariable Long mcqId) {
+        MCQResponseDTO mcq = courseModuleService.getMCQById(moduleId, mcqId);
+        return ResponseEntity.ok(mcq);
+    }
+
     @PutMapping("/{moduleId}/mcqs/{mcqId}")
     public ResponseEntity<MCQResponseDTO> updateMCQ(
-             @PathVariable Long moduleId, @PathVariable Long mcqId, @RequestBody MCQRequestDTO request) {
+            @PathVariable Long moduleId, @PathVariable Long mcqId, @RequestBody MCQRequestDTO request) {
         MCQResponseDTO updatedMCQ = courseModuleService.updateMCQ(moduleId, mcqId, request);
         return ResponseEntity.ok(updatedMCQ);
     }

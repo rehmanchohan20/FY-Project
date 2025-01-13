@@ -44,7 +44,7 @@ public class Course extends CommonEntity {
     private CourseOffer courseOffer;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CourseModule> courseDetails = new HashSet<>();
+    private Set<CourseModule> courseModule = new HashSet<>();
 
 
     @ManyToMany
@@ -65,6 +65,20 @@ public class Course extends CommonEntity {
             inverseJoinColumns = @JoinColumn(name = "guidance_id")
     )
     private Set<Guidance> guidances = new HashSet<>();
+
+
+    //Constructors
+
+    // Default constructor
+    public Course() {
+    }
+
+    // Constructor for deserialization
+    public Course(Long id) {
+        this.id = id;
+    }
+
+
     // Getters and setters
 
     public Long getId() {
@@ -139,16 +153,16 @@ public class Course extends CommonEntity {
         this.courseOffer = courseOffer;
     }
 
-    public Set<CourseModule> getCourseDetails() {
-        return courseDetails;
+    public Set<CourseModule> getcourseModule() {
+        return courseModule;
     }
 
-    public void setCourseDetails(Set<CourseModule> courseDetails) {
-        this.courseDetails = courseDetails;
+    public void setcourseModule(Set<CourseModule> courseModule) {
+        this.courseModule = courseModule;
     }
 
     public void addCourseModule(CourseModule module) {
-        this.courseDetails.add(module);
+        this.courseModule.add(module);
         module.setCourse(this);
     }
 

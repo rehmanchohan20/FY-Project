@@ -1,9 +1,8 @@
 package com.rehman.elearning.model;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "course_progress")
@@ -21,13 +20,11 @@ public class CourseProgress extends CommonEntity {
     @JoinColumn(name = "student_id")
     private Student student;
 
-
     @Column(name = "progress_percentage")
-    private double progressPercentage; // Changed from String to double to represent percentage
+    private double progressPercentage;
 
     @ElementCollection
-    private List<Long> completedModules = new ArrayList<>(); // Stores completed module IDs
-
+    private Set<Long> completedModules = new HashSet<>();
 
     // Getters and setters
     public Long getId() {
@@ -62,11 +59,11 @@ public class CourseProgress extends CommonEntity {
         this.progressPercentage = progressPercentage;
     }
 
-    public List<Long> getCompletedModules() {
+    public Set<Long> getCompletedModules() {
         return completedModules;
     }
 
-    public void setCompletedModules(List<Long> completedModules) {
+    public void setCompletedModules(Set<Long> completedModules) {
         this.completedModules = completedModules;
     }
 }

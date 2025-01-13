@@ -38,8 +38,9 @@ public class StudentController {
         return studentService.getStudentById(userId);
     }
 
-    @PutMapping("/students/{userId}")
-    public ResponseEntity<StudentResponseDTO> updateStudent(@PathVariable Long userId, @RequestBody StudentRequestDTO studentRequestDTO) {
+    @PutMapping("/students")
+    public ResponseEntity<StudentResponseDTO> updateStudent(@AuthenticationPrincipal Jwt jwt, @RequestBody StudentRequestDTO studentRequestDTO) {
+        long userId = Long.valueOf(jwt.getId());
         StudentResponseDTO updatedStudent = studentService.updateStudent(userId, studentRequestDTO);
         return ResponseEntity.ok(updatedStudent);
     }

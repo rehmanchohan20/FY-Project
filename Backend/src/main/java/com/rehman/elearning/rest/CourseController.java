@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,6 +47,11 @@ public class CourseController {
     public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
         List<CourseResponseDTO> response = courseService.getAllCourses();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/student/{studentId}/available-courses")
+    public List<CourseRequestDTO> getAvailableCourses(@PathVariable Long studentId) {
+        return courseService.getAvailableCoursesForStudent(studentId);
     }
 
     // Update a course (without thumbnail)
@@ -92,7 +99,8 @@ public class CourseController {
     // recommend course to the students:
 
     @GetMapping("/recommendations")
-    public List<RecommendedCourseResponseDTO> getRecommendedCourses(@RequestParam Long studentId) {
+    public List<RecommendedCourseResponseDTO> getRecommendedCourses(@AuthenticationPrincipal Jwt jwt) {
+        long studentId = Long.parseLong(jwt.getId());
         return courseRecommendationService.getRecommendedCourses(studentId);
     }
 
