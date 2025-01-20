@@ -130,18 +130,23 @@ public class CourseProgressServiceImpl implements CourseProgressService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.STUDENT_NOT_FOUND));
         List<CourseModule> modules = courseModuleRepository.findByCourseId(courseId);
 
-        int totalModules = modules.size();
-        int completedModules = 0;
+        int totalLessons = 0;
+        int completedLessons = 0;
 
         for (CourseModule module : modules) {
-            CourseProgress progress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getId());
-            // Check if the module is completed
-            if (progress != null && progress.getCompletedModules().contains(module.getId())) {
-                completedModules++;
+            Set<CourseModuleLesson> lessons = module.getCourseModuleLessons();
+            totalLessons += lessons.size();
+
+            for (CourseModuleLesson lesson : lessons) {
+                CourseProgress progress = courseProgressRepository.findByStudentAndLesson(userId, lesson.getId());
+                // Check if the lesson is completed
+                if (progress != null && progress.getProgressPercentage() == 100.0) {
+                    completedLessons++;
+                }
             }
         }
 
-        double overallProgress = totalModules > 0 ? (completedModules / (double) totalModules) * 100 : 0.0;
+        double overallProgress = totalLessons > 0 ? (completedLessons / (double) totalLessons) * 100 : 0.0;
 
         // Create a temporary CourseProgress entity to reuse the convertToResponseDTO method
         CourseProgress tempCourseProgress = new CourseProgress();
@@ -150,6 +155,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         tempCourseProgress.setCourseModuleLesson(modules.get(0).getCourseModuleLessons().iterator().next());
         tempCourseProgress.setProgressPercentage(overallProgress);
         tempCourseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
         return convertToResponseDTO(tempCourseProgress);
     }
 
@@ -165,18 +171,23 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         for (Course course : enrolledCourses) {
             List<CourseModule> modules = courseModuleRepository.findByCourseId(course.getId());
 
-            int totalModules = modules.size();
-            int completedModules = 0;
+            int totalLessons = 0;
+            int completedLessons = 0;
 
             for (CourseModule module : modules) {
-                CourseProgress progress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getId());
-                // Check if the module is completed
-                if (progress != null && progress.getCompletedModules().contains(module.getId())) {
-                    completedModules++;
+                Set<CourseModuleLesson> lessons = module.getCourseModuleLessons();
+                totalLessons += lessons.size();
+
+                for (CourseModuleLesson lesson : lessons) {
+                    CourseProgress progress = courseProgressRepository.findByStudentAndLesson(userId, lesson.getId());
+                    // Check if the lesson is completed
+                    if (progress != null && progress.getProgressPercentage() == 100.0) {
+                        completedLessons++;
+                    }
                 }
             }
 
-            double overallProgress = totalModules > 0 ? (completedModules / (double) totalModules) * 100 : 0.0;
+            double overallProgress = totalLessons > 0 ? (completedLessons / (double) totalLessons) * 100 : 0.0;
 
             // Create a temporary CourseProgress entity to reuse the convertToResponseDTO method
             CourseProgress tempCourseProgress = new CourseProgress();
