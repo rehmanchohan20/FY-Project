@@ -1,13 +1,16 @@
 package com.rehman.elearning.rest.dto.outbound;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+
 
 public class CourseProgressResponseDTO {
     private Long id;
     private Long studentId;
     private Long courseModuleLessonId;
     private double progressPercentage;
-    private LocalDateTime lastStudiedAt; // Timestamp for the last time the student studied
+    private Timestamp lastStudiedAt; // Timestamp for the last time the student studied
+
 
     public Long getId() {
         return id;
@@ -41,11 +44,11 @@ public class CourseProgressResponseDTO {
         this.progressPercentage = progressPercentage;
     }
 
-    public LocalDateTime getLastStudiedAt() {
+    public Timestamp getLastStudiedAt() {
         return lastStudiedAt;
     }
 
-    public void setLastStudiedAt(LocalDateTime lastStudiedAt) {
+    public void setLastStudiedAt(Timestamp lastStudiedAt) {
         this.lastStudiedAt = lastStudiedAt;
     }
 }

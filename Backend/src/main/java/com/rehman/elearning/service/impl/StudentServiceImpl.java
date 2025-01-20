@@ -58,7 +58,8 @@ public class StudentServiceImpl implements StudentService {
                         new CoursePriceResponseDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
                         course.getStatus(),
                         course.getThumbnail(),
-                        course.getCategory()
+                        course.getCategory(),
+                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
                 ))
                 .collect(Collectors.toList());
     }
@@ -161,6 +162,7 @@ public class StudentServiceImpl implements StudentService {
             priceResponse.setCurrency(course.getCoursePrice().getCurrency());
             dto.setCoursePrice(priceResponse);
         }
+        dto.setInstructor(new UserResponseDTO(course.getTeacher().getUser().getFullName()));
         return dto;
     }
 

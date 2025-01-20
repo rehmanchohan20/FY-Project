@@ -21,6 +21,10 @@ public class UserResponseDTO {
         this.role = String.valueOf(user.isTeacher());  // Default to Teacher if no role is found
     }
 
+    public UserResponseDTO(String fullName) {
+        this.fullName = fullName;
+    }
+
     // Getters and setters
     public Long getId() {
         return id;

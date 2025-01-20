@@ -71,7 +71,8 @@ public class TeacherServiceImpl implements TeacherService {
                         ),
                         course.getStatus(),
                         course.getThumbnail(), // Include the thumbnail field
-                        course.getCategory()
+                        course.getCategory(),
+                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
                 ))
                 .collect(Collectors.toList());
     }

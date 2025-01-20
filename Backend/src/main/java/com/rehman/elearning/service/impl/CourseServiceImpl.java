@@ -18,6 +18,7 @@ import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.CoursePriceResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.MediaResponseDTO;
+import com.rehman.elearning.rest.dto.outbound.UserResponseDTO;
 import com.rehman.elearning.service.CourseService;
 import com.rehman.elearning.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,7 +211,8 @@ public class CourseServiceImpl implements CourseService {
                             coursePrice,
                             course.getStatus(),
                             course.getThumbnail(),
-                            course.getCategory()
+                            course.getCategory(),
+                            new UserResponseDTO(course.getTeacher().getUser().getFullName())
                     );
 
                 })

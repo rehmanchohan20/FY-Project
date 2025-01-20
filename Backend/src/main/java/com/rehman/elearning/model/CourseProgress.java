@@ -24,7 +24,12 @@ public class CourseProgress extends CommonEntity {
     private double progressPercentage;
 
     @ElementCollection
+    @Column(name = "completed_modules")
     private Set<Long> completedModules = new HashSet<>();
+
+    @ElementCollection
+    @Column(name = "completed_lessons")
+    private Set<Long> completedLessons = new HashSet<>();
 
     // Getters and setters
     public Long getId() {
@@ -65,5 +70,13 @@ public class CourseProgress extends CommonEntity {
 
     public void setCompletedModules(Set<Long> completedModules) {
         this.completedModules = completedModules;
+    }
+
+    public Set<Long> getCompletedLessons() {
+        return completedLessons;
+    }
+
+    public void setCompletedLessons(Set<Long> completedLessons) {
+        this.completedLessons = completedLessons;
     }
 }

@@ -22,7 +22,8 @@ public enum ErrorEnum {
 	ACCOUNT_ALREADY_EXIST(GeneralErrorEnum.FAILURE.getCode(), "Account already exists, Please signin"),
 	ACCOUNT_NOT_REGISTER(GeneralErrorEnum.FAILURE.getCode(), "Account not found, Please signup"),
 	INVALID_REQUEST(GeneralErrorEnum.FAILURE.getCode(), "Invalid Request"),
-	FAILED_TO_UPLOAD_THUMBNAIL(GeneralErrorEnum.FAILURE.getCode(), "Failed to upload thumbnail"),;
+	FAILED_TO_UPLOAD_THUMBNAIL(GeneralErrorEnum.FAILURE.getCode(), "Failed to upload thumbnail"),
+	PROGRESS_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Progress not found"),;
 
 	private String code;
 	private String description;

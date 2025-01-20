@@ -3,10 +3,7 @@ package com.rehman.elearning.service.impl;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
-import com.rehman.elearning.model.CourseModule;
-import com.rehman.elearning.model.CourseModuleLesson;
-import com.rehman.elearning.model.CourseProgress;
-import com.rehman.elearning.model.Student;
+import com.rehman.elearning.model.*;
 import com.rehman.elearning.repository.CourseModuleLessonRepository;
 import com.rehman.elearning.repository.CourseModuleRepository;
 import com.rehman.elearning.repository.CourseProgressRepository;
@@ -20,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseProgressServiceImpl implements CourseProgressService {
@@ -47,19 +46,19 @@ public class CourseProgressServiceImpl implements CourseProgressService {
 
         CourseProgress courseProgress = courseProgressRepository.findByStudentAndLesson(studentId, courseModuleLessonId);
         if (courseProgress == null) {
-            // Initialize progress to 0% if it does not exist
             courseProgress = new CourseProgress();
             courseProgress.setStudent(student);
             courseProgress.setCourseModuleLesson(lesson);
             courseProgress.setCreatedBy(UserCreatedBy.Self);
-            courseProgress.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             courseProgress.setProgressPercentage(0.0);
         }
 
-        // Update progress if the new percentage is greater
         if (progressRequest.getProgressPercentage() > courseProgress.getProgressPercentage()) {
             courseProgress.setProgressPercentage(progressRequest.getProgressPercentage());
         }
+
+        courseProgress.getCompletedLessons().add(courseModuleLessonId);
+        courseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
         courseProgressRepository.save(courseProgress);
 
@@ -68,9 +67,8 @@ public class CourseProgressServiceImpl implements CourseProgressService {
 
     @Override
     public CourseProgressResponseDTO getProgress(Long studentId, Long courseModuleLessonId) {
-        CourseProgress courseProgress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(studentId, courseModuleLessonId);
+        CourseProgress courseProgress = courseProgressRepository.findByStudentAndLesson(studentId, courseModuleLessonId);
         if (courseProgress == null) {
-            // Initialize progress at 0% if it doesn't exist
             CourseModuleLesson lesson = courseModuleLessonRepository.findById(courseModuleLessonId)
                     .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND));
             Student student = studentRepository.findById(studentId)
@@ -79,7 +77,6 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             courseProgress.setStudent(student);
             courseProgress.setCourseModuleLesson(lesson);
             courseProgress.setCreatedBy(UserCreatedBy.Self);
-            courseProgress.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             courseProgress.setProgressPercentage(0.0);
             courseProgressRepository.save(courseProgress);
         }
@@ -94,8 +91,8 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         CourseModule module = courseModuleRepository.findById(moduleId)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.MODULE_NOT_FOUND));
 
-        // Ensure there are lessons in the module
-        List<CourseModuleLesson> lessons = (List<CourseModuleLesson>) module.getCourseModuleLessons();
+        // Use a Set instead of List
+        Set<CourseModuleLesson> lessons = module.getCourseModuleLessons();
         if (lessons.isEmpty()) {
             throw new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND);
         }
@@ -104,9 +101,8 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         if (courseProgress == null) {
             courseProgress = new CourseProgress();
             courseProgress.setStudent(student);
-            courseProgress.setCourseModuleLesson(lessons.get(0)); // Safe to get the first lesson
+            courseProgress.setCourseModuleLesson(lessons.iterator().next());
             courseProgress.setCreatedBy(UserCreatedBy.Self);
-            courseProgress.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             courseProgress.setProgressPercentage(0.0);
         }
 
@@ -120,12 +116,80 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         double completedModules = courseProgress.getCompletedModules().size();
         double newProgressPercentage = (completedModules / totalModules) * 100;
         courseProgress.setProgressPercentage(newProgressPercentage);
-
-        courseProgress.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        courseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
         courseProgressRepository.save(courseProgress);
 
         return convertToResponseDTO(courseProgress);
+    }
+
+    @Transactional
+    @Override
+    public CourseProgressResponseDTO getOverallCourseProgress(Long userId, Long courseId) {
+        Student student = studentRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.STUDENT_NOT_FOUND));
+        List<CourseModule> modules = courseModuleRepository.findByCourseId(courseId);
+
+        int totalModules = modules.size();
+        int completedModules = 0;
+
+        for (CourseModule module : modules) {
+            CourseProgress progress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getId());
+            // Check if the module is completed
+            if (progress != null && progress.getCompletedModules().contains(module.getId())) {
+                completedModules++;
+            }
+        }
+
+        double overallProgress = totalModules > 0 ? (completedModules / (double) totalModules) * 100 : 0.0;
+
+        // Create a temporary CourseProgress entity to reuse the convertToResponseDTO method
+        CourseProgress tempCourseProgress = new CourseProgress();
+        tempCourseProgress.setId(courseId);
+        tempCourseProgress.setStudent(student);
+        tempCourseProgress.setCourseModuleLesson(modules.get(0).getCourseModuleLessons().iterator().next());
+        tempCourseProgress.setProgressPercentage(overallProgress);
+        tempCourseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        return convertToResponseDTO(tempCourseProgress);
+    }
+
+    @Transactional
+    @Override
+    public List<CourseProgressResponseDTO> getAllCoursesProgress(Long userId) {
+        Student student = studentRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.STUDENT_NOT_FOUND));
+        Set<Course> enrolledCourses = student.getCourses();
+
+        List<CourseProgressResponseDTO> progressList = new ArrayList<>();
+
+        for (Course course : enrolledCourses) {
+            List<CourseModule> modules = courseModuleRepository.findByCourseId(course.getId());
+
+            int totalModules = modules.size();
+            int completedModules = 0;
+
+            for (CourseModule module : modules) {
+                CourseProgress progress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getId());
+                // Check if the module is completed
+                if (progress != null && progress.getCompletedModules().contains(module.getId())) {
+                    completedModules++;
+                }
+            }
+
+            double overallProgress = totalModules > 0 ? (completedModules / (double) totalModules) * 100 : 0.0;
+
+            // Create a temporary CourseProgress entity to reuse the convertToResponseDTO method
+            CourseProgress tempCourseProgress = new CourseProgress();
+            tempCourseProgress.setId(course.getId());
+            tempCourseProgress.setStudent(student);
+            tempCourseProgress.setCourseModuleLesson(modules.get(0).getCourseModuleLessons().iterator().next());
+            tempCourseProgress.setProgressPercentage(overallProgress);
+            tempCourseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
+            progressList.add(convertToResponseDTO(tempCourseProgress));
+        }
+
+        return progressList;
     }
 
     private CourseProgressResponseDTO convertToResponseDTO(CourseProgress courseProgress) {
@@ -134,7 +198,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         dto.setStudentId(courseProgress.getStudent().getUserId());
         dto.setCourseModuleLessonId(courseProgress.getCourseModuleLesson().getId());
         dto.setProgressPercentage(courseProgress.getProgressPercentage());
-        dto.setLastStudiedAt(courseProgress.getCreatedAt().toLocalDateTime());
+        dto.setLastStudiedAt(courseProgress.getUpdatedAt());
         return dto;
     }
 }
