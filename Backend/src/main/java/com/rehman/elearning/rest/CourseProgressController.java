@@ -49,19 +49,17 @@ public class CourseProgressController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{courseId}/overall-progress")
+    @GetMapping("/{userId}/user/{courseId}/overall-progress")
     public ResponseEntity<CourseProgressResponseDTO> getOverallCourseProgress(
-            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable Long userId,
             @PathVariable Long courseId) {
-        Long userId = Long.parseLong(jwt.getId());
         CourseProgressResponseDTO response = courseProgressService.getOverallCourseProgress(userId, courseId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/all-courses-progress")
+    @GetMapping("/{userId}/user/all-courses-progress")
     public ResponseEntity<List<CourseProgressResponseDTO>> getAllCoursesProgress(
-            @AuthenticationPrincipal Jwt jwt) {
-        Long userId = Long.parseLong(jwt.getId());
+            @PathVariable Long userId) {
         List<CourseProgressResponseDTO> response = courseProgressService.getAllCoursesProgress(userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -207,7 +207,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         CourseProgressResponseDTO dto = new CourseProgressResponseDTO();
         dto.setId(courseProgress.getId());
         dto.setStudentId(courseProgress.getStudent().getUserId());
-        dto.setCourseModuleLessonId(courseProgress.getCourseModuleLesson().getId());
+        dto.setCourseId(courseProgress.getCourseModuleLesson().getCourseModule().getCourse().getId());
         dto.setProgressPercentage(courseProgress.getProgressPercentage());
         dto.setLastStudiedAt(courseProgress.getUpdatedAt());
         return dto;

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class CourseProgressResponseDTO {
     private Long id;
     private Long studentId;
-    private Long courseModuleLessonId;
+    private Long courseId;
     private double progressPercentage;
     private Timestamp lastStudiedAt; // Timestamp for the last time the student studied
 
@@ -28,12 +28,12 @@ public class CourseProgressResponseDTO {
         this.studentId = studentId;
     }
 
-    public Long getCourseModuleLessonId() {
-        return courseModuleLessonId;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setCourseModuleLessonId(Long courseModuleLessonId) {
-        this.courseModuleLessonId = courseModuleLessonId;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public double getProgressPercentage() {

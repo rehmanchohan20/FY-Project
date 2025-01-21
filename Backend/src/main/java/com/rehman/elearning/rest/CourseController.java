@@ -117,7 +117,4 @@ public class CourseController {
         List<CourseResponseDTO> courses = courseService.getCoursesByCategory(category);
         return ResponseEntity.ok(courses);
     }
-
-
-
 }
