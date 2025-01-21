@@ -48,9 +48,9 @@ public class CourseController {
         List<CourseResponseDTO> response = courseService.getAllCourses();
         return ResponseEntity.ok(response);
     }
-
+    //get filtered out courses for student in which he's not enrolled:
     @GetMapping("/student/{studentId}/available-courses")
-    public List<CourseRequestDTO> getAvailableCourses(@PathVariable Long studentId) {
+    public List<CourseResponseDTO> getAvailableCourses(@PathVariable Long studentId) {
         return courseService.getAvailableCoursesForStudent(studentId);
     }
 
@@ -97,7 +97,6 @@ public class CourseController {
     }
 
     // recommend course to the students:
-
     @GetMapping("/recommendations")
     public List<RecommendedCourseResponseDTO> getRecommendedCourses(@AuthenticationPrincipal Jwt jwt) {
         long studentId = Long.parseLong(jwt.getId());
@@ -105,7 +104,6 @@ public class CourseController {
     }
 
     // course categories:
-
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryEnum>> getAllCategories() {
         List<CategoryEnum> categories = List.of(CategoryEnum.values()); // Get all enum values from CategoryEnum

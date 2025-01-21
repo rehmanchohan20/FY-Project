@@ -2,16 +2,24 @@ package com.rehman.elearning.rest.dto.inbound;
 
 import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
+import com.rehman.elearning.model.Teacher;
+import com.rehman.elearning.model.User;
+import com.rehman.elearning.rest.dto.outbound.UserResponseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class CourseRequestDTO {
+
 
     @NotBlank(message = "Title is required")
     private String title;
 
     @NotBlank(message = "Description is required")
     private String description;
+
+    private String thumbnail;
+
+    private UserResponseDTO TeacherName;
 
     @NotNull(message = "Course price must not be null")
     private CoursePriceRequestDTO coursePrice;
@@ -21,12 +29,16 @@ public class CourseRequestDTO {
     @NotNull(message = "Category should not be null")
     private CategoryEnum category;
 
+
     public CourseRequestDTO() {
     }
 
-    public CourseRequestDTO(String title, String description, CoursePriceRequestDTO coursePrice, CourseStatusEnum status, CategoryEnum category) {
+    public CourseRequestDTO(String title, String description, String thumbnail, UserResponseDTO TeacherName, CoursePriceRequestDTO coursePrice, CourseStatusEnum status, CategoryEnum category) {
+
         this.title = title;
         this.description = description;
+        this.thumbnail = thumbnail;
+        this.TeacherName = TeacherName;
         this.coursePrice = coursePrice;
         this.status = status;
         this.category = category;
@@ -70,5 +82,20 @@ public class CourseRequestDTO {
 
     public void setCoursePrice(CoursePriceRequestDTO coursePrice) {
         this.coursePrice = coursePrice;
+    }
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public UserResponseDTO getTeacherName() {
+        return TeacherName;
+    }
+
+    public void setTeacherName(UserResponseDTO teacherName) {
+        TeacherName = teacherName;
     }
 }

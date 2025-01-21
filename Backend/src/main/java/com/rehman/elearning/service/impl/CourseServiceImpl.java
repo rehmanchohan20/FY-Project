@@ -6,10 +6,7 @@ import com.rehman.elearning.constants.CourseStatusEnum;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.ResourceNotFoundException;
-import com.rehman.elearning.model.Course;
-import com.rehman.elearning.model.CoursePrice;
-import com.rehman.elearning.model.Student;
-import com.rehman.elearning.model.Teacher;
+import com.rehman.elearning.model.*;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.StudentRepository;
 import com.rehman.elearning.repository.TeacherRepository;
@@ -225,7 +222,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<CourseRequestDTO> getAvailableCoursesForStudent(Long studentId) {
+    public List<CourseResponseDTO> getAvailableCoursesForStudent(Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student ID."));
 
@@ -237,12 +234,18 @@ public class CourseServiceImpl implements CourseService {
         // Filter out the courses the student is already enrolled in and map to CourseRequestDTO
         return allCourses.stream()
                 .filter(course -> !enrolledCourses.contains(course))
-                .map(course -> new CourseRequestDTO(
+                .map(course -> new CourseResponseDTO(
+                        course.getId(),
                         course.getTitle(),
                         course.getDescription(),
-                        new CoursePriceRequestDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
+                        new CoursePriceResponseDTO(
+                                course.getCoursePrice().getAmount(),
+                                course.getCoursePrice().getCurrency()
+                        ),
                         course.getStatus(),
-                        course.getCategory()
+                        course.getThumbnail(),
+                        course.getCategory(),
+                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
                 ))
                 .collect(Collectors.toList());
     }

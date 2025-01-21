@@ -130,6 +130,8 @@ public class TeacherServiceImpl implements TeacherService {
         userResponseDTO.setId(teacher.getUser().getId());
         userResponseDTO.setFullName(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
         userResponseDTO.setEmail(teacher.getUser().getEmail());
+        userResponseDTO.setRole(teacher.getUser().isTeacher() == true ? "Teacher" : "Student");
+        userResponseDTO.setImage(teacher.getUser().getImage());
 
         // Set the user in the response DTO
         responseDto.setUser(userResponseDTO);

@@ -7,6 +7,7 @@ public class UserResponseDTO {
     private String fullName;
     private String email;
     private String role;
+    private String image;
 
 
 
@@ -19,6 +20,7 @@ public class UserResponseDTO {
         this.fullName = user.getFullName();
         this.email = user.getEmail();
         this.role = String.valueOf(user.isTeacher());  // Default to Teacher if no role is found
+        this.image = user.getImage();
     }
 
     public UserResponseDTO(String fullName) {
@@ -56,6 +58,14 @@ public class UserResponseDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 
