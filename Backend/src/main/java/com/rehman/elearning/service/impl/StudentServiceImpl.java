@@ -59,7 +59,13 @@ public class StudentServiceImpl implements StudentService {
                         course.getStatus(),
                         course.getThumbnail(),
                         course.getCategory(),
-                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
+                        new UserResponseDTO(
+                                course.getTeacher().getUserId(),
+                                course.getTeacher().getUser().getFullName(),
+                                course.getTeacher().getUser().getEmail(),
+                                course.getTeacher().getUser().getImage(),
+                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student"
+                        )
                 ))
                 .collect(Collectors.toList());
     }
@@ -162,7 +168,13 @@ public class StudentServiceImpl implements StudentService {
             priceResponse.setCurrency(course.getCoursePrice().getCurrency());
             dto.setCoursePrice(priceResponse);
         }
-        dto.setInstructor(new UserResponseDTO(course.getTeacher().getUser().getFullName()));
+        dto.setInstructor( new UserResponseDTO(
+                course.getTeacher().getUserId(),
+                course.getTeacher().getUser().getFullName(),
+                course.getTeacher().getUser().getEmail(),
+                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
+                course.getTeacher().getUser().getImage()
+        )); // Map the teacher to UserResponseDTO);
         return dto;
     }
 

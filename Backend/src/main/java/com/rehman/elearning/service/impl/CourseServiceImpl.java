@@ -209,7 +209,14 @@ public class CourseServiceImpl implements CourseService {
                             course.getStatus(),
                             course.getThumbnail(),
                             course.getCategory(),
-                            new UserResponseDTO(course.getTeacher().getUser().getFullName())
+                            new UserResponseDTO(
+                                    course.getTeacher().getUserId(),
+                                    course.getTeacher().getUser().getFullName(),
+                                    course.getTeacher().getUser().getEmail(),
+                                    course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
+                                    course.getTeacher().getUser().getImage()
+                            ) // Map the teacher to UserResponseDTO
+
                     );
 
                 })
@@ -245,8 +252,13 @@ public class CourseServiceImpl implements CourseService {
                         course.getStatus(),
                         course.getThumbnail(),
                         course.getCategory(),
-                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
-                ))
+                        new UserResponseDTO(
+                                course.getTeacher().getUserId(),
+                                course.getTeacher().getUser().getFullName(),
+                                course.getTeacher().getUser().getEmail(),
+                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
+                                course.getTeacher().getUser().getImage()
+                        ))) // Map the teacher to UserResponseDTO
                 .collect(Collectors.toList());
     }
 

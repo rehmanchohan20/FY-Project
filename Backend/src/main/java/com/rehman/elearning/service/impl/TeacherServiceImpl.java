@@ -72,13 +72,16 @@ public class TeacherServiceImpl implements TeacherService {
                         course.getStatus(),
                         course.getThumbnail(), // Include the thumbnail field
                         course.getCategory(),
-                        new UserResponseDTO(course.getTeacher().getUser().getFullName())
+                        new UserResponseDTO(
+                                course.getTeacher().getUserId(),
+                                course.getTeacher().getUser().getFullName(),
+                                course.getTeacher().getUser().getEmail(),
+                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
+                                course.getTeacher().getUser().getImage()
+                        )
                 ))
                 .collect(Collectors.toList());
     }
-
-
-
 
     @Override
     public TeacherResponseDTO updateTeacher(Long id, TeacherRequestDTO teacherRequestDto) {
@@ -157,8 +160,16 @@ public class TeacherServiceImpl implements TeacherService {
             priceResponse.setCurrency(course.getCoursePrice().getCurrency());
             courseResponseDTO.setCoursePrice(priceResponse);
         }
+        courseResponseDTO.setThumbnail(course.getThumbnail());
         courseResponseDTO.setStatus(course.getStatus());
-        // Set other fields from Course to CourseResponseDTO
+        courseResponseDTO.setInstructor(
+                new UserResponseDTO(
+                course.getTeacher().getUserId(),
+                course.getTeacher().getUser().getFullName(),
+                course.getTeacher().getUser().getEmail(),
+                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
+                course.getTeacher().getUser().getImage()
+        ));
         return courseResponseDTO;
     }
 

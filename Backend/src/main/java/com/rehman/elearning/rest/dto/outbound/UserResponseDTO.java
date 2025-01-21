@@ -23,8 +23,12 @@ public class UserResponseDTO {
         this.image = user.getImage();
     }
 
-    public UserResponseDTO(String fullName) {
+    public UserResponseDTO(Long id, String fullName, String email, String role, String image) {
+        this.id = id;
         this.fullName = fullName;
+        this.email = email;
+        this.role = role;
+        this.image = image;
     }
 
     // Getters and setters

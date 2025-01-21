@@ -26,6 +26,7 @@ public class CourseResponseDTO {
         this.instructor = instructor;
     }
 
+
     // No-argument constructor
     public CourseResponseDTO() {
     }
