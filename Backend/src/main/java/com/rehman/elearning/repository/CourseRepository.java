@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -37,5 +36,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
     List<Course> findRecommendedCourses(@Param("categories") List<CategoryEnum> categories);
 
     List<Course> findByIdIn(Set<Long> courseIds);
+
+    @Query("SELECT COUNT(c) FROM Course c")
+    long count();
+
+    @Query("SELECT c FROM Course c JOIN c.students s GROUP BY c.id ORDER BY COUNT(s) DESC")
+    List<Course> findTopCoursesByEnrollments();
 
 }
