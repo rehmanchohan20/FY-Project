@@ -67,6 +67,12 @@ public class Course extends CommonEntity {
     private Set<Guidance> guidances = new HashSet<>();
 
 
+
+    public int getEnrolledStudentsCount() {
+        return this.students != null ? this.students.size() : 0;
+    }
+
+
     //Constructors
 
     // Default constructor

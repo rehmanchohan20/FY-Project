@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -58,7 +59,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         // Aggregating Revenue Data (for the week)
         LocalDate startDate = LocalDate.of(2025, 1, 1); // Set your start date
-        LocalDate endDate = LocalDate.of(2025, 1, 25); // Set your end date
+        LocalDate endDate = LocalDate.of(2025, 10, 25); // Set your end date
         Timestamp startDateTime = Timestamp.valueOf(startDate.atStartOfDay());
         Timestamp endDateTime = Timestamp.valueOf(endDate.atTime(LocalTime.MAX));
 
@@ -74,13 +75,27 @@ public class DashboardServiceImpl implements DashboardService {
         TopCoursesResponseDTO responseDTO = new TopCoursesResponseDTO();
 
         // Fetching top courses based on the number of enrollments (or other criteria)
-        List<Course> topCourses = courseRepository.findTopCoursesByEnrollments(); // Query for top courses based on enrollments
-        Long topCourseEnrollments = topCourses.stream()
-                .mapToLong(course -> course.getStudents().size()) // Calculate the number of students enrolled in each course
+        List<Course> courses = courseRepository.findTopCoursesByEnrollments();
+
+        // Manually convert the Course entities to CourseResponseDTOs
+        List<CourseResponseDTO> topCourses = courses.stream()
+                .map(course -> new CourseResponseDTO(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getDescription(),
+                        (long) course.getEnrolledStudentsCount(), // Use the method to get enrolled students count
+                        new CoursePriceResponseDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
+                        new UserResponseDTO(course.getTeacher().getUserId(), course.getTeacher().getUser().getFullName(), course.getTeacher().getUser().getEmail())
+                ))
+                .collect(Collectors.toList());
+
+        // Calculate the total number of enrollments across all top courses
+        Long totalEnrollments = topCourses.stream()
+                .mapToLong(CourseResponseDTO::getEnrolledStudentsCount)
                 .sum();
 
         responseDTO.setTopCourses(topCourses);
-        responseDTO.setTotalEnrollments(topCourseEnrollments);
+        responseDTO.setTotalEnrollments(totalEnrollments);
 
         return responseDTO;
     }

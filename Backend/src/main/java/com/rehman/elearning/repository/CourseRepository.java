@@ -3,6 +3,7 @@ package com.rehman.elearning.repository;
 import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Student;
+import com.rehman.elearning.rest.dto.outbound.CourseResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

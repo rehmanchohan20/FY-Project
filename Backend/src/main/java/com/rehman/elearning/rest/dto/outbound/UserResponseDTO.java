@@ -31,6 +31,12 @@ public class UserResponseDTO {
         this.image = image;
     }
 
+    public UserResponseDTO(Long id, String fullName, String email) {
+        this.id=id;
+        this.fullName = fullName;
+        this.email = email;
+    }
+
     // Getters and setters
     public Long getId() {
         return id;

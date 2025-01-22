@@ -13,8 +13,28 @@ public class CourseResponseDTO {
     private String thumbnail; // URL of the course thumbnail
     private CategoryEnum category;
     private UserResponseDTO instructor; // Instructor details
+    private Long enrolledStudentsCount = 0L; // Number of students enrolled in the course
 
-    // Constructor accepting all fields including thumbnail
+
+    public CourseResponseDTO(Long id, String title, String description, Long enrolledStudentsCount, CoursePriceResponseDTO coursePrice, UserResponseDTO instructor) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.enrolledStudentsCount = enrolledStudentsCount != null ? enrolledStudentsCount : 0L; // Handle null values
+        this.coursePrice = coursePrice;
+        this.instructor = instructor;
+
+    }
+
+    public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, UserResponseDTO instructor) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.coursePrice = coursePrice;
+        this.instructor = instructor;
+    }
+
+
     public CourseResponseDTO(Long id, String title, String description, CoursePriceResponseDTO coursePrice, CourseStatusEnum status, String thumbnail, CategoryEnum category, UserResponseDTO instructor) {
         this.id = id;
         this.title = title;
@@ -95,5 +115,13 @@ public class CourseResponseDTO {
 
     public void setInstructor(UserResponseDTO instructor) {
         this.instructor = instructor;
+    }
+
+    public Long getEnrolledStudentsCount() {
+        return enrolledStudentsCount;
+    }
+
+    public void setEnrolledStudentsCount(Long enrolledStudentsCount) {
+        this.enrolledStudentsCount = enrolledStudentsCount;
     }
 }

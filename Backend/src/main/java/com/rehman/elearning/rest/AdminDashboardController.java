@@ -1,5 +1,6 @@
 package com.rehman.elearning.rest;
 
+import com.rehman.elearning.model.Course;
 import com.rehman.elearning.rest.dto.inbound.*;
 import com.rehman.elearning.rest.dto.outbound.*;
 import com.rehman.elearning.service.DashboardService;
@@ -8,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -42,3 +46,4 @@ public class AdminDashboardController {
         return dashboardService.getVisitorInsights(requestDTO);
     }
 }
+
