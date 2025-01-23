@@ -31,7 +31,7 @@ public class ApiUrlListUtil {
         List<RequestMatcher> list = new ArrayList<>();
         list.add(new AntPathRequestMatcher("/api/courses/**"));
         list.add(new AntPathRequestMatcher("/api/modules/{moduleId}/lessons/**"));
-
+        list.add(new AntPathRequestMatcher("/api/dashboard/**"));
         list.add(new AntPathRequestMatcher("/api/courses/{courseId}/offers/**"));
         list.add(new AntPathRequestMatcher("/api/courses/{courseId}/modules/{moduleId}"));
 

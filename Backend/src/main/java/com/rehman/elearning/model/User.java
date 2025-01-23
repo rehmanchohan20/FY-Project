@@ -180,16 +180,6 @@ public class User extends CommonEntity implements OAuth2User, UserDetails {
 		return student != null;
 	}
 
-	public void setAsTeacher(boolean isTeacher) {
-		if (isTeacher) {
-			this.teacher = new Teacher(this);
-			this.student = null;
-		} else {
-			this.teacher = null;
-			this.student = new Student(this);
-		}
-	}
-
 
 	@Override
 	public boolean isAccountNonExpired() {

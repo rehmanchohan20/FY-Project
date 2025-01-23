@@ -4,6 +4,7 @@ import com.rehman.elearning.constants.CategoryEnum;
 import com.rehman.elearning.constants.CourseStatusEnum;
 import jakarta.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,6 +46,10 @@ public class Course extends CommonEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CourseModule> courseModule = new HashSet<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<CourseEnrollmentData> enrollments;
+
 
 
     @ManyToMany
@@ -194,5 +199,13 @@ public class Course extends CommonEntity {
 
     public void setGuidances(Set<Guidance> guidances) {
         this.guidances = guidances;
+    }
+
+    public List<CourseEnrollmentData> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<CourseEnrollmentData> enrollments) {
+        this.enrollments = enrollments;
     }
 }

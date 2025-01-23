@@ -82,6 +82,7 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         ticket.setResolvedAt(LocalDateTime.now());
+        ticket.setStatus(TicketStatus.CLOSED);
         ticketRepository.save(ticket); // Update the ticket status
 
         return mapToResponseDTO(ticket);

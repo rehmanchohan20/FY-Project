@@ -6,7 +6,8 @@ public class UserResponseDTO {
     private Long id;
     private String username;
     private String email;
-    private Boolean isTeacehr;
+    private Boolean isTeacher;
+    private Boolean isAdmin;
     private String image;
 
 
@@ -19,16 +20,18 @@ public class UserResponseDTO {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.isTeacehr = user.isTeacher(); // Default to Teacher if no role is found
+        this.isTeacher = user.isTeacher(); // Default to Teacher if no role is found
+        this.isAdmin = user.getAdmin(); // Default to Admin if no role is found
         this.image = user.getImage();
     }
 
-    public UserResponseDTO(Long id, String username, String email, String image, Boolean isTeacehr) {
+    public UserResponseDTO(Long id, String username, String email, String image, Boolean isTeacher, Boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.image = image;
-        this.isTeacehr = isTeacehr;
+        this.isTeacher = isTeacher;
+        this.isAdmin = isAdmin;
     }
 
     public UserResponseDTO(Long id, String username, String email) {
@@ -62,12 +65,20 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public Boolean getTeacehr() {
-        return isTeacehr;
+    public Boolean getIsTeacher() {
+        return isTeacher;
     }
 
-    public void setTeacehr(Boolean teacehr) {
-        isTeacehr = teacehr;
+    public void setTeacher(Boolean teacher) {
+        isTeacher = teacher;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 
     public String getImage() {

@@ -27,10 +27,10 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<RegistrationAdminResponseDTO>> registerUserByAdmin(
-            @RequestBody @Valid RegistrationAdminRequestDTO registrationAdminRequestDTO) {
-        RegistrationAdminResponseDTO response = userService.registerUserByAdmin(registrationAdminRequestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<RegistrationAdminResponseDTO>(response));
+    public ResponseEntity<ApiResponse<UserResponseDTO>> registerUserByAdmin(
+            @RequestBody @Valid UserRequestDTO UserRequestDTO) {
+        UserResponseDTO response = userService.registerUserByAdmin(UserRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<UserResponseDTO>(response));
     }
 
     @GetMapping("/{id}")
@@ -62,6 +62,5 @@ public class UserController {
         List<UserResponseDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-
 }
 

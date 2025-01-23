@@ -76,7 +76,8 @@ public class TeacherServiceImpl implements TeacherService {
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
                                 course.getTeacher().getUser().getImage(),
-                                course.getTeacher().getUser().isTeacher()
+                                course.getTeacher().getUser().isTeacher(),
+                                course.getTeacher().getUser().getAdmin()
                         )
                 ))
                 .collect(Collectors.toList());
@@ -132,7 +133,7 @@ public class TeacherServiceImpl implements TeacherService {
         userResponseDTO.setId(teacher.getUser().getId());
         userResponseDTO.setusername(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
         userResponseDTO.setEmail(teacher.getUser().getEmail());
-        userResponseDTO.setTeacehr(teacher.getUser().isTeacher());
+        userResponseDTO.setTeacher(teacher.getUser().isTeacher());
         userResponseDTO.setImage(teacher.getUser().getImage());
 
         // Set the user in the response DTO
@@ -167,7 +168,8 @@ public class TeacherServiceImpl implements TeacherService {
                 course.getTeacher().getUser().getFullName(),
                 course.getTeacher().getUser().getEmail(),
                 course.getTeacher().getUser().getImage(),
-                course.getTeacher().getUser().isTeacher()
+                course.getTeacher().getUser().isTeacher(),
+                course.getTeacher().getUser().getAdmin()
         ));
         return courseResponseDTO;
     }

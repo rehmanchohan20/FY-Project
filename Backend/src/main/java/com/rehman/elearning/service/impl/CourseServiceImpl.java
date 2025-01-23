@@ -236,7 +236,8 @@ public class CourseServiceImpl implements CourseService {
                                     course.getTeacher().getUser().getFullName(),
                                     course.getTeacher().getUser().getEmail(),
                                     course.getTeacher().getUser().getImage(),
-                                    course.getTeacher().getUser().isTeacher()
+                                    course.getTeacher().getUser().isTeacher(),
+                                    course.getTeacher().getUser().getAdmin()
 
                             ) // Map the teacher to UserResponseDTO
 
@@ -280,7 +281,8 @@ public class CourseServiceImpl implements CourseService {
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
                                 course.getTeacher().getUser().getImage(),
-                                course.getTeacher().getUser().isTeacher()
+                                course.getTeacher().getUser().isTeacher(),
+                                course.getTeacher().getUser().getAdmin()
                         ))) // Map the teacher to UserResponseDTO
                 .collect(Collectors.toList());
     }

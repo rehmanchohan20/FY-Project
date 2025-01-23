@@ -28,4 +28,10 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT COUNT(DISTINCT p.id) FROM Payment p WHERE MONTH(p.createdAt) = MONTH(CURRENT_DATE) AND YEAR(p.createdAt) = YEAR(CURRENT_DATE)")
     Long countVisitorsThisMonth();
 
+    public List<Payment> findByCourse_Teacher_UserId(Long teacherId);
+
+
+    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.course.teacher.userId = :teacherId")
+    Double calculateTotalRevenueByTeacherId(Long teacherId);
+
 }

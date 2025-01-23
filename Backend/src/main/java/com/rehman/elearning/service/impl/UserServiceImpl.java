@@ -114,22 +114,19 @@ public class UserServiceImpl implements UserService {
 		user.setImage("https://vectorified.com/no-profile-picture-icon#no-profile-picture-icon-28.png"); // Default image URL
 		user.setAuthProvider(AuthProviderEnum.TraditionalLogin); // Assuming traditional login for registration
 		user.setProviderId(UUID.randomUUID().toString()); // Generate a unique provider ID
-		user.setAsTeacher(registrationRequestDTO.getIsTeacher());
 
-
-
-		// Role assignment based on registration request
-//		if (registrationRequestDTO.getIsTeacher()) {
-//			Teacher teacher = new Teacher(this);
-//			teacher.setUser(user);
-//			user.setTeacher(teacher);
-//			teacher.setCreatedBy(UserCreatedBy.Self);
-//		} else {
-//			Student student = new Student();
-//			student.setUser(user);
-//			user.setStudent(student);
-//			student.setCreatedBy(UserCreatedBy.Self);
-//		}
+//		 Role assignment based on registration request
+		if (registrationRequestDTO.getIsTeacher()) {
+			Teacher teacher = new Teacher();
+			teacher.setUser(user);
+			user.setTeacher(teacher);
+			teacher.setCreatedBy(UserCreatedBy.Self);
+		} else {
+			Student student = new Student();
+			student.setUser(user);
+			user.setStudent(student);
+			student.setCreatedBy(UserCreatedBy.Self);
+		}
 
 		userRepository.save(user);
 		Optional<User> savedUser = userRepository.findById(user.getId()); savedUser.ifPresent(u -> { System.out.println("Saved user: " + u.getUsername() + ", Role: " + (u.isTeacher() ? "Teacher" : (u.isStudent() ? "Student" : "Guest"))); });
@@ -138,47 +135,44 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public RegistrationAdminResponseDTO registerUserByAdmin(RegistrationAdminRequestDTO registrationAdminRequestDTO)
-			throws ApplicationException {
+	public UserResponseDTO registerUserByAdmin(UserRequestDTO  userRequestDTO) throws ApplicationException {
 		// Check for existing email
-		userRepository.findByEmail(registrationAdminRequestDTO.getEmail()).ifPresent(user -> {
+		userRepository.findByEmail(userRequestDTO.getEmail()).ifPresent(user -> {
 			throw new EmailAlreadyTakenException(ErrorEnum.EMAIL_ALREADY_EXIST);
 		});
 
 		// Check for existing username
-		userRepository.findByUsername(registrationAdminRequestDTO.getUsername()).ifPresent(user -> {
+		userRepository.findByUsername(userRequestDTO.getFullName()).ifPresent(user -> {
 			throw new UsernameAlreadyTakenException(ErrorEnum.USERNAME_ALREADY_EXIST);
 		});
-
 		// Create new user
 		User user = new User();
-		user.setUsername(registrationAdminRequestDTO.getUsername());
-		user.setFullName(registrationAdminRequestDTO.getUsername());
-		user.setPassword(passwordEncoder.encode(registrationAdminRequestDTO.getPassword()));
-		user.setEmail(registrationAdminRequestDTO.getEmail());
+		user.setUsername(userRequestDTO.getFullName());
+		user.setFullName(userRequestDTO.getFullName());
+		user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+		user.setEmail(userRequestDTO.getEmail());
 		user.setAdmin(false); // Set isAdmin to true since this user is created by admin
 		user.setImage("https://vectorified.com/no-profile-picture-icon#no-profile-picture-icon-28.png"); // Default image URL
 		user.setAuthProvider(AuthProviderEnum.TraditionalLogin);
 		user.setProviderId(UUID.randomUUID().toString());
 		user.setCreatedBy(UserCreatedBy.Admin); // Set createdBy to "Admin"
-		user.setAsTeacher(registrationAdminRequestDTO.getIsTeacher());
+
 
 		// Role assignment based on registration request
-//		if (registrationAdminRequestDTO.getIsTeacher()) {
-//			Teacher teacher = new Teacher(this);
-//			teacher.setUser(user);
-//			teacher.setCreatedBy(UserCreatedBy.Admin);
-//			user.setTeacher(teacher);
-//		} else {
-//			Student student = new Student();
-//			student.setUser(user);
-//			student.setCreatedBy(UserCreatedBy.Admin);
-//			user.setStudent(student);
-//		}
-
+		if (userRequestDTO.getIsTeacher()) {
+			Teacher teacher = new Teacher();
+			teacher.setUser(user);
+			teacher.setCreatedBy(UserCreatedBy.Admin);
+			user.setTeacher(teacher);
+		} else {
+			Student student = new Student();
+			student.setUser(user);
+			student.setCreatedBy(UserCreatedBy.Admin);
+			user.setStudent(student);
+		}
 
 		userRepository.save(user);
-		return new RegistrationAdminResponseDTO(user.getId().toString());
+		return mapToResponse(user);
 	}
 
 	@Override
@@ -215,7 +209,6 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(userRequestDto.getEmail());
 		user.setPassword(userRequestDto.getPassword());
 
-
 		// Handle isTeacher field
 		if (userRequestDto.getIsTeacher() != null && userRequestDto.getIsTeacher()) {
 			// If the user is marked as a teacher, ensure a Teacher entity is associated
@@ -251,6 +244,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserResponseDTO> getAllUsers() {
 		return userRepository.findAll()
 				.stream()
+				.filter(user -> !user.getAdmin()) // Filter out users with isAdmin set to true
 				.map(this::mapToResponse)
 				.collect(Collectors.toList());
 	}
@@ -266,7 +260,8 @@ public class UserServiceImpl implements UserService {
 		dto.setId(user.getId());
 		dto.setusername(user.getUsername());
 		dto.setEmail(user.getEmail());
-		dto.setTeacehr(user.isTeacher());
+		dto.setTeacher(user.isTeacher());
+		dto.setAdmin(user.getAdmin());
 		dto.setImage(user.getImage());
 		// Add other fields as necessary
 		return dto;

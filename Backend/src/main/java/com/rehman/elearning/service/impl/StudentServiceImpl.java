@@ -64,7 +64,8 @@ public class StudentServiceImpl implements StudentService {
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
                                 course.getTeacher().getUser().getImage(),
-                                course.getTeacher().getUser().isTeacher()
+                                course.getTeacher().getUser().isTeacher(),
+                                course.getTeacher().getUser().getAdmin()
 
                         )
                 ))
@@ -174,7 +175,8 @@ public class StudentServiceImpl implements StudentService {
                 course.getTeacher().getUser().getFullName(),
                 course.getTeacher().getUser().getEmail(),
                 course.getTeacher().getUser().getImage(),
-                course.getTeacher().getUser().isTeacher()
+                course.getTeacher().getUser().isTeacher(),
+                course.getTeacher().getUser().getAdmin()
         )); // Map the teacher to UserResponseDTO);
         return dto;
     }

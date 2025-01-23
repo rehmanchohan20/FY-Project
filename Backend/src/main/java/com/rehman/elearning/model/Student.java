@@ -16,11 +16,6 @@ public class Student extends CommonEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-//	@ManyToMany
-//	@JoinTable(name = "enroll_course",
-//			joinColumns = @JoinColumn(name = "student_id"),
-//			inverseJoinColumns = @JoinColumn(name = "course_id")
-//	)
 	@ManyToMany(mappedBy = "students", cascade = CascadeType.PERSIST)
 	private Set<Course> courses;
 

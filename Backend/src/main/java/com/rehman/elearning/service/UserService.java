@@ -24,8 +24,7 @@ public interface UserService {
 			throws ApplicationException;
 
 
-	public RegistrationAdminResponseDTO registerUserByAdmin(RegistrationAdminRequestDTO registrationAdminRequestDTO)
-			throws ApplicationException;
+	public UserResponseDTO registerUserByAdmin(UserRequestDTO  userRequestDTO) throws ApplicationException;
 	UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO updateUserByAdmin(Long userId, UserRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO getUserById(Long id);
