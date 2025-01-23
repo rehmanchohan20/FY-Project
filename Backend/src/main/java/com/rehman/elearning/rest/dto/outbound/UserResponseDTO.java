@@ -4,9 +4,9 @@ import com.rehman.elearning.model.User;
 
 public class UserResponseDTO {
     private Long id;
-    private String fullName;
+    private String username;
     private String email;
-    private String role;
+    private Boolean isTeacehr;
     private String image;
 
 
@@ -17,23 +17,23 @@ public class UserResponseDTO {
     // Constructor that takes a User object
     public UserResponseDTO(User user) {
         this.id = user.getId();
-        this.fullName = user.getFullName();
+        this.username = user.getUsername();
         this.email = user.getEmail();
-        this.role = String.valueOf(user.isTeacher());  // Default to Teacher if no role is found
+        this.isTeacehr = user.isTeacher(); // Default to Teacher if no role is found
         this.image = user.getImage();
     }
 
-    public UserResponseDTO(Long id, String fullName, String email, String role, String image) {
+    public UserResponseDTO(Long id, String username, String email, String image, Boolean isTeacehr) {
         this.id = id;
-        this.fullName = fullName;
+        this.username = username;
         this.email = email;
-        this.role = role;
         this.image = image;
+        this.isTeacehr = isTeacehr;
     }
 
-    public UserResponseDTO(Long id, String fullName, String email) {
+    public UserResponseDTO(Long id, String username, String email) {
         this.id=id;
-        this.fullName = fullName;
+        this.username = username;
         this.email = email;
     }
 
@@ -46,12 +46,12 @@ public class UserResponseDTO {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getusername() {
+        return username;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setusername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -62,12 +62,12 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
+    public Boolean getTeacehr() {
+        return isTeacehr;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setTeacehr(Boolean teacehr) {
+        isTeacehr = teacehr;
     }
 
     public String getImage() {
@@ -78,38 +78,3 @@ public class UserResponseDTO {
         this.image = image;
     }
 }
-
-
-//package com.rehman.elearning.rest.dto.outbound;
-//
-//public class UserResponseDTO {
-//    private Long id;
-//    private String username;
-//    private String email;
-//
-//
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//}

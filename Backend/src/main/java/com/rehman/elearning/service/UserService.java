@@ -27,6 +27,7 @@ public interface UserService {
 	public RegistrationAdminResponseDTO registerUserByAdmin(RegistrationAdminRequestDTO registrationAdminRequestDTO)
 			throws ApplicationException;
 	UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto) throws IOException;
+	UserResponseDTO updateUserByAdmin(Long userId, UserRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO getUserById(Long id);
 	List<UserResponseDTO> getAllUsers();
 	void deleteUser(Long id);

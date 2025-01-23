@@ -1,12 +1,9 @@
 package com.rehman.elearning.rest;
 
-import com.rehman.elearning.model.User;
 import com.rehman.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.RoleRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.UserRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.RegistrationAdminResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.UserResponseDTO;
-import com.rehman.elearning.service.RoleSelection;
 import com.rehman.elearning.service.UserService;
 import com.rehman.elearning.util.ApiResponse;
 import jakarta.validation.Valid;
@@ -16,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,6 +48,12 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserResponseDTO> updateUser(@AuthenticationPrincipal Jwt jwt, @RequestBody UserRequestDTO userRequestDTO) throws IOException {
         UserResponseDTO user = userService.updateUser(Long.valueOf(jwt.getId()), userRequestDTO);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserResponseDTO> updateUserByAdmin(@PathVariable Long userId, @RequestBody UserRequestDTO userRequestDTO) throws IOException {
+        UserResponseDTO user = userService.updateUserByAdmin(userId, userRequestDTO);
         return ResponseEntity.ok(user);
     }
 

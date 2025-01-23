@@ -45,6 +45,9 @@ public class Student extends CommonEntity {
 
 	//	Constructors
 	// Default constructor
+	public Student(User user) {
+	}
+
 	public Student() {
 	}
 

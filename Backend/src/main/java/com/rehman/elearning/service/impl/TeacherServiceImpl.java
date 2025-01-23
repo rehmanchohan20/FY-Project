@@ -3,7 +3,6 @@ package com.rehman.elearning.service.impl;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.model.User;
-import com.rehman.elearning.model.*;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.TeacherRepository;
 import com.rehman.elearning.repository.UserRepository;
@@ -76,8 +75,8 @@ public class TeacherServiceImpl implements TeacherService {
                                 course.getTeacher().getUserId(),
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
-                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
-                                course.getTeacher().getUser().getImage()
+                                course.getTeacher().getUser().getImage(),
+                                course.getTeacher().getUser().isTeacher()
                         )
                 ))
                 .collect(Collectors.toList());
@@ -131,9 +130,9 @@ public class TeacherServiceImpl implements TeacherService {
         // Map User entity to UserResponseDTO
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(teacher.getUser().getId());
-        userResponseDTO.setFullName(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
+        userResponseDTO.setusername(teacher.getUser().getFullName()); // Assuming 'fullName' field in User represents username
         userResponseDTO.setEmail(teacher.getUser().getEmail());
-        userResponseDTO.setRole(teacher.getUser().isTeacher() == true ? "Teacher" : "Student");
+        userResponseDTO.setTeacehr(teacher.getUser().isTeacher());
         userResponseDTO.setImage(teacher.getUser().getImage());
 
         // Set the user in the response DTO
@@ -167,8 +166,8 @@ public class TeacherServiceImpl implements TeacherService {
                 course.getTeacher().getUserId(),
                 course.getTeacher().getUser().getFullName(),
                 course.getTeacher().getUser().getEmail(),
-                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
-                course.getTeacher().getUser().getImage()
+                course.getTeacher().getUser().getImage(),
+                course.getTeacher().getUser().isTeacher()
         ));
         return courseResponseDTO;
     }

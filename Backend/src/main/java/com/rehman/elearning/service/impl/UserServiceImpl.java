@@ -111,24 +111,25 @@ public class UserServiceImpl implements UserService {
 		user.setCreatedBy(UserCreatedBy.Self);
 		user.setAdmin(false);
 //		user.setAdmin(Boolean.TRUE.equals(registrationRequestDTO.getAdmin())); // uncommit this and  registrationDTO when you want to create an admin
-		user.setImage("default-profile.png"); // Default image URL
+		user.setImage("https://vectorified.com/no-profile-picture-icon#no-profile-picture-icon-28.png"); // Default image URL
 		user.setAuthProvider(AuthProviderEnum.TraditionalLogin); // Assuming traditional login for registration
 		user.setProviderId(UUID.randomUUID().toString()); // Generate a unique provider ID
+		user.setAsTeacher(registrationRequestDTO.getIsTeacher());
 
 
 
 		// Role assignment based on registration request
-		if (registrationRequestDTO.getIsTeacher()) {
-			Teacher teacher = new Teacher();
-			teacher.setUser(user);
-			user.setTeacher(teacher);
-			teacher.setCreatedBy(UserCreatedBy.Self);
-		} else {
-			Student student = new Student();
-			student.setUser(user);
-			user.setStudent(student);
-			student.setCreatedBy(UserCreatedBy.Self);
-		}
+//		if (registrationRequestDTO.getIsTeacher()) {
+//			Teacher teacher = new Teacher(this);
+//			teacher.setUser(user);
+//			user.setTeacher(teacher);
+//			teacher.setCreatedBy(UserCreatedBy.Self);
+//		} else {
+//			Student student = new Student();
+//			student.setUser(user);
+//			user.setStudent(student);
+//			student.setCreatedBy(UserCreatedBy.Self);
+//		}
 
 		userRepository.save(user);
 		Optional<User> savedUser = userRepository.findById(user.getId()); savedUser.ifPresent(u -> { System.out.println("Saved user: " + u.getUsername() + ", Role: " + (u.isTeacher() ? "Teacher" : (u.isStudent() ? "Student" : "Guest"))); });
@@ -156,30 +157,29 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(passwordEncoder.encode(registrationAdminRequestDTO.getPassword()));
 		user.setEmail(registrationAdminRequestDTO.getEmail());
 		user.setAdmin(false); // Set isAdmin to true since this user is created by admin
-		user.setImage("default-profile.png"); // Default image URL
+		user.setImage("https://vectorified.com/no-profile-picture-icon#no-profile-picture-icon-28.png"); // Default image URL
 		user.setAuthProvider(AuthProviderEnum.TraditionalLogin);
 		user.setProviderId(UUID.randomUUID().toString());
 		user.setCreatedBy(UserCreatedBy.Admin); // Set createdBy to "Admin"
-
+		user.setAsTeacher(registrationAdminRequestDTO.getIsTeacher());
 
 		// Role assignment based on registration request
-		if (registrationAdminRequestDTO.getIsTeacher()) {
-			Teacher teacher = new Teacher();
-			teacher.setUser(user);
-			teacher.setCreatedBy(UserCreatedBy.Admin);
-			user.setTeacher(teacher);
-		} else {
-			Student student = new Student();
-			student.setUser(user);
-			student.setCreatedBy(UserCreatedBy.Admin);
-			user.setStudent(student);
-		}
+//		if (registrationAdminRequestDTO.getIsTeacher()) {
+//			Teacher teacher = new Teacher(this);
+//			teacher.setUser(user);
+//			teacher.setCreatedBy(UserCreatedBy.Admin);
+//			user.setTeacher(teacher);
+//		} else {
+//			Student student = new Student();
+//			student.setUser(user);
+//			student.setCreatedBy(UserCreatedBy.Admin);
+//			user.setStudent(student);
+//		}
 
 
 		userRepository.save(user);
 		return new RegistrationAdminResponseDTO(user.getId().toString());
 	}
-
 
 	@Override
 	@Transactional
@@ -199,7 +199,43 @@ public class UserServiceImpl implements UserService {
 			user.setImage(imagePath);
 		}
 		// Update properties from DTO to the entity
-		user.setFullName(userRequestDto.getName());
+		user.setFullName(userRequestDto.getFullName());
+		user.setEmail(userRequestDto.getEmail());
+		return mapToResponse(userRepository.save(user));
+	}
+
+	@Override
+	@Transactional
+	public UserResponseDTO updateUserByAdmin(Long userId, UserRequestDTO userRequestDto) throws IOException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		user.setUsername(userRequestDto.getFullName());
+		user.setFullName(userRequestDto.getFullName());
+		user.setEmail(userRequestDto.getEmail());
+		user.setPassword(userRequestDto.getPassword());
+
+
+		// Handle isTeacher field
+		if (userRequestDto.getIsTeacher() != null && userRequestDto.getIsTeacher()) {
+			// If the user is marked as a teacher, ensure a Teacher entity is associated
+			if (user.getTeacher() == null) {
+				Teacher teacher = new Teacher();
+				teacher.setUser(user);
+				teacher.setCreatedBy(UserCreatedBy.Admin);
+				user.setTeacher(teacher);
+			}
+			user.setStudent(null); // Ensure the user is not a student
+		} else {
+			// If the user is not marked as a teacher, ensure a Student entity is associated
+			if (user.getStudent() == null) {
+				Student student = new Student();
+				student.setUser(user);
+				student.setCreatedBy(UserCreatedBy.Admin);
+				user.setStudent(student);
+			}
+			user.setTeacher(null); // Ensure the user is not a teacher
+		}
 
 		return mapToResponse(userRepository.save(user));
 	}
@@ -228,8 +264,10 @@ public class UserServiceImpl implements UserService {
 		UserResponseDTO dto = new UserResponseDTO();
 		// Map properties from entity to DTO
 		dto.setId(user.getId());
-		dto.setFullName(user.getUsername());
+		dto.setusername(user.getUsername());
 		dto.setEmail(user.getEmail());
+		dto.setTeacehr(user.isTeacher());
+		dto.setImage(user.getImage());
 		// Add other fields as necessary
 		return dto;
 	}

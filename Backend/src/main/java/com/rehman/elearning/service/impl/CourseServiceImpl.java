@@ -159,20 +159,42 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.COURSE_NOT_FOUND));
 
         try {
+            // Unlink related entities
             if (course.getCoursePrice() != null) {
                 course.setCoursePrice(null); // Unlink the price from the course
             }
-            if (course.getcourseModule()!= null && !course.getcourseModule().isEmpty()) {
+
+            if (course.getCourseOffer() != null) {
+                course.setCourseOffer(null); // Unlink the offer from the course
+            }
+
+            if (course.getcourseModule() != null && !course.getcourseModule().isEmpty()) {
                 course.getcourseModule().forEach(module -> module.setCourse(null)); // Unlink each module
                 course.getcourseModule().clear(); // Clear the collection
             }
 
-            // Finally, delete the course itself
-            if(course != null && course.getTeacher() != null) {
+            if (course.getStudents() != null && !course.getStudents().isEmpty()) {
+                course.getStudents().forEach(student -> student.getCourses().remove(course)); // Unlink each student
+                course.getStudents().clear(); // Clear the collection
+            }
+
+            if (course.getGuidances() != null && !course.getGuidances().isEmpty()) {
+                course.getGuidances().forEach(guidance -> guidance.getCourses().remove(course)); // Unlink each guidance
+                course.getGuidances().clear(); // Clear the collection
+            }
+
+            if (course.getPayments() != null && !course.getPayments().isEmpty()) {
+                course.getPayments().forEach(payment -> payment.setCourse(null)); // Unlink each payment
+                course.getPayments().clear(); // Clear the collection
+            }
+
+            if (course.getTeacher() != null) {
                 course.getTeacher().getCourses().remove(course); // Unlink the course from the teacher
             }
+
+            // Finally, delete the course itself
             courseRepository.delete(course); // Delete the course object
-            courseRepository.flush(); // Ensure delete it immediately executed
+            courseRepository.flush(); // Ensure delete is immediately executed
 
             // Log success
         } catch (Exception e) {
@@ -213,8 +235,9 @@ public class CourseServiceImpl implements CourseService {
                                     course.getTeacher().getUserId(),
                                     course.getTeacher().getUser().getFullName(),
                                     course.getTeacher().getUser().getEmail(),
-                                    course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
-                                    course.getTeacher().getUser().getImage()
+                                    course.getTeacher().getUser().getImage(),
+                                    course.getTeacher().getUser().isTeacher()
+
                             ) // Map the teacher to UserResponseDTO
 
                     );
@@ -256,8 +279,8 @@ public class CourseServiceImpl implements CourseService {
                                 course.getTeacher().getUserId(),
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
-                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
-                                course.getTeacher().getUser().getImage()
+                                course.getTeacher().getUser().getImage(),
+                                course.getTeacher().getUser().isTeacher()
                         ))) // Map the teacher to UserResponseDTO
                 .collect(Collectors.toList());
     }

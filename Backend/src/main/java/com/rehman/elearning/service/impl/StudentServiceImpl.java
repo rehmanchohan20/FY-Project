@@ -64,7 +64,8 @@ public class StudentServiceImpl implements StudentService {
                                 course.getTeacher().getUser().getFullName(),
                                 course.getTeacher().getUser().getEmail(),
                                 course.getTeacher().getUser().getImage(),
-                                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student"
+                                course.getTeacher().getUser().isTeacher()
+
                         )
                 ))
                 .collect(Collectors.toList());
@@ -172,8 +173,8 @@ public class StudentServiceImpl implements StudentService {
                 course.getTeacher().getUserId(),
                 course.getTeacher().getUser().getFullName(),
                 course.getTeacher().getUser().getEmail(),
-                course.getTeacher().getUser().isTeacher() ? "Teacher" : "Student",
-                course.getTeacher().getUser().getImage()
+                course.getTeacher().getUser().getImage(),
+                course.getTeacher().getUser().isTeacher()
         )); // Map the teacher to UserResponseDTO);
         return dto;
     }

@@ -11,6 +11,9 @@ public class RegistrationAdminRequestDTO {
 	private String username;
 
 	@NotBlank
+	private String fullName;
+
+	@NotBlank
 	private String email;
 
 	@NotBlank
@@ -23,8 +26,9 @@ public class RegistrationAdminRequestDTO {
 		super();
 	}
 
-	public RegistrationAdminRequestDTO(String username, String email, String password, Boolean isTeacher) {
+	public RegistrationAdminRequestDTO(String username, String fullName, String email, String password, Boolean isTeacher) {
 		this.username = username;
+		this.fullName = fullName;
 		this.email = email;
 		this.password = password;
 		this.isTeacher = isTeacher;
@@ -36,6 +40,14 @@ public class RegistrationAdminRequestDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName( String fullName) {
+		this.fullName = fullName;
 	}
 
 	public String getEmail() {
@@ -66,6 +78,7 @@ public class RegistrationAdminRequestDTO {
 	public String toString() {
 		return "RegistrationRequestDTO{" +
 				"username='" + username + '\'' +
+				", fullName='" + fullName + '\'' +
 				", email='" + email + '\'' +
 				", password='" + password + '\'' +
 				", isTeacher=" + isTeacher + '}';

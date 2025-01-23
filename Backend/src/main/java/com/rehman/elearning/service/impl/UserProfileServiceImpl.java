@@ -1,6 +1,8 @@
 package com.rehman.elearning.service.impl;
 
 import com.rehman.elearning.constants.ErrorEnum;
+import com.rehman.elearning.model.Student;
+import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.model.User;
 import com.rehman.elearning.repository.UserRepository;
 import com.rehman.elearning.rest.dto.inbound.UserProfileRequestDTO;
@@ -29,7 +31,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponseDTO updateUserProfile(String username, UserProfileRequestDTO requestDTO) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException(ErrorEnum.USER_NOT_FOUND.getCode()));
-
         user.setFullName(requestDTO.getName());
         user.setEmail(requestDTO.getEmail());
         user.setImage(requestDTO.getProfilePicture());

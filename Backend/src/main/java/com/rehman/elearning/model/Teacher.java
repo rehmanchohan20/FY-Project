@@ -20,6 +20,12 @@ public class Teacher extends CommonEntity{
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Course> courses = new HashSet<>();
 
+    public Teacher(User user) {
+    }
+
+    public Teacher() {
+    }
+
     public Long getUserId() {
         return userId;
     }

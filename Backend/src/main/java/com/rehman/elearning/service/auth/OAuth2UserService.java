@@ -1,7 +1,5 @@
 package com.rehman.elearning.service.auth;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,22 +9,15 @@ import com.rehman.elearning.exceptions.AccountAlreadyRegisterException;
 import com.rehman.elearning.exceptions.AccountNotRegisterException;
 import com.rehman.elearning.model.Student;
 import com.rehman.elearning.model.Teacher;
-import com.rehman.elearning.util.AuthorityUtils;
 import com.rehman.elearning.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +26,6 @@ import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.exceptions.OAuth2AuthenticationProcessingException;
 import com.rehman.elearning.model.User;
 import com.rehman.elearning.repository.UserRepository;
-
-import javax.management.relation.Role;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {
