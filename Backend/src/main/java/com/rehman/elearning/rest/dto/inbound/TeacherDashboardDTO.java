@@ -32,12 +32,6 @@ public class TeacherDashboardDTO {
         public EnrollmentData() {
         }
 
-        public EnrollmentData(String courseName, Long courseEnrollments, Timestamp createdAt) {
-            this.courseName = courseName;
-            this.courseEnrollments = courseEnrollments;
-            this.createdAt = createdAt;
-        }
-
         // Getters and setters
         public String getCourseName() {
             return courseName;

@@ -33,8 +33,8 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
 
         // Course Statistics
         dashboardDTO.setTotalCourses(courseRepository.countByTeacherUserId(teacherId));
-        dashboardDTO.setTotalStudentsEnrolled(courseEnrollmentDataRepository.countTotalEnrollmentsByTeacherId(teacherId));
-        dashboardDTO.setDailyEnrollments(courseEnrollmentDataRepository.countDailyEnrollmentsByTeacherId(teacherId, LocalDate.now()));
+        dashboardDTO.setTotalStudentsEnrolled(courseEnrollmentDataRepository.countTotalStudentsEnrolledByTeacher(teacherId));
+        dashboardDTO.setDailyEnrollments(courseEnrollmentDataRepository.countStudentsEnrolledTodayByTeacher(teacherId, LocalDate.now()));
         dashboardDTO.setTotalRevenue(paymentRepository.calculateTotalRevenueByTeacherId(teacherId));
 
         // Enrollment Data
