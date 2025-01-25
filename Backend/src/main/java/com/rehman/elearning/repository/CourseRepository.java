@@ -50,4 +50,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 
     List<Course> findByTeacherUserId(Long teacherUserId);
 
+
+    @Query("SELECT COUNT(e) FROM Course c " +
+            "JOIN c.enrollments e " +
+            "WHERE c.teacher.userId = :teacherId " +
+            "AND DATE(e.createdAt) = CURRENT_DATE")
+    Long countStudentsEnrolledToday(@Param("teacherId") Long teacherId);
+
 }

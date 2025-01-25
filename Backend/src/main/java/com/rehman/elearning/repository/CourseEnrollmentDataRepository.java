@@ -24,7 +24,15 @@ public interface CourseEnrollmentDataRepository extends JpaRepository<CourseEnro
 
 
 //    @Query("SELECT COUNT(c) FROM CourseEnrollmentData c WHERE c.course.teacher.userId = :teacherId AND c.createdAt >= :date")
-//    Long countDailyEnrollmentsByTeacherId(Long teacherId, LocalDate date);
+//    Long countDailyEnrollmentsByCourse_Id(Long courseId, LocalDate date);
+
+
+//    @Query("SELECT COUNT(e) FROM Course c " +
+//            "JOIN c.enrollments e " +
+//            "WHERE c.teacher.userId = :teacherId " +
+//            "AND DATE(e.createdAt) = CURRENT_DATE")
+//    Long countStudentsEnrolledToday(@Param("teacherId") Long teacherId);
+
 
 
 //    @Query("SELECT COUNT(s) FROM Student s " +

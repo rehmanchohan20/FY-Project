@@ -1,5 +1,6 @@
 package com.rehman.elearning.service.impl;
 
+import com.rehman.elearning.model.Payment;
 import com.rehman.elearning.repository.CourseEnrollmentDataRepository;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.PaymentRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +29,13 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
     @Override
     public TeacherDashboardDTO getTeacherDashboard(Long teacherId) {
         TeacherDashboardDTO dashboardDTO = new TeacherDashboardDTO();
+           // Course Statistics
 
-        // Course Statistics
+        Long CountEnrollment = courseRepository.countStudentsEnrolledToday(teacherId);
+
         dashboardDTO.setTotalCourses(courseRepository.countByTeacherUserId(teacherId));
         dashboardDTO.setTotalStudentsEnrolled(courseEnrollmentDataRepository.countTotalStudentsEnrolledByTeacher(teacherId));
+        dashboardDTO.setDailyEnrollments(CountEnrollment);
         dashboardDTO.setTotalRevenue(paymentRepository.calculateTotalRevenueByTeacherId(teacherId));
 
         // Enrollment Data
@@ -58,10 +63,10 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
                 .stream()
                 .map(entry -> {
                     String courseName = entry.getKey();
-                    List<com.rehman.elearning.model.Payment> payments = entry.getValue();
+                    List<Payment> payments = entry.getValue();
 
                     double totalRevenue = payments.stream()
-                            .mapToDouble(com.rehman.elearning.model.Payment::getAmount)
+                            .mapToDouble(Payment::getAmount)
                             .sum();
 
                     List<Timestamp> revenueDates = payments.stream()
