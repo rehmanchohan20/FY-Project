@@ -16,7 +16,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     // Custom method to find a payment by its transaction ID
     Optional<Payment> findByTransactionId(String transactionId);
-    Optional<Payment> findByStudentUserIdAndCourseId(Long studentId, Long courseId);
+
+    Optional<Payment> findByStudent_UserIdAndCourse_Id(Long studentId, Long courseId);
+
 
     // Admin methods
     @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate")

@@ -1,9 +1,11 @@
 package com.rehman.elearning.service.impl;
 
+import com.rehman.elearning.constants.PaymentStatus;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Student;
 import com.rehman.elearning.model.User;
 import com.rehman.elearning.repository.CourseRepository;
+import com.rehman.elearning.repository.PaymentRepository;
 import com.rehman.elearning.repository.StudentRepository;
 import com.rehman.elearning.rest.dto.inbound.CoursePriceRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.CourseRequestDTO;
@@ -35,6 +37,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Override
     @Transactional
@@ -47,30 +51,53 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public List<CourseResponseDTO> getEnrolledCourses(Long studentId) {
+        // Fetch the student entity
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-        List<Course> enrolledCourses = courseRepository.findByStudents_UserId(studentId);
-        return enrolledCourses.stream()
-                .map(course -> new CourseResponseDTO(
-                        course.getId(),
-                        course.getTitle(),
-                        course.getDescription(),
-                        new CoursePriceResponseDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
-                        course.getStatus(),
-                        course.getThumbnail(),
-                        course.getCategory(),
-                        new UserResponseDTO(
-                                course.getTeacher().getUserId(),
-                                course.getTeacher().getUser().getFullName(),
-                                course.getTeacher().getUser().getEmail(),
-                                course.getTeacher().getUser().getImage(),
-                                course.getTeacher().getUser().isTeacher(),
-                                course.getTeacher().getUser().getAdmin()
 
-                        )
-                ))
+        // Fetch the list of courses the student is enrolled in
+        List<Course> enrolledCourses = courseRepository.findByStudents_UserId(studentId);
+
+        // Iterate over the enrolled courses to update payment status and map to response DTO
+        return enrolledCourses.stream()
+                .map(course -> {
+                    boolean isEnrolled = course.getStudents().stream()
+                            .anyMatch(s -> s.getUserId().equals(student.getUserId()));
+
+                    // If the student is enrolled in the course, proceed to update the payment status
+                    if (isEnrolled) {
+                        // Find the payment record for the student and course
+                        paymentRepository.findByStudent_UserIdAndCourse_Id(student.getUserId(), course.getId())
+                                .ifPresent(payment -> {
+                                    // Update payment status to SUCCESS if the student is enrolled
+                                    payment.setStatus(PaymentStatus.SUCCESS);
+                                    paymentRepository.save(payment); // Save the updated payment
+                                });
+                    }
+
+                    // Return the CourseResponseDTO after updating the payment status (if applicable)
+                    return new CourseResponseDTO(
+                            course.getId(),
+                            course.getTitle(),
+                            course.getDescription(),
+                            new CoursePriceResponseDTO(course.getCoursePrice().getAmount(), course.getCoursePrice().getCurrency()),
+                            course.getStatus(),
+                            course.getThumbnail(),
+                            course.getCategory(),
+                            new UserResponseDTO(
+                                    course.getTeacher().getUserId(),
+                                    course.getTeacher().getUser().getFullName(),
+                                    course.getTeacher().getUser().getEmail(),
+                                    course.getTeacher().getUser().getImage(),
+                                    course.getTeacher().getUser().isTeacher(),
+                                    course.getTeacher().getUser().getAdmin()
+                            )
+                    );
+                })
                 .collect(Collectors.toList());
     }
+
+
 
     private StudentResponseDTO getStudentResponseDTO(StudentRequestDTO studentRequestDto, Student student) {
         if (studentRequestDto.getCourseIds() != null) {

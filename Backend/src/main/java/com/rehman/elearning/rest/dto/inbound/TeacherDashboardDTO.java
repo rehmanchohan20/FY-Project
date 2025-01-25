@@ -1,9 +1,6 @@
 package com.rehman.elearning.rest.dto.inbound;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class TeacherDashboardDTO {
@@ -27,7 +24,7 @@ public class TeacherDashboardDTO {
     public static class EnrollmentData {
         private String courseName;
         private Long courseEnrollments;
-        private Timestamp createdAt;  // Use LocalDateTime instead of Date
+        private Timestamp createdAt;
 
         public EnrollmentData() {
         }
@@ -58,18 +55,18 @@ public class TeacherDashboardDTO {
         }
     }
 
-
     public static class PaymentData {
-        private Timestamp  revenueDate;
+        private String courseName;
         private Double revenueAmount;
+        private List<Timestamp> revenueDates; // Updated to support multiple dates for a course
 
         // Getters and setters
-        public Timestamp  getRevenueDate() {
-            return revenueDate;
+        public String getCourseName() {
+            return courseName;
         }
 
-        public void setRevenueDate(Timestamp  revenueDate) {
-            this.revenueDate = revenueDate;
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
         }
 
         public Double getRevenueAmount() {
@@ -78,6 +75,14 @@ public class TeacherDashboardDTO {
 
         public void setRevenueAmount(Double revenueAmount) {
             this.revenueAmount = revenueAmount;
+        }
+
+        public List<Timestamp> getRevenueDates() {
+            return revenueDates;
+        }
+
+        public void setRevenueDates(List<Timestamp> revenueDates) {
+            this.revenueDates = revenueDates;
         }
     }
 
@@ -94,11 +99,11 @@ public class TeacherDashboardDTO {
             this.activity = activity;
         }
 
-        public Timestamp  getActivityDate() {
+        public Timestamp getActivityDate() {
             return activityDate;
         }
 
-        public void setActivityDate(Timestamp  activityDate) {
+        public void setActivityDate(Timestamp activityDate) {
             this.activityDate = activityDate;
         }
     }

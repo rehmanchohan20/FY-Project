@@ -1,8 +1,5 @@
 package com.rehman.elearning.service.impl;
 
-import com.rehman.elearning.model.Course;
-import com.rehman.elearning.model.CourseEnrollmentData;
-import com.rehman.elearning.model.Payment;
 import com.rehman.elearning.repository.CourseEnrollmentDataRepository;
 import com.rehman.elearning.repository.CourseRepository;
 import com.rehman.elearning.repository.PaymentRepository;
@@ -11,7 +8,7 @@ import com.rehman.elearning.service.TeacherDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +31,6 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
         // Course Statistics
         dashboardDTO.setTotalCourses(courseRepository.countByTeacherUserId(teacherId));
         dashboardDTO.setTotalStudentsEnrolled(courseEnrollmentDataRepository.countTotalStudentsEnrolledByTeacher(teacherId));
-        dashboardDTO.setDailyEnrollments(courseEnrollmentDataRepository.countStudentsEnrolledTodayByTeacher(teacherId, LocalDate.now()));
         dashboardDTO.setTotalRevenue(paymentRepository.calculateTotalRevenueByTeacherId(teacherId));
 
         // Enrollment Data
@@ -51,13 +47,31 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
                 .collect(Collectors.toList());
         dashboardDTO.setEnrollments(enrollmentData);
 
-        // Payment Data
+        // Payment Data (Aggregated by course name)
         List<TeacherDashboardDTO.PaymentData> paymentData = paymentRepository.findByCourse_Teacher_UserId(teacherId)
                 .stream()
-                .map(payment -> {
+                .collect(Collectors.groupingBy(
+                        payment -> payment.getCourse().getTitle(),
+                        Collectors.toList()
+                ))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    String courseName = entry.getKey();
+                    List<com.rehman.elearning.model.Payment> payments = entry.getValue();
+
+                    double totalRevenue = payments.stream()
+                            .mapToDouble(com.rehman.elearning.model.Payment::getAmount)
+                            .sum();
+
+                    List<Timestamp> revenueDates = payments.stream()
+                            .map(payment -> payment.getCreatedAt())
+                            .collect(Collectors.toList());
+
                     TeacherDashboardDTO.PaymentData data = new TeacherDashboardDTO.PaymentData();
-                    data.setRevenueDate(payment.getCreatedAt());
-                    data.setRevenueAmount(payment.getAmount());
+                    data.setCourseName(courseName);
+                    data.setRevenueAmount(totalRevenue);
+                    data.setRevenueDates(revenueDates);
                     return data;
                 })
                 .collect(Collectors.toList());
@@ -77,5 +91,4 @@ public class TeacherDashboardServiceImpl implements TeacherDashboardService {
 
         return dashboardDTO;
     }
-
 }

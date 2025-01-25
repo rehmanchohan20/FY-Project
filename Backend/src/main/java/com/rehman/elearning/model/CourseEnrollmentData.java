@@ -2,6 +2,8 @@ package com.rehman.elearning.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 
@@ -21,7 +23,7 @@ public class CourseEnrollmentData {
     private Long enrollmentCount;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;  // Use LocalDate Time instead of Date
+    private Timestamp createdAt;  // Use LocalDate Time instead of Date
 
     // Getters and setters
 
@@ -49,11 +51,11 @@ public class CourseEnrollmentData {
         this.enrollmentCount = enrollmentCount;
     }
 
-    public LocalDate  getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate  createdAt) {
+    public void setCreatedAt(Timestamp  createdAt) {
         this.createdAt = createdAt;
     }
 }

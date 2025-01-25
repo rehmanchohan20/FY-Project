@@ -175,6 +175,11 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             if (studentId != null && courseId != null) {
+                paymentRepository.findByTransactionId(studentId)
+                        .ifPresent(payment -> {
+                            payment.setStatus(PaymentStatus.SUCCESS);
+                            paymentRepository.save(payment);
+                        });
                 handlePaymentSuccess(studentId, courseId);
             }
         } catch (SignatureVerificationException e) {
@@ -205,8 +210,11 @@ public class PaymentServiceImpl implements PaymentService {
         // Enroll student in course
         student.getCourses().add(course);
         course.getStudents().add(student);
+
         studentRepository.save(student);
         courseRepository.save(course);
+
+
 
         // Initialize course progress to 0%
         List<CourseModule> courseModules = new ArrayList<>(course.getcourseModule());
@@ -227,7 +235,7 @@ public class PaymentServiceImpl implements PaymentService {
         courseProgressRepository.save(courseProgress);
 
         // Update payment status to SUCCESS
-        paymentRepository.findByStudentUserIdAndCourseId(student.getUserId(), course.getId())
+        paymentRepository.findByStudent_UserIdAndCourse_Id(student.getUserId(), course.getId())
                 .ifPresent(payment -> {
                     payment.setStatus(PaymentStatus.SUCCESS);
                     paymentRepository.save(payment);
