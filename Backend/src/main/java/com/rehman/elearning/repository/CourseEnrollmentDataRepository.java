@@ -43,10 +43,6 @@ public interface CourseEnrollmentDataRepository extends JpaRepository<CourseEnro
 //    Long countStudentsEnrolledTodayByTeacher(@Param("teacherId") Long teacherId,
 //                                             @Param("date") Timestamp date);
 
-
-
-
-
     @Query("SELECT c FROM CourseEnrollmentData c WHERE c.course.teacher.userId = :teacherId")
     List<CourseEnrollmentData> findByCourseTeacherUserId(@Param("teacherId") Long teacherId);
 }
