@@ -180,6 +180,18 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         for (Course course : enrolledCourses) {
             List<CourseModule> modules = courseModuleRepository.findByCourseId(course.getId());
 
+            // If there are no modules in the course, assign progress to 0%
+            if (modules.isEmpty()) {
+                CourseProgress tempCourseProgress = new CourseProgress();
+                tempCourseProgress.setId(course.getId());
+                tempCourseProgress.setStudent(student);
+                tempCourseProgress.setProgressPercentage(0.0);
+                tempCourseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
+                progressList.add(convertToResponseDTO(tempCourseProgress));
+                continue;
+            }
+
             int totalLessons = 0;
             int completedLessons = 0;
 
@@ -202,7 +214,13 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             CourseProgress tempCourseProgress = new CourseProgress();
             tempCourseProgress.setId(course.getId());
             tempCourseProgress.setStudent(student);
-            tempCourseProgress.setCourseModuleLesson(modules.get(0).getCourseModuleLessons().iterator().next());
+
+            // Safely set the CourseModuleLesson if available
+            CourseModuleLesson firstLesson = modules.get(0).getCourseModuleLessons().stream().findFirst().orElse(null);
+            if (firstLesson != null) {
+                tempCourseProgress.setCourseModuleLesson(firstLesson);
+            }
+
             tempCourseProgress.setProgressPercentage(overallProgress);
             tempCourseProgress.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
 

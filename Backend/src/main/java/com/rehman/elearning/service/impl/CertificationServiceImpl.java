@@ -75,7 +75,7 @@ public class CertificationServiceImpl implements CertificationService {
         // Check if the student has completed all modules
         for (CourseModule courseModule : courseModules) {
             // Get progress for each module
-            List<CourseProgress> progressList = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(studentId, courseModule.getId());
+            List<CourseProgress> progressList = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(studentId, courseModule.getId());//
 
             if (progressList.isEmpty() || progressList.get(0).getProgressPercentage() < 100) {
                 throw new CourseNotCompletedException(ErrorEnum.COURSE_NOT_COMPLETED);
