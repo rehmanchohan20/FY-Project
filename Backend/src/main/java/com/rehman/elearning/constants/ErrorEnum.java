@@ -23,7 +23,8 @@ public enum ErrorEnum {
 	ACCOUNT_NOT_REGISTER(GeneralErrorEnum.FAILURE.getCode(), "Account not found, Please signup"),
 	INVALID_REQUEST(GeneralErrorEnum.FAILURE.getCode(), "Invalid Request"),
 	FAILED_TO_UPLOAD_THUMBNAIL(GeneralErrorEnum.FAILURE.getCode(), "Failed to upload thumbnail"),
-	PROGRESS_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Progress not found"),;
+	PROGRESS_NOT_FOUND(GeneralErrorEnum.FAILURE.getCode(), "Progress not found"),
+	COURSE_NOT_COMPLETED(GeneralErrorEnum.FAILURE.getCode(), "Course not completed"),;
 
 	private String code;
 	private String description;

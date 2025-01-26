@@ -11,6 +11,10 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.rehman.elearning.constants.ErrorEnum;
+import com.rehman.elearning.exceptions.CourseNotCompletedException;
+import com.rehman.elearning.exceptions.CourseNotFoundException;
+import com.rehman.elearning.exceptions.StudentNotFoundException;
 import com.rehman.elearning.model.Certification;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.CourseModule;
@@ -59,8 +63,11 @@ public class CertificationServiceImpl implements CertificationService {
     @Override
     public CertificationDTO issueCertification(Long studentId, Long courseId) {
         // Fetch the student and course
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(ErrorEnum.STUDENT_NOT_FOUND));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(ErrorEnum.COURSE_NOT_FOUND));
 
         // Fetch all modules of the course
         List<CourseModule> courseModules = new ArrayList<>(course.getcourseModule());
@@ -71,7 +78,7 @@ public class CertificationServiceImpl implements CertificationService {
             List<CourseProgress> progressList = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(studentId, courseModule.getId());
 
             if (progressList.isEmpty() || progressList.get(0).getProgressPercentage() < 100) {
-                throw new IllegalStateException("Student has not completed the module: " + courseModule.getHeading());
+                throw new CourseNotCompletedException(ErrorEnum.COURSE_NOT_COMPLETED);
             }
         }
 
@@ -101,9 +108,6 @@ public class CertificationServiceImpl implements CertificationService {
 
         return certificationDTO;
     }
-
-
-
 
     // Generate the certificate PDF
     private ByteArrayOutputStream generateCertificatePdfUsingTemplate(Student student, Course course) {
