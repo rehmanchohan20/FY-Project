@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.rehman.elearning.model.Certification;
 import com.rehman.elearning.model.Course;
+import com.rehman.elearning.model.CourseModule;
 import com.rehman.elearning.model.CourseProgress;
 import com.rehman.elearning.model.Student;
 import com.rehman.elearning.repository.CertificationRepository;
@@ -32,7 +33,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CertificationServiceImpl implements CertificationService {
@@ -52,25 +55,24 @@ public class CertificationServiceImpl implements CertificationService {
     @Autowired
     private JavaMailSender mailSender;
 
+
     @Override
     public CertificationDTO issueCertification(Long studentId, Long courseId) {
         // Fetch the student and course
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
-        // Fetch the most recent progress for the student in the course
-        List<CourseProgress> progressList = courseProgressRepository.findLatestProgressByStudent_UserIdAndCourseModuleLesson_CourseModule_Course_Id(studentId, courseId);
+        // Fetch all modules of the course
+        List<CourseModule> courseModules = new ArrayList<>(course.getcourseModule());
 
-        if (progressList.isEmpty()) {
-            throw new IllegalArgumentException("Course progress not found");
-        }
+        // Check if the student has completed all modules
+        for (CourseModule courseModule : courseModules) {
+            // Get progress for each module
+            List<CourseProgress> progressList = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(studentId, courseModule.getId());
 
-        // Get the latest progress (first element in the list)
-        CourseProgress progress = progressList.get(0);
-
-        // Check if the student has completed the course (progress should be 100%)
-        if (progress.getProgressPercentage() < 100) {
-            throw new IllegalStateException("Course not yet completed");
+            if (progressList.isEmpty() || progressList.get(0).getProgressPercentage() < 100) {
+                throw new IllegalStateException("Student has not completed the module: " + courseModule.getHeading());
+            }
         }
 
         // Issue the certification
@@ -99,6 +101,9 @@ public class CertificationServiceImpl implements CertificationService {
 
         return certificationDTO;
     }
+
+
+
 
     // Generate the certificate PDF
     private ByteArrayOutputStream generateCertificatePdfUsingTemplate(Student student, Course course) {

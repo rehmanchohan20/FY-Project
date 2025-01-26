@@ -22,5 +22,5 @@ public interface CourseProgressRepository extends JpaRepository<CourseProgress, 
     List<CourseProgress> findLatestProgressByStudent_UserIdAndCourseModuleLesson_CourseModule_Course_Id(Long studentId, Long courseId);
 
     // In case you want to find by moduleId
-    CourseProgress findByStudent_UserIdAndCourseModuleLesson_ModuleId(Long userId, Long moduleId);
+    List<CourseProgress> findByStudent_UserIdAndCourseModuleLesson_ModuleId(Long studentId, Long moduleId);
 }

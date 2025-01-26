@@ -97,7 +97,15 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             throw new ResourceNotFoundException(ErrorEnum.LESSON_NOT_FOUND);
         }
 
-        CourseProgress courseProgress = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getCourse().getId());
+        // Fetching the CourseProgress as a List
+        List<CourseProgress> progressList = courseProgressRepository.findByStudent_UserIdAndCourseModuleLesson_ModuleId(userId, module.getCourse().getId());
+
+        // Assuming you want to get the first match from the progressList
+        CourseProgress courseProgress = null;
+        if (!progressList.isEmpty()) {
+            courseProgress = progressList.get(0);
+        }
+
         if (courseProgress == null) {
             courseProgress = new CourseProgress();
             courseProgress.setStudent(student);
@@ -122,6 +130,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
 
         return convertToResponseDTO(courseProgress);
     }
+
 
     @Transactional
     @Override
