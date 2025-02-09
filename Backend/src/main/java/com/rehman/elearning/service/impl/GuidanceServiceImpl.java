@@ -1,7 +1,9 @@
 package com.rehman.elearning.service.impl;
 
 import com.rehman.elearning.constants.CategoryEnum;
+import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
+import com.rehman.elearning.exceptions.ResourceNotFoundException;
 import com.rehman.elearning.model.Course;
 import com.rehman.elearning.model.Guidance;
 import com.rehman.elearning.model.Student;
@@ -27,33 +29,31 @@ public class GuidanceServiceImpl implements GuidanceService {
 
     @Override
     public GuidanceResponseDTO createGuidanceForStudent(Student student, String question, List<Course> courses) {
-        String whatsappLink = null;
+        String whatsappLink = "https://wa.me/03113865205?text=Hello, I need further guidance regarding my course!";
 
-        // Check if question contains any of the response triggers (case-insensitive match)
+        // Check if the question contains any of the response triggers (case-insensitive match)
         if (KeywordUtil.RESPONSE_TRIGGERS.stream()
                 .anyMatch(trigger -> question.toLowerCase().contains(trigger.toLowerCase()))) {
             System.out.println("this hook hits");
-            whatsappLink = "https://wa.me/03113865205?text=Hello, I need further guidance regarding my course!";
-            System.out.println("WhatsApp Link: " + whatsappLink);
-            return new GuidanceResponseDTO(whatsappLink); // Returning the WhatsApp link response
+            return new GuidanceResponseDTO(whatsappLink);
         }
 
         // Clean the question for better matching
         String cleanedQuestion = question.trim().replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
 
-        // Create a map of categories to their corresponding keyword sets
-        Map<CategoryEnum, Set<String>> categoryKeywords = Map.of(
-                CategoryEnum.Programming, KeywordUtil.PROGRAMMING_KEYWORDS,
-                CategoryEnum.Design, KeywordUtil.DESIGN_KEYWORDS,
-                CategoryEnum.DigitalMarketing, KeywordUtil.DIGITAL_MARKETING_KEYWORDS,
-                CategoryEnum.Others, KeywordUtil.OTHERS_KEYWORDS
-        );
-
-
         // Find relevant courses if not provided
         if (courses == null || courses.isEmpty()) {
             courses = findRelevantCourses(cleanedQuestion);
         }
+
+        // If no relevant courses found, return the WhatsApp response
+        if (courses.isEmpty()) {
+            System.out.println("No relevant courses found. Redirecting to WhatsApp.");
+            return new GuidanceResponseDTO(whatsappLink);
+        }
+
+        // Ensure all courses are saved before assigning to guidance
+        courses = courseRepository.findAllById(courses.stream().map(Course::getId).collect(Collectors.toList()));
 
         // Create and save the Guidance entity
         Guidance guidance = new Guidance();
@@ -82,9 +82,10 @@ public class GuidanceServiceImpl implements GuidanceService {
                 guidance.getAnswer(),
                 guidance.getNextStepRecommendation(),
                 courseDetails,
-                null  // No WhatsApp link if not triggered
+                null  // No WhatsApp link if relevant courses exist
         );
     }
+
 
     private List<Course> findRelevantCourses(String question) {
         String cleanedQuestion = question.trim().replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
@@ -99,19 +100,17 @@ public class GuidanceServiceImpl implements GuidanceService {
 
         CategoryEnum matchedCategory = categoryKeywords.entrySet().stream()
                 .filter(entry -> entry.getValue().stream()
-                        .anyMatch(keyword -> Arrays.asList(cleanedQuestion.split(" ")).contains(keyword.toLowerCase()))) // Match whole words
+                        .anyMatch(keyword -> Arrays.asList(cleanedQuestion.split(" ")).contains(keyword.toLowerCase())))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
 
         System.out.println("Matched Category: " + matchedCategory);
+
         if (matchedCategory != null) {
             return courseRepository.findByCategory(matchedCategory);
         }
-
-        return courseRepository.findAll(); // Fallback case
+        return Collections.emptyList();
     }
-
-
 
 }

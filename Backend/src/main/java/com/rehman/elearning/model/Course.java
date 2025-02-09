@@ -51,7 +51,6 @@ public class Course extends CommonEntity {
     private List<CourseEnrollmentData> enrollments;
 
 
-
     @ManyToMany
     @JoinTable(
             name = "enrolled_Student",
@@ -71,6 +70,9 @@ public class Course extends CommonEntity {
     )
     private Set<Guidance> guidances = new HashSet<>();
 
+    public Course(Long i, String s) {
+        super();
+    }
 
 
     public int getEnrolledStudentsCount() {
