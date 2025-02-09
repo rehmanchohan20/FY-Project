@@ -32,7 +32,9 @@ public class GuidanceServiceImpl implements GuidanceService {
         // Check if question contains any of the response triggers (case-insensitive match)
         if (KeywordUtil.RESPONSE_TRIGGERS.stream()
                 .anyMatch(trigger -> question.toLowerCase().contains(trigger.toLowerCase()))) {
+            System.out.println("this hook hits");
             whatsappLink = "https://wa.me/03113865205?text=Hello, I need further guidance regarding my course!";
+            System.out.println("WhatsApp Link: " + whatsappLink);
             return new GuidanceResponseDTO(whatsappLink); // Returning the WhatsApp link response
         }
 

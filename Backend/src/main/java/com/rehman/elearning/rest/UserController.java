@@ -1,6 +1,7 @@
 package com.rehman.elearning.rest;
 
 import com.rehman.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
+import com.rehman.elearning.rest.dto.inbound.UserProfileRequestDTO;
 import com.rehman.elearning.rest.dto.inbound.UserRequestDTO;
 import com.rehman.elearning.rest.dto.outbound.RegistrationAdminResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.UserResponseDTO;
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<UserResponseDTO> updateUser(@AuthenticationPrincipal Jwt jwt, @RequestBody UserRequestDTO userRequestDTO) throws IOException {
+    public ResponseEntity<UserResponseDTO> updateUser(@AuthenticationPrincipal Jwt jwt, @RequestBody UserProfileRequestDTO userRequestDTO) throws IOException {
         UserResponseDTO user = userService.updateUser(Long.valueOf(jwt.getId()), userRequestDTO);
         return ResponseEntity.ok(user);
     }

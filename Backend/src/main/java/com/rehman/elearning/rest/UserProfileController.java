@@ -9,6 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserProfileController {
@@ -31,7 +33,7 @@ public class UserProfileController {
     @PutMapping("/me")
     public ResponseEntity<UserProfileResponseDTO> updateUserProfile(
             Authentication authentication,
-            @RequestBody UserProfileRequestDTO requestDTO) {
+            @RequestBody UserProfileRequestDTO requestDTO) throws IOException {
         String username = authentication.getName();
         UserProfileResponseDTO updatedProfile = userProfileService.updateUserProfile(username, requestDTO);
         return ResponseEntity.ok(updatedProfile);

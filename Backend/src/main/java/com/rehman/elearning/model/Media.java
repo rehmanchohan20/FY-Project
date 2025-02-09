@@ -11,6 +11,10 @@ public class Media extends  CommonEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column
+    private String title;
+
     @Column(name = "url")
     private String url;
     @Column(name = "type")
@@ -53,6 +57,14 @@ public class Media extends  CommonEntity {
         this.duration = duration;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public Set<CourseModuleLesson> getCourseModuleLessons() {
         return courseModuleLessons;
     }
@@ -60,5 +72,8 @@ public class Media extends  CommonEntity {
     public void setCourseModuleLessons(Set<CourseModuleLesson> courseModuleLessons) {
         this.courseModuleLessons = courseModuleLessons;
     }
+
+
+
 
 }

@@ -53,7 +53,6 @@ public class MediaServiceImpl implements MediaService {
         if (videoFile == null || videoFile.isEmpty()) {
             throw new IllegalArgumentException("No video file provided.");
         }
-
         // Save video to the file system and get the server URL
         String videoFileUrl = saveVideoToFile(videoFile);
 
@@ -69,6 +68,7 @@ public class MediaServiceImpl implements MediaService {
 
         // Create Media entity
         Media media = new Media();
+        media.setTitle(videoFile.getOriginalFilename());
         media.setUrl(videoFileUrl);  // Save the server URL in the database
         media.setType("video");
         media.setDuration(formattedDuration);
@@ -93,6 +93,7 @@ public class MediaServiceImpl implements MediaService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorEnum.RESOURCE_NOT_FOUND));
 
         // Update media properties
+        media.setTitle(request.getTitle());
         media.setUrl(request.getUrl());
         media.setType(request.getType());
         media.setDuration(request.getDuration());
@@ -109,6 +110,7 @@ public class MediaServiceImpl implements MediaService {
 
     private MediaResponseDTO convertToResponseDTO(Media media) {
         MediaResponseDTO dto = new MediaResponseDTO();
+        dto.setTitle(media.getTitle());
         dto.setId(media.getId());
         dto.setUrl(media.getUrl());
         dto.setType(media.getType());
@@ -221,6 +223,7 @@ public class MediaServiceImpl implements MediaService {
 
         // Create Media entity for the thumbnail
         Media media = new Media();
+        media.setTitle(thumbnailFile.getOriginalFilename());
         media.setUrl(thumbnailFileUrl);  // Save the server URL in the database
         media.setType("thumbnail");
         media.setCreatedBy(UserCreatedBy.Teacher);

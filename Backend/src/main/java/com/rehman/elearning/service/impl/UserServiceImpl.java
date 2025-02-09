@@ -4,10 +4,7 @@ import com.rehman.elearning.constants.AuthProviderEnum;
 import com.rehman.elearning.constants.ErrorEnum;
 import com.rehman.elearning.constants.UserCreatedBy;
 import com.rehman.elearning.exceptions.*;
-import com.rehman.elearning.rest.dto.inbound.LoginRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.RegistrationRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.UserRequestDTO;
+import com.rehman.elearning.rest.dto.inbound.*;
 import com.rehman.elearning.model.Student;
 import com.rehman.elearning.model.Teacher;
 import com.rehman.elearning.model.User;
@@ -177,7 +174,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto) throws IOException {
+	public UserResponseDTO updateUser(Long id, UserProfileRequestDTO userRequestDto) throws IOException {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -193,8 +190,13 @@ public class UserServiceImpl implements UserService {
 			user.setImage(imagePath);
 		}
 		// Update properties from DTO to the entity
-		user.setFullName(userRequestDto.getFullName());
+		user.setFullName(userRequestDto.getName());
 		user.setEmail(userRequestDto.getEmail());
+
+		System.out.println("Updating user: " + user.getUsername());
+		System.out.println("New name: " + userRequestDto.getName());
+		System.out.println("New email: " + userRequestDto.getEmail());
+		System.out.println("New profile picture: " + userRequestDto.getProfilePicture());
 		return mapToResponse(userRepository.save(user));
 	}
 

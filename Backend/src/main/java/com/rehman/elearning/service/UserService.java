@@ -3,10 +3,7 @@ package com.rehman.elearning.service;
 import com.rehman.elearning.constants.RoleEnum;
 import com.rehman.elearning.exceptions.ApplicationException;
 import com.rehman.elearning.model.User;
-import com.rehman.elearning.rest.dto.inbound.LoginRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.RegistrationAdminRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.RegistrationRequestDTO;
-import com.rehman.elearning.rest.dto.inbound.UserRequestDTO;
+import com.rehman.elearning.rest.dto.inbound.*;
 import com.rehman.elearning.rest.dto.outbound.LoginResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.RegistrationAdminResponseDTO;
 import com.rehman.elearning.rest.dto.outbound.RegistrationResponseDTO;
@@ -25,7 +22,7 @@ public interface UserService {
 
 
 	public UserResponseDTO registerUserByAdmin(UserRequestDTO  userRequestDTO) throws ApplicationException;
-	UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDto) throws IOException;
+	UserResponseDTO updateUser(Long id, UserProfileRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO updateUserByAdmin(Long userId, UserRequestDTO userRequestDto) throws IOException;
 	UserResponseDTO getUserById(Long id);
 	List<UserResponseDTO> getAllUsers();

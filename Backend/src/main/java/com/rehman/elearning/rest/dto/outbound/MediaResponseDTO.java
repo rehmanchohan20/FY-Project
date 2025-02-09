@@ -2,6 +2,7 @@ package com.rehman.elearning.rest.dto.outbound;
 
 public class MediaResponseDTO {
     private Long id;
+    private String title;
     private String url;
     private String type;
     private String duration;
@@ -38,4 +39,13 @@ public class MediaResponseDTO {
     public void setDuration(String duration) {
         this.duration = duration;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
+

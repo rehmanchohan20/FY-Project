@@ -43,7 +43,7 @@ public class TeacherController {
 //    @GetMapping("/teachers/me/courses")
 //    public ResponseEntity<List<CourseResponseDTO>> getMyCourses(@AuthenticationPrincipal Jwt jwt) {
 //        // Extract the user ID from the JWT token
-//        Long userId = Long.valueOf(jwt.getClaim("sub")); // Adjust this based on your JWT structure
+//        Long userId = Long.valueOf(jwt.getClaim("jti")); // Adjust this based on your JWT structure
 //
 //        return ResponseEntity.ok(userId);
 //    }
