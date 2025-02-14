@@ -115,7 +115,7 @@ public class CertificationServiceImpl implements CertificationService {
         try {
             // Load the pre-designed template
             PdfDocument pdfDoc = new PdfDocument(
-                    new PdfReader("C:/Users/rehma/Downloads/Kindness Certificate Template 4_removed.pdf"),
+                    new PdfReader("C:/Users/rehma/Downloads/CreativeTagCertificate.pdf"),
                     new PdfWriter(outputStream)
             );
 
@@ -130,24 +130,25 @@ public class CertificationServiceImpl implements CertificationService {
                     new Paragraph(new Text(student.getUser().getName())
                             .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
                             .setFontSize(24)),
-                    pageSize.getWidth() / 2, 400, TextAlignment.CENTER
+                    370, 270, TextAlignment.LEFT // Adjust X and Y to fit the template
             );
 
-            // Add course title
+// Add course title
             canvas.showTextAligned(
                     new Paragraph(new Text(course.getTitle())
                             .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
                             .setFontSize(18)),
-                    pageSize.getWidth() / 2, 350, TextAlignment.CENTER
+                    350, 240, TextAlignment.LEFT // Adjust positioning
             );
 
-            // Add issue date
+// Add issue date
             canvas.showTextAligned(
-                    new Paragraph(new Text("Issued on: " + Timestamp.valueOf(LocalDateTime.now()))
+                    new Paragraph(new Text(""+Timestamp.valueOf(LocalDateTime.now()))
                             .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
                             .setFontSize(12)),
-                    pageSize.getWidth() / 2, 300, TextAlignment.CENTER
+                    400, 195, TextAlignment.LEFT // Position near the "Issue Date" label
             );
+
 
             // Close the canvas and PDF document
             canvas.close();
